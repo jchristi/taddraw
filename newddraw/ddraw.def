@@ -1,0 +1,6 @@
+
+LIBRARY      "ddraw"
+
+EXPORTS
+    ; Explicit exports can go here
+ 	DirectDrawCreate	@1
