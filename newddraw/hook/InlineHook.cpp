@@ -240,6 +240,13 @@ LPBYTE InlineSingleHook::NewBytesForInlineHook (LPBYTE NewBytes_Pvoid)
 	return tempRtn_Pbyte;
 }
 
+LPVOID InlineSingleHook::SetParamOfHook (LPVOID ParamOfHook_Pvoid)
+{
+	LPVOID rtn= ParamOfHook;
+	ParamOfHook= ParamOfHook_Pvoid;
+	return rtn;
+}
+
 void InlineSingleHook::InitHookClass (const LPBYTE AddrToHook_Pvoid, DWORD Len_Dw, int HookMode, LPVOID RouterAddr, LPVOID ParamOfHook_Pvoid)
 {
 	m_NewBytes_Pbyte= NULL;

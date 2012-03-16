@@ -1,4 +1,4 @@
-#pragma  once
+#pragma once
 class IncreaseAISearchMapEntriesLimit;
 class IncreaseWeaponTypeLimit;
 class IncreaseUnitTypeLimit;
@@ -8,6 +8,7 @@ class Switchalt;
 class InlineSingleHook;
 class IncreaseSfxLimit;
 class ModifyWeaponPacket;
+class UnicodeSupport;
 
 class LimitCrack
 {
@@ -21,8 +22,10 @@ public:
 	InlineSingleHook* HookInCircleSelect;
 	IncreaseSfxLimit * NowIncreaseSfxLimit;
 	ModifyWeaponPacket * NowModifyWeaponPacket;
+	UnicodeSupport* NowSupportUnicode;
 
 public:
+
 	LimitCrack (void);
 	~LimitCrack (void);
 };

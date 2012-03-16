@@ -1275,4 +1275,38 @@ LONG RegWriteStr (HKEY RootKey, LPTSTR lpSubKey, LPTSTR lpValueName, LPCSTR Data
 	return RegWriteData ( RootKey, lpSubKey, lpValueName, REG_SZ, (LPVOID)Data, Strlen);
 }
 
-};//extern "C"
+
+
+unsigned int __stdcall CalcCRC(char* data, int len)
+{
+	char tmp= 0;
+	char tmp1= 0;
+	char tmp2= 0;
+	char tmp3= 0;
+	char tmp4= 0;
+	for (int i= 0; i<len; i++)
+	{
+		tmp= data[i];
+		tmp1+= tmp;
+		tmp2= tmp2^ tmp;
+		tmp3= tmp3+ i^ tmp;
+		tmp4= tmp4^ (i+ tmp);
+	}
+
+	return tmp1| (tmp2<< 8)| (tmp3<< 8)| (tmp4<< 8);
+}
+
+char * duplicate_str (char * Org)
+{
+	if (NULL==Org)
+	{
+		return NULL;
+	}
+	int len= strlen( Org);
+	char * Rtn_buf= new char [len+ 1 ];
+	strcpy_s ( Rtn_buf, len+ 1, Org);
+	return Rtn_buf;
+}
+
+};//extern "C" {
+

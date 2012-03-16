@@ -10,8 +10,8 @@
 #endif
 
 	class InlineSingleHook;
-	struct Context_Screen;
-
+	struct _OFFSCREEN;
+	typedef struct _OFFSCREEN OFFSCREEN;
 
 #ifndef _WINDEF_
 	struct tagRECT;
@@ -23,7 +23,7 @@
 	{
 		DWORD Width;
 		DWORD Height;
-		DWORD PixelPerLine;
+		DWORD lPitch;
 		LPVOID SurfaceMem_Pvoid;
 		int SurfaceMemBytesLen;
 		LPDIRECTDRAWSURFACE DDSurface_P;
@@ -33,27 +33,32 @@
 		struct tagSpecScreenSurface * Next;
 	} SpecScreenSurface, * PSpecScreenSurface;
 
+/*
+	typedef struct _VisibleWnd
+	{
+		HWND hwnd;
+		HDC hdc;
+		RECT rect;
+	}VisibleWnd, * PVisibleWnd;
+*/
+
 	class UnicodeSupport 
 	{
 	public:
-		bool IsStunkTA;
-
-// 
-// 		int TAProcessWhenExchange;//maybe TA use new surface when we backup old surface's clipper
-// 		LPDIRECTDRAWCLIPPER IME_Clipper;
-// 
-// 		LPDIRECTDRAWCLIPPER FrontOrg_Clipper;
-// 		LPDIRECTDRAWCLIPPER BackOrg_Clipper;
-
+	/*	vector<VisibleWnd> VisibleWnd_Vec;*/
+		BOOL ImeShowing;
 		BOOL UnicodeValid;
 	//*公共函数 *//
 	public:	
-		UnicodeSupport ();
+		UnicodeSupport(LPCSTR FontName);
+		UnicodeSupport (void);
 		~UnicodeSupport();
-		LPDIRECTDRAWSURFACE CreateSurfaceFromContextScreen (Context_Screen * Context_Screen_Ptr, LPDIRECTDRAW lpDDraw, LPDIRECTDRAWSURFACE * lplpDDSurface);
+		LPDIRECTDRAWSURFACE CreateSurfaceFromContextScreen (OFFSCREEN * OFFSCREEN_Ptr, LPDIRECTDRAW lpDDraw, LPDIRECTDRAWSURFACE * lplpDDSurface);
 
-		BOOL UnicodeDrawTextA (Context_Screen * Context_Screen_Ptr, char * Str_cstrp, LPDIRECTDRAW TADDrawArgc_lp, int X_Off, int Y_Off);
+		BOOL UnicodeDrawTextA (OFFSCREEN * OFFSCREEN_Ptr, char * Str_cstrp, LPDIRECTDRAW TADDrawArgc_lp, int X_Off, int Y_Off);
 	    bool Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
+		bool Blt (LPDIRECTDRAWSURFACE DescSurface);
+		
 	//*内部变量 *//
 	private:
 		HFONT UnicodeWhiteFont;
@@ -64,16 +69,67 @@
 		InlineSingleHook * ValidChar_ISH;
 		InlineSingleHook * DeleteChar_ISH;
 		InlineSingleHook * DBSC2rdByte_ISH;
+		InlineSingleHook * Blt_BottomState0_Text_ISH;
+		InlineSingleHook * Blt_BottomState1_Text_ISH;
+		InlineSingleHook * PopadState_ISH;
+/*
+		InlineSingleHook * CreateWindowExW_ISH;
+*/
+
 		PSpecScreenSurface UnicodeFontDrawCache;
+
+		HIMC hIMC; 
+		HIMC Orginal_hIMC;
+
+		int xPos;
+		int yPos;
+		int Width;
+		int Height;
+
+		DWORD ImeSurfaceBackground;
+		LPDIRECTDRAWSURFACE lpImeSurface;
+
+		char IMEName[0x100];
+		char InputStrBuf[0x200];
+		vector<LPSTR> CandidateList;
+		LPCANDIDATELIST lpCandList;
+		DWORD CurrentCandListLen;
+
+		BOOL LMouseDown;
+		
 	//*内部函数 *//
 	private:
-		PSpecScreenSurface NewSpecScreenSurface (Context_Screen * Context_Screen_Ptr);
+		PSpecScreenSurface NewSpecScreenSurface (OFFSCREEN * OFFSCREEN_Ptr);
 		void FreeSpecScreenSurface (PSpecScreenSurface ForFree_PSSS);
-		PSpecScreenSurface GetSpecScreenSurface (Context_Screen * Context_Screen_Ptr);
+		PSpecScreenSurface GetSpecScreenSurface (OFFSCREEN * OFFSCREEN_Ptr);
+
+		HWND GetMaxChildRect (HWND InHwnd, RECT * Rtn_Rect);
+		void ReleaseCandidateList (void);
+
+		bool UpdateImeFrame (void);
+		void DrawALine_Ime (HDC ImeHdc, LPSTR StrBuf, int * Curt_Width, int * Curt_Height);
+		int DrawSeparator (HDC ImeHdc, int Length, int * Curt_Width, int * Curt_Height);
+
+		void RestoreLocalSurf ( void);
+		BOOL IsIDDrawLost (void);
 	};
+
+
+	void CopyToContextScreenMem (OFFSCREEN * OFFSCREEN_Ptr, PSpecScreenSurface SrcSpecScreenSurface);
+	void CopyToSpecSurfaceMem (PSpecScreenSurface SrcSpecScreenSurface, OFFSCREEN * OFFSCREEN_Ptr);
+
 	int USDrawTextInScreen_HookRouter (PInlineX86StackBuffer X86StrackBuffer);
 
 	int myDeleteChar (PInlineX86StackBuffer X86StrackBuffer);
 	int myValidChar  (PInlineX86StackBuffer X86StrackBuffer);
 	int DBSC2rdByte (PInlineX86StackBuffer X86StrackBuffer);
+	int __stdcall Blt_BottomState1_Text (PInlineX86StackBuffer X86StrackBuffer);
+	int __stdcall Blt_BottomState0_Text (PInlineX86StackBuffer X86StrackBuffer);
+	int __stdcall PopadState (PInlineX86StackBuffer X86StrackBuffer);
+/*
+
+	extern unsigned int CreateWindowExW_rtn;
+	extern unsigned int InnerCreateWindow;
+	int __stdcall CreateWindowExW_new (PInlineX86StackBuffer X86StrackBuffer);
+	*/
 #endif //UNICODESUPPORT_HAYU32Y

@@ -1,5 +1,8 @@
 #include "iddraw.h"
 #include "iddrawsurface.h"
+#include <vector>
+using namespace std;
+
 #include "hook/etc.h"
 #include "hook/hook.h"
 
@@ -11,13 +14,12 @@
 #include "IncreaseSfxLimit.h"
 #include "SwitchAlt.h"
 #include "MultiGameWeaponID.h"
-
+#include "UnicodeSupport.h"
 
 #include "tamem.h"
 #include "tafunctions.h"
 #include "LimitCrack.h"
-#include <vector>
-using namespace std;
+
 #include "TAConfig.h"
 
 LimitCrack::LimitCrack ( void)
@@ -27,11 +29,11 @@ LimitCrack::LimitCrack ( void)
 	NowIncreaseWeaponTypeLimit= new IncreaseWeaponTypeLimit ( tmp_i);
 	if ((tmp_i* 0x115)<=(*(WeaponAryLen[0])))
 	{
-		DataShare->WeaponIDCrack= 1;
+		DataShare->WeaponIDLimit= tmp_i;
 	}
 	else
 	{
-		DataShare->WeaponIDCrack= 0;
+		DataShare->WeaponIDLimit= 0;
 	}
 
 	NowIncreaseUnitTypeLimit= new IncreaseUnitTypeLimit ( MyConfig->GetIniInt ( "UnitType", 0) );
@@ -72,6 +74,14 @@ LimitCrack::LimitCrack ( void)
 		Type= MyConfig->EnumIniRegInfo_Next ( &RegInfo_Enum, &Name_p, (LPCVOID *)&Data);
 	}
 	MyConfig->EnumIniRegInfo_End ( &RegInfo_Enum);
+
+	DataShare->IniCRC= MyConfig->GetIniCrc ( );
+
+	//
+	char FontName[0x100];
+	FontName[0]= 0;
+	MyConfig->GetIniStr ( "UnicodeSupport", FontName, 0x100, NULL);
+	NowSupportUnicode= new UnicodeSupport ( FontName);
 }
 
 LimitCrack::~LimitCrack ( void)

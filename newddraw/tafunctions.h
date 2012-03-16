@@ -90,6 +90,15 @@ extern unsigned int EnterOption_Address;
 extern unsigned int PressInOption_Address;
 extern unsigned int AddtionInitAddr;
 
+extern unsigned int Blt_BottomState0_TextRtn;
+extern unsigned int Blt_BottomState0_TextAddr;
+
+extern unsigned int Blt_BottomState1_TextRtn;
+extern unsigned int Blt_BottomState1_TextAddr;
+
+extern unsigned int PopadStateAddr;
 //////////////////////////////////////////////////////////////////////////
 extern InlineSingleHook * AddtionInitHook;
+
+
 #endif

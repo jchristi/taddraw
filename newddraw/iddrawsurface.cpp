@@ -1,8 +1,9 @@
 //---------------------------------------------------------------------------
 #pragma hdrstop
 
-
 #include "oddraw.h"
+#include <vector>
+using namespace std;
 
 #include "whiteboard.h"
 #include "MinimapHandler.h"
@@ -19,6 +20,7 @@
 
 #include "iddrawsurface.h"
 
+
 #include <stdio.h>
 #include "font.h"
 #include <time.h>
@@ -28,6 +30,7 @@
 #include "hook/hook.h"
 #include "UnicodeSupport.h"
 #include "tafunctions.h"
+#include "LimitCrack.h"
 
 //---------------------------------------------------------------------------
 //#pragma package(smart_init)
@@ -163,16 +166,16 @@ ULONG __stdcall IDDrawSurface::Release()
 	return result;
 }
 
-HRESULT __stdcall IDDrawSurface::AddAttachedSurface(LPDIRECTDRAWSURFACE arg1)
-{
-	OutptTxt("AddAttachedSurface");
-	return lpFront->AddAttachedSurface(arg1);
-}
-
 HRESULT __stdcall IDDrawSurface::AddOverlayDirtyRect(LPRECT arg1)
 {
 	OutptTxt("AddOverlayDirtyRect");
 	return lpFront->AddOverlayDirtyRect(arg1);
+}
+
+HRESULT __stdcall IDDrawSurface::AddAttachedSurface(LPDIRECTDRAWSURFACE arg1)
+{
+	OutptTxt("AddAttachedSurface");
+	return lpFront->AddAttachedSurface(arg1);
 }
 
 HRESULT __stdcall IDDrawSurface::Blt(LPRECT arg1, LPDIRECTDRAWSURFACE arg2, LPRECT arg3, DWORD arg4, LPDDBLTFX arg5)
@@ -308,12 +311,7 @@ HRESULT __stdcall IDDrawSurface::IsLost()
 
 HRESULT __stdcall IDDrawSurface::Lock(LPRECT arg1, LPDDSURFACEDESC arg2, DWORD arg3, HANDLE arg4)
 {
-#ifdef UNICODE_SUPPORT
-	if (((UnicodeSupport *)(LocalShare->TAUnicodeSupport))->IsStunkTA)
-	{//当输入法窗口弹出来时，把TA窗口给暂停了。
-		return DDERR_SURFACEBUSY;
-	}
-#endif //UNICODE_SUPPORT
+
 
 	HRESULT result = lpBack->Lock(arg1, arg2, arg3, arg4);
 
@@ -423,9 +421,6 @@ HRESULT __stdcall IDDrawSurface::Unlock(LPVOID arg1)
 		if(result!=DD_OK)
 			return result;
 
-		//if(lpBattleFieldSurf->IsLost() != DD_OK)
-		//  lpBattleFieldSurf->Restore();
-		//IdleUnits.Blit(lpBack);
 		DDDTA->Blit(lpBack);
 
 		lpDDClipper->SetClipList(BattleFieldRegion,0);
@@ -437,7 +432,13 @@ HRESULT __stdcall IDDrawSurface::Unlock(LPVOID arg1)
 		Income->BlitIncome(lpBack);
 		CommanderWarp->Blit(lpBack);
 		SettingsDialog->BlitDialog(lpBack);
-
+		//////////////////////////////////////////////////////////////////////////
+		//unicode
+		if (NULL!=NowCrackLimit)
+		{
+			NowCrackLimit->NowSupportUnicode->Blt ( lpBack);
+		}
+		//////////////////////////////////////////////////////////////////////////
 		//ChangeQueue.Blit(lpBack);
 	}
 
@@ -520,7 +521,6 @@ void IDDrawSurface::ReplaceTAProc()
 	TopWindow = GetForegroundWindow();
 
 	LocalShare->TAWndProc = (WNDPROC)SetWindowLong(TopWindow, GWL_WNDPROC, (long)WinProc);
-
 }
 
 void IDDrawSurface::Set(bool EnableVSync)
@@ -718,11 +718,8 @@ LRESULT CALLBACK WinProc(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam
 	__try
 	{
 		UpdateTAProcess ( );
-#ifdef UNICODE_SUPPORT
 		//send message to unicode Support at first
-		if(((UnicodeSupport *)LocalShare->TAUnicodeSupport)->Message(WinProcWnd, Msg, wParam, lParam))
-			return 0;
-#endif
+
 
 		//The thing in bottom need full-screen suuport
 		if(DataShare->ehaOff == 1 && !DataShare->PlayingDemo)
@@ -752,6 +749,18 @@ LRESULT CALLBACK WinProc(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam
 			}
 		}
 		
+		//////////////////////////////////////////////////////////////////////////
+		//unicode
+		if (NULL!=NowCrackLimit)
+		{
+			if (NowCrackLimit->NowSupportUnicode->Message(WinProcWnd, Msg, wParam, lParam))
+			{
+				return 0;
+			}
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
 		if(((AlliesWhiteboard*)LocalShare->Whiteboard)->Message(WinProcWnd, Msg, wParam, lParam))
 			return 0;
 

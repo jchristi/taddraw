@@ -195,3 +195,12 @@ unsigned int EnterOption_Address = 0x0460160;
 unsigned int PressInOption_Address= 0x0045FC60;
 
 unsigned int AddtionInitAddr= 0x49E9A0;;
+
+unsigned int Blt_BottomState0_TextRtn= 0x004C16D9 ;
+unsigned int Blt_BottomState0_TextAddr= 0x004C16D4 ;
+unsigned int Blt_BottomState1_TextRtn= 0x004C1749 ;
+unsigned int Blt_BottomState1_TextAddr= 0x004C1744 ;
+
+
+
+unsigned int PopadStateAddr= 0x0468AC0;
