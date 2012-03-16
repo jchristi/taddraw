@@ -9,12 +9,8 @@
 #define TALoading 5
 #define TAInGame 6
 
-//扩展的功能是否实现的宏定义  
-//是否禁止输入法
-#define NOIMMINTA
-//#define DEBUG_INFO
+#define DEBUG_INFO
 
-//#define UNICODE_SUPPORT
 class AlliesWhiteboard;
 class CIncome;
 class CTAHook ;
@@ -69,9 +65,11 @@ typedef struct DataShare_
 	int ta3d;
 	//int IsWatch;
 	int LosViewOn;
-	int WeaponIDCrack;
+	int WeaponIDLimit;
 	int MultiWeaponID;
+	unsigned int IniCRC;
 }*DataSharePTR;
+
 extern DataShare_* DataShare;
 extern void *pMapView;
 bool SetupFileMap();
@@ -103,7 +101,7 @@ typedef struct LocalShare_
 	LPVOID DDDTA;
 
 	//extern for unicode font;
-	LPVOID TAUnicodeSupport;
+	//LPVOID TAUnicodeSupport;
 	LPVOID TAExternQuickKey;
 }*LocalSharePTR;
 extern LocalShare_* LocalShare;

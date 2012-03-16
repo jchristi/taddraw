@@ -106,6 +106,7 @@
 		const LPVOID RtnAddrOfHook (void);
 		const LPBYTE RedirectedOrgOpcodes (void);
 		const LPVOID RedirectedOpcodeInStub (void);
+		LPVOID SetParamOfHook (LPVOID ParamOfHook_Pvoid);
 
 		virtual void Hook (void);
 		

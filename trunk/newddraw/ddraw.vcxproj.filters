@@ -11,9 +11,6 @@
     <Filter Include="Source Files\Functions">
       <UniqueIdentifier>{116dc400-450d-4937-953e-52e99d630821}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Functions\Pcx">
-      <UniqueIdentifier>{79d2cdad-260d-43a4-a93c-e32c69f27495}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\STL">
       <UniqueIdentifier>{ebaae430-0659-48cb-9a1e-7b6d317c550b}</UniqueIdentifier>
     </Filter>
@@ -70,6 +67,9 @@
     <Filter Include="Source Files\Functions\hpi">
       <UniqueIdentifier>{e24ea4b8-5f6c-4912-8164-5a9d309d3a8d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Functions\misc\Pcx">
+      <UniqueIdentifier>{79d2cdad-260d-43a4-a93c-e32c69f27495}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ddraw.cpp">
@@ -88,10 +88,10 @@
       <Filter>Source Files\3dta</Filter>
     </ClCompile>
     <ClCompile Include="PCX.CPP">
-      <Filter>Source Files\Functions\Pcx</Filter>
+      <Filter>Source Files\Functions\misc\Pcx</Filter>
     </ClCompile>
     <ClCompile Include="pcxread.cpp">
-      <Filter>Source Files\Functions\Pcx</Filter>
+      <Filter>Source Files\Functions\misc\Pcx</Filter>
     </ClCompile>
     <ClCompile Include="hook\etc.cpp">
       <Filter>Source Files\Functions\misc\hook</Filter>
@@ -171,9 +171,6 @@
     <ClCompile Include="MultiGameWeaponID.cpp">
       <Filter>Source Files\Functions\externFromChina\LimitCrack</Filter>
     </ClCompile>
-    <ClCompile Include="UnicodeSupport.cpp">
-      <Filter>Source Files\Functions\externFromChina\LimitCrack</Filter>
-    </ClCompile>
     <ClCompile Include="LimitCrack.cpp">
       <Filter>Source Files\Functions\externFromChina\LimitCrack</Filter>
     </ClCompile>
@@ -182,6 +179,9 @@
     </ClCompile>
     <ClCompile Include="dialog.cpp">
       <Filter>Source Files\Functions\OrginalTadr</Filter>
+    </ClCompile>
+    <ClCompile Include="UnicodeSupport.cpp">
+      <Filter>Source Files\Functions\externFromChina</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -228,9 +228,6 @@
       <Filter>Header Files\others</Filter>
     </ClInclude>
     <ClInclude Include="ExternQuickKey.h">
-      <Filter>Header Files\Functions\externFromChina</Filter>
-    </ClInclude>
-    <ClInclude Include="UnicodeSupport.h">
       <Filter>Header Files\Functions\externFromChina</Filter>
     </ClInclude>
     <ClInclude Include="bookmarks.h">
@@ -310,6 +307,9 @@
     </ClInclude>
     <ClInclude Include="LimitCrack.h">
       <Filter>Header Files\Functions\externFromChina\LimitCrack</Filter>
+    </ClInclude>
+    <ClInclude Include="UnicodeSupport.h">
+      <Filter>Header Files\Functions\externFromChina</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

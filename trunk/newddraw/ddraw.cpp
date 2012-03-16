@@ -2,6 +2,10 @@
 #include "oddraw.h"
 #include "iddraw.h"
 #include "iddrawsurface.h"
+
+#include <vector>
+using namespace std;
+
 #include "weaponid.h"
 #include <stdio.h>
 #include "hook/etc.h"
@@ -14,8 +18,7 @@
 #include "LimitCrack.h"
 #include "taHPI.h"
 
-#include <vector>
-using namespace std;
+
 
 #include "TAConfig.h"
 //---------------------------------------------------------------------------
@@ -95,6 +98,9 @@ LimitCrack * NowCrackLimit;
 
 int __stdcall AddtionInit (PInlineX86StackBuffer X86StrackBuffer)
 {
+
+	EnableSound();
+
 	IDDrawSurface::OutptTxt ("Init TAHPI");
 	TAHPI= new _TAHPI ( TRUE);
 	IDDrawSurface::OutptTxt ("Init TAConfig");
@@ -148,25 +154,18 @@ bool APIENTRY DllMain(HINSTANCE hinst, unsigned long reason, void*)
 		SetupTAHookFileMap();
 
 		DataShare->IsRunning = 5;
- 		EnableSound();
+ 		
 		
 		//hook the address that loaded HPI file.
 		AddtionInitHook= new InlineSingleHook ( AddtionInitAddr, 5, 
 			INLINE_5BYTESLAGGERJMP, AddtionInit);
-// 	
-// 
-#ifdef UNICODE_SUPPORT
- 		LocalShare->TAUnicodeSupport= (LPVOID) (new UnicodeSupport);
-#endif //UNICODE_SUPPORT
+
 	}
 	if(reason==DLL_PROCESS_DETACH)
 	{
-
 		/* KillTimer(NULL, Timer);
 		KillTimer(NULL, DetectTimer); */
-#ifdef UNICODE_SUPPORT
-		delete (UnicodeSupport *)(LocalShare->TAUnicodeSupport);
-#endif //UNICODE_SUPPORT
+
 		FreeLibrary(SDDraw);
 		ShutdownLocalFileMap();
 		ShutDownTAHookFileMap();

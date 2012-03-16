@@ -17,7 +17,9 @@ IDDraw::IDDraw(LPDIRECTDRAW lpTADD, bool CreateFullScreen)
 
 	LocalShare->DDrawClass = this;
 	LocalShare->TADirectDraw = lpTADD;
+	//unicode
 
+	//
 	//check if version is 3.1 standar
 	if((*((unsigned char*)0x4ad494))==0x00 && (*((unsigned char*)0x4ad495))==0x55 && (*((unsigned char*)0x4ad496))==0xe8)
 		LocalShare->CompatibleVersion = true;

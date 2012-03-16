@@ -46,10 +46,6 @@ CTAHook::CTAHook()
 	if(strcmp(Text,"Total Annihilation Class")==0)
 		TAhWnd = TopWindow;
 
-#ifdef NOIMMINTA
-	ImmAssociateContext ( TAhWnd, NULL);
-#endif //NOIMMINTA
-
 	QueuePos = 0;
 	Delay = 5;
 	WriteLine = false;

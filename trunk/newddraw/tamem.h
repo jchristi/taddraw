@@ -38,7 +38,7 @@ struct ParticleBase;
 struct SmokeGraphics;
 struct RadarPicStruct;
 struct DSoundStruct;
-struct Context_Screen;
+struct _OFFSCREEN;
 struct PlayerResourcesStruct;
 struct _RaceSideData;
 struct _Vertices;
@@ -611,17 +611,6 @@ struct SmokeGraphics{
 	SmokeParticleStruct* me;
 };*///?
 
-struct Context_Screen
-{
-	int Width;
-	int Height;
-	int PixelPerLine; // TA is8bits colors mode, so Just Equ Width
-	LPVOID ScreenColorBits_Ptr;// 0xc
-	char unknow_[0xc];
-	RECT ScreenRect;// 0x1c
-	int unknow_1;
-};
-
 typedef struct _OPENTAFILE 
 {
 	unsigned CFILE;
@@ -691,6 +680,20 @@ typedef struct _Vertices
 	int field_4;
 	int field_8;
 }Vertices, * PVertices;
+
+typedef struct _OFFSCREEN
+{
+	unsigned int  Width ;
+	unsigned int  Height ;
+	unsigned int  lPitch  ;
+	LPVOID  lpSurface ;
+	unsigned int  field_10 ;
+	unsigned int  field_14 ;
+	unsigned  short field_18 ;
+	unsigned short field_1A;
+	RECT ScreenRect;
+	unsigned int field_2C ;
+}OFFSCREEN;
 
 enum PlayerPropertyMask
 {

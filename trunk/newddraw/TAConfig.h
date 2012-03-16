@@ -36,6 +36,7 @@ typedef struct _EnumRegInfo
 class TADRConfig 
 {
 private:
+	bool IsDdrawIni;
 	char IniFilePath_cstr[MAX_PATH];
 
 	vector<RegString *> RegStrings_vec;
@@ -47,6 +48,7 @@ public:
 
 	BOOL GetIniBool (LPCSTR ConfigName, BOOL Default);
 	int GetIniInt (LPCSTR ConfigName, int DefaultValue);
+	int GetIniStr (LPCSTR ConfigName, LPSTR lpReturnedString, DWORD nSize, LPSTR DefaultStr);
 
 	int EnumIniRegInfo_End (PEnumRegInfo * iterator_arg);
 	int EnumIniRegInfo_Next (PEnumRegInfo * iterator_arg, LPCSTR * Name_pp, LPCVOID *  Data_p);
@@ -55,7 +57,8 @@ public:
 	LONG WriteTAReg_Str (LPTSTR lpValueName, LPCSTR Data, DWORD Strlen);
 	LONG WriteTAReg_Dword (LPTSTR lpValueName, DWORD Value);
 	
-
+	unsigned int GetIniCrc (void);
+	
 private:
 	void LoadIniRegSetting ( LPBYTE IniFileData);
 	HKEY TARegPath_HKEY (void);

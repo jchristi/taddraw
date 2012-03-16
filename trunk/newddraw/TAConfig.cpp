@@ -20,14 +20,16 @@ TADRConfig::TADRConfig ()
 	char * IniFileBuf= NULL;
 	BYTE * IniFileData;
 	HANDLE File;
-
-	GetTempFileNameA ( NULL, "taini", 0x0, TAexeName);
+	
 	GetTempPathA ( MAX_PATH, TAexePath);
-	strcat_s ( TAexePath, MAX_PATH, TAexeName);
+	GetTempFileNameA ( TAexePath, "taini", 0x0, TAexeName);
+	
+	//strcat_s ( TAexePath, MAX_PATH, TAexeName);
 
 	IniFileBuf= TAHPI->readfile ( "config\\ddraw.ini", &IniFileLen);
 	if ((-1)==IniFileLen)
 	{
+		IsDdrawIni= false;
 		if (NULL!=IniFileBuf)
 		{
 			TAHPI->free_readfile ( IniFileBuf);
@@ -58,11 +60,11 @@ TADRConfig::TADRConfig ()
 	}
 	else
 	{
-
-		strcpy_s ( IniFilePath_cstr, MAX_PATH , TAexePath);
+		IsDdrawIni= true;
+		strcpy_s ( IniFilePath_cstr, MAX_PATH, TAexeName);
 		IniFileData= reinterpret_cast<BYTE *>(IniFileBuf);
 
-		File= CreateFileA ( IniFilePath_cstr, FILE_WRITE_ACCESS, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		File= CreateFileA ( IniFilePath_cstr, FILE_WRITE_ACCESS, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 		if (INVALID_HANDLE_VALUE!=File)
 		{
 			WriteFile ( File, IniFileData, IniFileLen, reinterpret_cast<DWORD *>(&IniFileLen), NULL);
@@ -78,9 +80,7 @@ TADRConfig::TADRConfig ()
 		if (NULL!=IniFileBuf)
 		{
 			TAHPI->free_readfile ( IniFileBuf);
-		
 		}
-		
 	}
 	if (INVALID_HANDLE_VALUE!=File)
 	{
@@ -131,6 +131,12 @@ BOOL TADRConfig::GetIniBool (LPCSTR ConfigName, BOOL Default)
 int TADRConfig::GetIniInt (LPCSTR ConfigName, int DefaultValue)
 {
 	return GetPrivateProfileIntA ( "Preferences", ConfigName, DefaultValue, IniFilePath_cstr);
+	//return GetIniFileInt ( ConfigName, DefaultValue);
+}
+
+int TADRConfig::GetIniStr (LPCSTR ConfigName, LPSTR lpReturnedString, DWORD nSize, LPSTR DefaultStr)
+{
+	return GetPrivateProfileStringA ( "Preferences", ConfigName, DefaultStr, lpReturnedString,  nSize,  IniFilePath_cstr);
 	//return GetIniFileInt ( ConfigName, DefaultValue);
 }
 
@@ -389,7 +395,6 @@ int TADRConfig::EnumIniRegInfo_Next (PEnumRegInfo * iterator_arg, LPCSTR * Name_
 	}
 	else
 	{
-		
 		*Name_pp= (*iterator_var->Dword_iter)->Name();
 		*Data_p=  reinterpret_cast<LPVOID>((*iterator_var->Dword_iter)->Value());
 		iterator_var->Count+= 1;
@@ -408,6 +413,49 @@ int TADRConfig::EnumIniRegInfo_End (PEnumRegInfo * iterator_arg)
 	delete iterator_arg;
 	return Rtn;
 }
+
+unsigned int TADRConfig::GetIniCrc (void)
+{
+	unsigned int Rtn_CRC= 0;
+	if (IsDdrawIni)
+	{
+		HANDLE File;
+		char * Buffer;
+		DWORD FileLen;
+		
+		while (false)
+		{
+			File= CreateFileA ( IniFilePath_cstr, FILE_READ_ACCESS, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+			if (INVALID_HANDLE_VALUE==File)
+			{
+				break;
+			}
+
+			FileLen= GetFileSize ( File, NULL);
+			if (0<FileLen)
+			{
+				Buffer= new char[FileLen];
+
+				ReadFile ( File, Buffer, FileLen, reinterpret_cast<DWORD *>(&FileLen), NULL);
+
+				Rtn_CRC= CalcCRC ( Buffer, FileLen);
+
+				delete Buffer;
+			}
+
+			CloseHandle ( File);
+
+			if (0==Rtn_CRC)
+			{// if the file is exist but CRC is 0, set it as 0xffffffff to make sure 0 used as invalid CRC.
+				Rtn_CRC= -1;
+			}
+		};
+	}
+
+	return Rtn_CRC;
+}
+
 
 
 RegDword::RegDword (LPSTR Name, int NameLen, DWORD Value)
