@@ -232,20 +232,6 @@ IncreaseWeaponTypeLimit::IncreaseWeaponTypeLimit (DWORD NewLen)
 }
 
 
-void IncreaseWeaponTypeLimit::WeaponType_IdLimit (void)
-{
-
-	for (int i= 0; i<IDLIMITARYNUMBER; ++i)
-	{
-		IDlimitAry[i]= new SingleHook ( reinterpret_cast<LPBYTE>(IDlimitAddrAry[i]), IDlimitLenAry[i], INLINE_UNPROTECTEVINMENT, IDlimitBitsAry[i]);
-	}
-
-	//
-	BYTE IDlimit2_bits[]= {0xC7, 0x44, 0x24, 0x18, 0x00, 0x00, 0x00, 0x00};
-	IDlimit2= new ModifyHook ( 0x0042EC9f, INLINE_MODIFYCODE, 0x5, IDlimit2_bits, sizeof( IDlimit2_bits), 0x5);
-
-
-}
 
 void IncreaseWeaponTypeLimit::NewLimit (DWORD NewLen)
 {
@@ -281,7 +267,7 @@ void IncreaseWeaponTypeLimit::NewLimit (DWORD NewLen)
 		return ;
 	}
 	DWORD tempCurtLen= CurtLen+ reinterpret_cast<DWORD>((&(reinterpret_cast<TAdynmemStruct *>(0)->Weapons)))+ sizeof(WeaponStruct);
-	LPVOID tempCurtPtr= malloc ( tempCurtLen);
+	LPVOID tempCurtPtr= new BYTE[tempCurtLen];
 	
 
 	WriteWeaponAryPtr ( &CurtPtr);
@@ -328,6 +314,11 @@ IncreaseWeaponTypeLimit::~IncreaseWeaponTypeLimit ()
 			delete IDlimitAry[i];
 		}
 	}
+	if (NULL!=CurtPtr)
+	{
+		delete CurtPtr;
+		CurtPtr= NULL;
+	}
 
 }
 
@@ -366,6 +357,26 @@ DWORD IncreaseWeaponTypeLimit::WriteWeaponAryLen ( DWORD Newlen)
 	return CurtLen;
 }
 
+
+void IncreaseWeaponTypeLimit::WeaponType_IdLimit (void)
+{
+
+	if (NULL!=CurtPtr)
+	{
+		return ;
+	}
+
+	for (int i= 0; i<IDLIMITARYNUMBER; ++i)
+	{
+		IDlimitAry[i]= new SingleHook ( reinterpret_cast<LPBYTE>(IDlimitAddrAry[i]), IDlimitLenAry[i], INLINE_UNPROTECTEVINMENT, IDlimitBitsAry[i]);
+	}
+
+	//
+	BYTE IDlimit2_bits[]= {0xC7, 0x44, 0x24, 0x18, 0x00, 0x00, 0x00, 0x00};
+	IDlimit2= new ModifyHook ( 0x0042EC9f, INLINE_MODIFYCODE, 0x5, IDlimit2_bits, sizeof( IDlimit2_bits), 0x5);
+
+
+}
 
 IncreaseUnitTypeLimit::IncreaseUnitTypeLimit ()
 {

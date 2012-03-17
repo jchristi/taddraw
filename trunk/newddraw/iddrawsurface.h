@@ -9,7 +9,7 @@
 #define TALoading 5
 #define TAInGame 6
 
-#define DEBUG_INFO
+//#define DEBUG_INFO
 
 class AlliesWhiteboard;
 class CIncome;

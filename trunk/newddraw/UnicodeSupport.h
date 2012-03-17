@@ -90,6 +90,7 @@
 		LPDIRECTDRAWSURFACE lpImeSurface;
 
 		char IMEName[0x100];
+		//char CompositingBuf[0x100];
 		char InputStrBuf[0x200];
 		vector<LPSTR> CandidateList;
 		LPCANDIDATELIST lpCandList;
@@ -112,6 +113,7 @@
 
 		void RestoreLocalSurf ( void);
 		BOOL IsIDDrawLost (void);
+		void SendStr (char * InputStrBuf);
 	};
 
 
@@ -126,6 +128,9 @@
 	int __stdcall Blt_BottomState1_Text (PInlineX86StackBuffer X86StrackBuffer);
 	int __stdcall Blt_BottomState0_Text (PInlineX86StackBuffer X86StrackBuffer);
 	int __stdcall PopadState (PInlineX86StackBuffer X86StrackBuffer);
+
+	extern LPSTR IME_NOTIFY_STR[];
+	extern LPSTR IME_COMPOSITION_STR[];
 /*
 
 	extern unsigned int CreateWindowExW_rtn;

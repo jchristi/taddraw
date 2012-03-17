@@ -79,6 +79,7 @@ void ModifyHook::InitHookClass (LPBYTE AddrToHook_Pvoid, int HookMode, DWORD Max
 			m_NewBytes_Pbyte= OverWriteOpcode;
 			m_LenToModify_Dw= MaxLen;
 			m_OrgBytes_Pbyte= new BYTE [MaxLen];
+			
 			m_OverWriteLen= OverWriteLen;
 			m_OffToRedirect= OffToRedirect;
 			memcpy ( m_OrgBytes_Pbyte, AddrToHook ( ), MaxLen);
@@ -93,7 +94,13 @@ void ModifyHook::InitHookClass (LPBYTE AddrToHook_Pvoid, int HookMode, DWORD Max
 			return ;
 		}
 		
-		mallocedBuf= new BYTE [MaxLen* 0x4+ 0x5];
+		DWORD Len_Dw;
+		DWORD tempForProtect_Dw;
+		Len_Dw= MaxLen* 0x4+ 0x5;
+		mallocedBuf= new BYTE [Len_Dw];
+
+		VirtualProtect ( mallocedBuf, Len_Dw, PAGE_EXECUTE_READWRITE, &tempForProtect_Dw);
+
 		m_NewBytes_Pbyte= mallocedBuf;
 		m_OverWriteLen= OverWriteLen;
 
