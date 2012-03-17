@@ -299,10 +299,12 @@ void InlineSingleHook::InitHookClass (const LPBYTE AddrToHook_Pvoid, DWORD Len_D
 		}
 		
 		//这儿是初始化HOOK的wapper m_HookRouter_Pproc
-		m_HookRouter_Pproc= new BYTE[X86INLINEROUTERENDOFF+ Len_Dw* 0x4+ 0x4+ 0x5];//X86InlineHookRouter+ orgcode+ jmp back, orgcode可能全是要被扩充4被大小的jecxz
+		DWORD HookRouterLen;
+		HookRouterLen= X86INLINEROUTERENDOFF+ Len_Dw* 0x4+ 0x4+ 0x5;
+		m_HookRouter_Pproc= new BYTE[HookRouterLen];//X86InlineHookRouter+ orgcode+ jmp back, orgcode可能全是要被扩充4被大小的jecxz
 		LPBYTE CurrentPtrIn_m_HookRouter_Pproc;
 		DWORD tempForProtect_Dw;
-		VirtualProtect ( m_HookRouter_Pproc, X86INLINEROUTERENDOFF+ Len_Dw+ 0x5, PAGE_EXECUTE_READWRITE, &tempForProtect_Dw);
+		VirtualProtect ( m_HookRouter_Pproc, HookRouterLen, PAGE_EXECUTE_READWRITE, &tempForProtect_Dw);
 		
 #ifdef DEBUG
 		//VC的debug模式，调用的函数都是0xe9 ?? ?? ?? ??这样的地址。

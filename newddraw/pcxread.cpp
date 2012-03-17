@@ -37,8 +37,10 @@ LPDIRECTDRAWSURFACE CreateSurfPCXResource(WORD PCXNum, bool VidMem)
 	ddsd.dwWidth = Width;
 	ddsd.dwHeight = Height;
 
-	((LPDIRECTDRAW)LocalShare->TADirectDraw)->CreateSurface(&ddsd, &RetSurf, NULL);
-
+	if( DD_OK!=((LPDIRECTDRAW)LocalShare->TADirectDraw)->CreateSurface(&ddsd, &RetSurf, NULL))
+	{
+		return NULL;
+	}
 	DDRAW_INIT_STRUCT(ddsd);
 
 	RetSurf->Lock(NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);

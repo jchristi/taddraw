@@ -487,89 +487,59 @@ void UnicodeSupport::RestoreLocalSurf ( void)
 bool UnicodeSupport::Blt (LPDIRECTDRAWSURFACE DescSurface)
 {
 	//
-
-	if (NULL==DescSurface)
+	__try
 	{
-		return false;
-	}
-
-	if (!UnicodeValid)
-	{
-		return false;
-	}
-
-	if (!ImeShowing)
-	{
-		return false;
-	}
-
-	if (IsIDDrawLost())
-	{
-		RestoreLocalSurf ( );/////////ugly
-	}
-
-	if (DD_OK!=lpImeSurface->IsLost ( ))
-	{
-		lpImeSurface->Restore ( );
-	}
-
-	RECT Dest;
-	Dest.left = xPos;
-	Dest.top = yPos;
-	Dest.right = xPos + Width;
-	Dest.bottom = yPos + Height;
-	DDBLTFX ddbltfx;
-	DDRAW_INIT_STRUCT( ddbltfx);
-	ddbltfx.ddckSrcColorkey.dwColorSpaceLowValue= ImeSurfaceBackground;
-
-	RECT Src;
-
-	Src.left= Src.top= 0;
-	Src.right= Width;
-	Src.bottom= Height;
-	if(DescSurface->Blt(&Dest, lpImeSurface, &Src, DDBLT_ASYNC| DDBLT_KEYSRCOVERRIDE, &ddbltfx)!=DD_OK)
-	{
-		DescSurface->Blt(&Dest, lpImeSurface, &Src, DDBLT_WAIT| DDBLT_KEYSRCOVERRIDE, &ddbltfx);
-	}
-
-	/*LONG Width;
-	LONG Height;
-	LONG X;
-	LONG Y;
-	POINT tmp_Point;
-
-	for (vector<VisibleWnd>::iterator theiter= VisibleWnd_Vec.begin ( ); theiter!=VisibleWnd_Vec.end(); ++theiter)
-	{
-		GetWindowRect ( theiter->hwnd, &(theiter->rect));
-		theiter->hdc= GetWindowDC ( theiter->hwnd);
-		GetWindowOrgEx ( theiter->hdc, &tmp_Point);
-		Width= theiter->rect.right- theiter->rect.left;
-		Height= theiter->rect.bottom- theiter->rect.top;
-		X= theiter->rect.left;
-		Y= theiter->rect.top;
-
-		if ((NULL!=theiter->hdc)
-			&&(Width!=0)
-			&&(Height!=0))
+			if (NULL==DescSurface)
 		{
-
-			BitBlt
-				(
-				SurfaceDC,
-				tmp_Point.x,
-				tmp_Point.y,	
-				Width,	
-				Height,
-				theiter->hdc,	
-				0,	
-				0,	
-				SRCCOPY	 	
-				);
+			return false;
 		}
-	}
 
-	DescSurface->ReleaseDC ( SurfaceDC);*/
-	return true;
+		if (!UnicodeValid)
+		{
+			return false;
+		}
+
+		if (!ImeShowing)
+		{
+			return false;
+		}
+
+		if (IsIDDrawLost())
+		{
+			RestoreLocalSurf ( );/////////ugly
+		}
+
+		if (DD_OK!=lpImeSurface->IsLost ( ))
+		{
+			lpImeSurface->Restore ( );
+		}
+
+		RECT Dest;
+		Dest.left = xPos;
+		Dest.top = yPos;
+		Dest.right = xPos + Width;
+		Dest.bottom = yPos + Height;
+		DDBLTFX ddbltfx;
+		DDRAW_INIT_STRUCT( ddbltfx);
+		ddbltfx.ddckSrcColorkey.dwColorSpaceLowValue= ImeSurfaceBackground;
+
+		RECT Src;
+
+		Src.left= Src.top= 0;
+		Src.right= Width;
+		Src.bottom= Height;
+		if(DescSurface->Blt(&Dest, lpImeSurface, &Src, DDBLT_ASYNC| DDBLT_KEYSRCOVERRIDE, &ddbltfx)!=DD_OK)
+		{
+			DescSurface->Blt(&Dest, lpImeSurface, &Src, DDBLT_WAIT| DDBLT_KEYSRCOVERRIDE, &ddbltfx);
+		}
+
+		return true;
+	}
+	__except (EXCEPTION_EXECUTE_HANDLER)
+	{
+		;
+	}
+	return false;
 }
 
 
@@ -740,6 +710,14 @@ bool UnicodeSupport::UpdateImeFrame (void)
 	return true;
 }
 
+void UnicodeSupport::SendStr (char * InputStrBuf)
+{
+	for (int i= 0; 0!=InputStrBuf[i]; ++i)
+	{
+		SendMessageA ( *reinterpret_cast<HWND *>(0x51F320+ 0x0040), WM_CHAR, InputStrBuf[i], 0);
+	}
+}
+
 bool UnicodeSupport::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 	bool RTN_b= false;
@@ -792,47 +770,84 @@ bool UnicodeSupport::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 		RTN_b= true;
 		ImeShowing= TRUE;
 		break;
+
 	case WM_IME_COMPOSITION:
 		IDDrawSurface::OutptTxt ( "WM_IME_COMPOSITION");
-// 		if (NULL!=hIMC)
-// 		{
-// 			
-// 		//	UpdateAllVisibleWindow ( );
-// 		}
+#ifdef DEBUG_INFO
+		IDDrawSurface::OutptTxt ( IME_COMPOSITION_STR[lParam- GCS_COMPREADSTR]);
+#endif
 		DWORD dwIndex;
-		switch(lParam)
+
+		//RTN_b= true;
+		switch((BOOL)lParam)
 		{
 		case GCS_COMPSTR:
-			dwIndex= GCS_COMPSTR;
 			
-			ImmGetCompositionString	( hIMC, dwIndex, InputStrBuf, 0x100);
-			RTN_b= true;
+		case GCS_COMPREADSTR:
+			//dwIndex= GCS_COMPREADSTR;
+			//IDDrawSurface::OutptTxt ( "GCS_COMPSTR");
+			dwIndex= (BOOL)lParam;
+			memset ( InputStrBuf, 0, sizeof(InputStrBuf));
+			
+			ImmGetCompositionString	( hIMC, dwIndex, InputStrBuf, sizeof(InputStrBuf));
+			//RTN_b= true;
+			strcat_s ( InputStrBuf, sizeof(InputStrBuf), InputStrBuf);
 			IDDrawSurface::OutptTxt ( InputStrBuf);
 			UpdateImeFrame ( );
 			ImeShowing= TRUE;
 			break;
-		case GCS_COMPREADSTR:
-			dwIndex= GCS_COMPREADSTR;
-			ImmGetCompositionString	( hIMC, dwIndex, InputStrBuf, 0x100);
-			RTN_b= true;
+
+		case GCS_RESULTSTR:
+			//IDDrawSurface::OutptTxt ( "GCS_RESULTSTR");
+			memset ( InputStrBuf, 0, sizeof(InputStrBuf));
+			ImmGetCompositionString	( hIMC, GCS_RESULTSTR, InputStrBuf, sizeof(InputStrBuf));
+
+			strcat_s ( InputStrBuf, sizeof(InputStrBuf), InputStrBuf);
+
 			IDDrawSurface::OutptTxt ( InputStrBuf);
+
+			SendStr ( InputStrBuf);
+
+			InputStrBuf[0]= 0; // no need the str at now
+
 			UpdateImeFrame ( );
-			ImeShowing= TRUE;
+			ImeShowing= FALSE;
+
+			//RTN_b= false;
 			break;
 		default:
 			;
 		}
 		// 
-		RTN_b= true;
+		//RTN_b= true;
+		break;
+	case WM_IME_CHAR:
+		IDDrawSurface::OutptTxt ( "WM_IME_CHAR");
+		IDDrawSurface::OutptTxt ( reinterpret_cast<char *>(&wParam));
 		break;
 	case WM_IME_NOTIFY:
-		
+		IDDrawSurface::OutptTxt ( "WM_IME_NOTIFY");
+#ifdef DEBUG_INFO
+		IDDrawSurface::OutptTxt ( IME_NOTIFY_STR[wParam- IMN_CLOSESTATUSWINDOW]);
+#endif
 		switch (wParam)
 		{
 		case IMN_OPENCANDIDATE:
 		case IMN_CHANGECANDIDATE:
-			IDDrawSurface::OutptTxt ( "IMN_CHANGECANDIDATE");
+			//IDDrawSurface::OutptTxt ( "IMN_CHANGECANDIDATE");
 			DWORD NewLen;
+			if (IMN_CHANGECANDIDATE==wParam)
+			{
+				memset ( InputStrBuf, 0, sizeof(InputStrBuf));
+				ImmGetCompositionString	( hIMC, GCS_COMPSTR, InputStrBuf, sizeof(InputStrBuf));
+				//strcat_s ( InputStrBuf, sizeof(InputStrBuf), InputStrBuf);
+				IDDrawSurface::OutptTxt ( InputStrBuf);
+			}
+			else
+			{
+				InputStrBuf[0]= 0;
+			}
+			
 			NewLen= ImmGetCandidateList ( hIMC, 0, NULL, 0);
 			if ((NULL==lpCandList)||
 				(NewLen>CurrentCandListLen))
@@ -853,7 +868,7 @@ bool UnicodeSupport::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 				&&(1==lpCandList->dwCount))
 			{
 				CandidateList.push_back ( reinterpret_cast<char *>(lpCandList->dwOffset));
-				IDDrawSurface::OutptTxt ( CandidateList.back ( ));
+				//IDDrawSurface::OutptTxt ( CandidateList.back ( ));
 			}
 			else
 			{
@@ -861,7 +876,7 @@ bool UnicodeSupport::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 				{
 					CandidateList.push_back ( duplicate_str (reinterpret_cast<LPSTR>(lpCandList)+ lpCandList->dwOffset[i]));
 					//CandidateList.back ( );
-					IDDrawSurface::OutptTxt ( CandidateList.back ( ));
+					//IDDrawSurface::OutptTxt ( CandidateList.back ( ));
 				}
 			}
 			UpdateImeFrame ( );
@@ -870,20 +885,28 @@ bool UnicodeSupport::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 			break;
 		case IMN_CLOSECANDIDATE:
 			//cls the lpImeSurface;
-			IDDrawSurface::OutptTxt ( "IMN_CLOSECANDIDATE");
+			//IDDrawSurface::OutptTxt ( "IMN_CLOSECANDIDATE");
 
+			//memset ( InputStrBuf, 0, sizeof(InputStrBuf));
+			//ImmGetCompositionString	( hIMC, GCS_RESULTSTR, InputStrBuf, sizeof(InputStrBuf));
+
+			//strcat_s ( InputStrBuf, sizeof(InputStrBuf), InputStrBuf);
+			//IDDrawSurface::OutptTxt ( InputStrBuf);
+
+			//SendStr ( InputStrBuf);
 
 			ReleaseCandidateList ( );	
+			InputStrBuf[0]= 0;
 			UpdateImeFrame ( );
 			RTN_b= true;
 			
 			ImeShowing= FALSE;
 			break;
 		default:
+
 			;
 		}
 			
-		
 		break;
 	case WM_INPUTLANGCHANGE:
 		IDDrawSurface::OutptTxt ( "WM_INPUTLANGCHANGE");
@@ -906,24 +929,27 @@ bool UnicodeSupport::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 		break;
 	case WM_IME_ENDCOMPOSITION:
 		IDDrawSurface::OutptTxt ( "WM_IME_ENDCOMPOSITION");
-		memset ( InputStrBuf, 0, 0x200);
-		ImmGetCompositionString	( hIMC, GCS_RESULTSTR, InputStrBuf, 0x200);
-		
-		IDDrawSurface::OutptTxt ( InputStrBuf);
-//		ReleaseAllVisibleWindow ( );
-		//RTN_b= false;
-		
-		for (int i= 0; 0!=InputStrBuf[i]; ++i)
-		{
-			
-			SendMessageA ( *reinterpret_cast<HWND *>(0x51F320+ 0x0040), WM_CHAR, InputStrBuf[i], 0);
-		}
-
-		InputStrBuf[0]= 0; // no need the str at now, 
+		memset ( InputStrBuf, 0, sizeof(InputStrBuf));
+		// no need the str at now, 
 		UpdateImeFrame ( );
 		ImeShowing= FALSE;
 
 		RTN_b= true;
+		break;
+	case WM_IME_CONTROL:
+		IDDrawSurface::OutptTxt ( "WM_IME_CONTROL");
+		break;
+	case WM_IME_KEYDOWN:
+		IDDrawSurface::OutptTxt ( "WM_IME_KEYDOWN");
+		break;
+	case WM_IME_KEYUP:
+		IDDrawSurface::OutptTxt ( "WM_IME_KEYUP");
+		break;
+	case WM_IME_SELECT:
+		IDDrawSurface::OutptTxt ( "WM_IME_SELECT");
+		break;
+	case WM_IME_SETCONTEXT:
+		IDDrawSurface::OutptTxt ( "WM_IME_SETCONTEXT");
 		break;
 	default:
 		;
@@ -931,6 +957,43 @@ bool UnicodeSupport::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 
 	return RTN_b;
 }
+
+
+#ifdef DEBUG_INFO
+
+LPSTR IME_COMPOSITION_STR[]=
+{
+	"GCS_COMPREADSTR",
+	"GCS_COMPREADATTR",
+	"GCS_COMPREADCLAUSE",
+	"GCS_COMPSTR",
+	"GCS_COMPATTR",
+	"GCS_COMPCLAUSE",
+	"GCS_CURSORPOS",
+	"GCS_DELTASTART",
+	"GCS_RESULTREADSTR",
+	"GCS_RESULTREADCLAUSE",
+	"GCS_RESULTSTR",
+	"GCS_RESULTCLAUSE"
+};
+LPSTR IME_NOTIFY_STR[]= 
+{
+	"IMN_CLOSESTATUSWINDOW",
+	"IMN_OPENSTATUSWINDOW",
+	"IMN_CHANGECANDIDATE",
+	"IMN_CLOSECANDIDATE",
+	"IMN_OPENCANDIDATE",
+	"IMN_SETCONVERSIONMODE",
+	"IMN_SETSENTENCEMODE",
+	"IMN_SETOPENSTATUS",
+	"IMN_SETCANDIDATEPOS",
+	"IMN_SETCOMPOSITIONFONT",
+	"IMN_SETCOMPOSITIONWINDOW",
+	"IMN_SETSTATUSWINDOWPOS",
+	"IMN_GUIDELINE",
+	"IMN_PRIVATE"
+};
+#endif
 
 
 void CopyToContextScreenMem (OFFSCREEN * OFFSCREEN_Ptr, PSpecScreenSurface SrcSpecScreenSurface)
