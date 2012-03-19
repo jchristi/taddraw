@@ -75,12 +75,14 @@
 
 #define INLINE_5BYTESNOREDIECTCALL (0x1004)
 #define INLINE_5BYTESNOREDIECTJMP (0x1005)
-#define X86STRACKBUFFERCHANGE 0x7798FFAA // HOOK ROUTER中修改了返回地址时候必须返回这个！修改了寄存器的值时候不用返回这个，修改堆栈的值也不用。但你自己设置了返回地址，就要自己备份那些被HOOK掉的指令了。可以从InlineSingleHook::RedirectedOpcodeInStub获得stub中返回位置的代码。
 
 #define INLINE_MODIFYCODE (0x1006)
 #define INLINE_SINGLEJMP (0x1007)
 
 #define ERRORMODE 0x99987
+
+#define X86STRACKBUFFERCHANGE 0x7798FFAA // HOOK ROUTER中修改了返回地址时候必须返回这个！修改了寄存器的值时候不用返回这个，修改堆栈的值也不用。但你自己设置了返回地址，就要自己备份那些被HOOK掉的指令了。可以从InlineSingleHook::RedirectedOpcodeInStub获得stub中返回位置的代码。
+
 
 
 	typedef int  (__stdcall * InlineX86HookRouter) (PInlineX86StackBuffer X86StrackBuffer);

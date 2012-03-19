@@ -1308,5 +1308,26 @@ char * duplicate_str (char * Org)
 	return Rtn_buf;
 }
 
+
+int getDBCSlen (char * DBCSstr)
+{
+	int temp= 0;
+	while (0!=*DBCSstr)
+	{
+		if (IsDBCSLeadByte( *DBCSstr))
+		{
+			++DBCSstr;
+			if (0==*DBCSstr)
+			{
+				++temp;
+				break;
+			}
+		}
+		++DBCSstr;
+		++temp;
+	}
+	return temp;
+}
+
 };//extern "C" {
 

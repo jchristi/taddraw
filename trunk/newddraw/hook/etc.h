@@ -23,6 +23,7 @@ extern "C"
 	BOOL MemWriteWithBackup (LPVOID Addr_Pvoid, DWORD len_Dw, LPBYTE Org_Pvoid, LPBYTE New_Pvoid);
 	int GetMinValidLenWithMatchOpcode ( LPBYTE OrgOpcode_Pb, int AtLeastLen_I);
 	char * duplicate_str (char * Org);
+	int getDBCSlen (char * DBCSstr);
 };//extern "C"
 
 #endif //ETC_H56NFRDA

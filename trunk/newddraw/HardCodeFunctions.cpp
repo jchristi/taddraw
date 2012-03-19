@@ -201,6 +201,7 @@ unsigned int Blt_BottomState0_TextAddr= 0x004C16D4 ;
 unsigned int Blt_BottomState1_TextRtn= 0x004C1749 ;
 unsigned int Blt_BottomState1_TextAddr= 0x004C1744 ;
 
-
+unsigned int GetTextExtent_AssignCharLenAddr= 0x004C1480;
+unsigned int GetStrExtentAddr= 0x004A5030;
 
 unsigned int PopadStateAddr= 0x0468AC0;

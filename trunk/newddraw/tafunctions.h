@@ -99,6 +99,7 @@ extern unsigned int Blt_BottomState1_TextAddr;
 extern unsigned int PopadStateAddr;
 //////////////////////////////////////////////////////////////////////////
 extern InlineSingleHook * AddtionInitHook;
-
+extern unsigned int GetTextExtent_AssignCharLenAddr;
+extern unsigned int GetStrExtentAddr;
 
 #endif

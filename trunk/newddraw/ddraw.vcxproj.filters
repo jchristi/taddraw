@@ -93,9 +93,6 @@
     <ClCompile Include="pcxread.cpp">
       <Filter>Source Files\Functions\misc\Pcx</Filter>
     </ClCompile>
-    <ClCompile Include="hook\etc.cpp">
-      <Filter>Source Files\Functions\misc\hook</Filter>
-    </ClCompile>
     <ClCompile Include="hook\Hook.cpp">
       <Filter>Source Files\Functions\misc\hook</Filter>
     </ClCompile>
@@ -182,6 +179,9 @@
     </ClCompile>
     <ClCompile Include="UnicodeSupport.cpp">
       <Filter>Source Files\Functions\externFromChina</Filter>
+    </ClCompile>
+    <ClCompile Include="hook\etc.cpp">
+      <Filter>Source Files\Functions\misc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

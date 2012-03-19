@@ -48,9 +48,11 @@
 	/*	vector<VisibleWnd> VisibleWnd_Vec;*/
 		BOOL ImeShowing;
 		BOOL UnicodeValid;
+
+		SIZE FontExtent;
 	//*¹«¹²º¯Êý *//
 	public:	
-		UnicodeSupport(LPCSTR FontName);
+		UnicodeSupport(LPCSTR FontName, DWORD Color, DWORD Background);
 		UnicodeSupport (void);
 		~UnicodeSupport();
 		LPDIRECTDRAWSURFACE CreateSurfaceFromContextScreen (OFFSCREEN * OFFSCREEN_Ptr, LPDIRECTDRAW lpDDraw, LPDIRECTDRAWSURFACE * lplpDDSurface);
@@ -72,6 +74,8 @@
 		InlineSingleHook * Blt_BottomState0_Text_ISH;
 		InlineSingleHook * Blt_BottomState1_Text_ISH;
 		InlineSingleHook * PopadState_ISH;
+		InlineSingleHook * GetStrExtent_ISH;
+		InlineSingleHook * GetTextExtent_AssignCharLen_ISH;
 /*
 		InlineSingleHook * CreateWindowExW_ISH;
 */
@@ -81,10 +85,17 @@
 		HIMC hIMC; 
 		HIMC Orginal_hIMC;
 
+		int CursorX;
+		int CursorY;
 		int xPos;
 		int yPos;
 		int Width;
 		int Height;
+		int CharStartHeight;
+		int CharElemHeight;
+
+		COLORREF FontColor;
+		COLORREF HDCBackground;
 
 		DWORD ImeSurfaceBackground;
 		LPDIRECTDRAWSURFACE lpImeSurface;
@@ -92,6 +103,9 @@
 		char IMEName[0x100];
 		//char CompositingBuf[0x100];
 		char InputStrBuf[0x200];
+
+		char CompReadStr[0x100];
+
 		vector<LPSTR> CandidateList;
 		LPCANDIDATELIST lpCandList;
 		DWORD CurrentCandListLen;
@@ -109,13 +123,14 @@
 
 		bool UpdateImeFrame (void);
 		void DrawALine_Ime (HDC ImeHdc, LPSTR StrBuf, int * Curt_Width, int * Curt_Height);
-		int DrawSeparator (HDC ImeHdc, int Length, int * Curt_Width, int * Curt_Height);
+		int DrawSeparator (HDC ImeHdc, int Length, int * Curt_Width, int * Curt_Height, HBRUSH Brush= (HBRUSH) COLOR_BTNHIGHLIGHT);
 
 		void RestoreLocalSurf ( void);
 		BOOL IsIDDrawLost (void);
 		void SendStr (char * InputStrBuf);
+		void SetHDCFont (HDC Hdc, HFONT font);
+		bool UpdateImeInput (void);
 	};
-
 
 	void CopyToContextScreenMem (OFFSCREEN * OFFSCREEN_Ptr, PSpecScreenSurface SrcSpecScreenSurface);
 	void CopyToSpecSurfaceMem (PSpecScreenSurface SrcSpecScreenSurface, OFFSCREEN * OFFSCREEN_Ptr);
@@ -128,7 +143,9 @@
 	int __stdcall Blt_BottomState1_Text (PInlineX86StackBuffer X86StrackBuffer);
 	int __stdcall Blt_BottomState0_Text (PInlineX86StackBuffer X86StrackBuffer);
 	int __stdcall PopadState (PInlineX86StackBuffer X86StrackBuffer);
-
+	int __stdcall GetStrExtent (PInlineX86StackBuffer X86StrackBuffer);
+	int __stdcall GetTextExtent_AssignCharLen(PInlineX86StackBuffer X86StrackBuffer);
+	
 	extern LPSTR IME_NOTIFY_STR[];
 	extern LPSTR IME_COMPOSITION_STR[];
 /*

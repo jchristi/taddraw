@@ -81,7 +81,7 @@ LimitCrack::LimitCrack ( void)
 	char FontName[0x100];
 	FontName[0]= 0;
 	MyConfig->GetIniStr ( "UnicodeSupport", FontName, 0x100, NULL);
-	NowSupportUnicode= new UnicodeSupport ( FontName);
+	NowSupportUnicode= new UnicodeSupport ( FontName, MyConfig->GetIniInt ( "UnicodeSupport_Color", 0xffffff), MyConfig->GetIniInt ( "UnicodeSupport_Background", 0x000000));
 }
 
 LimitCrack::~LimitCrack ( void)
