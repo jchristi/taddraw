@@ -135,7 +135,7 @@ bool APIENTRY DllMain(HINSTANCE hinst, unsigned long reason, void*)
 {
 	HInstance = hinst;
 	IDDrawSurface::OutptTxt("DLL EntryPoint");
-	
+
 	if(reason==DLL_PROCESS_ATTACH)
 	{
 		IDDrawSurface::OutptTxt("Process Attached");

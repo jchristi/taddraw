@@ -9,14 +9,16 @@ using namespace std;
 #include <vector>
 #include "UnicodeSupport.h"
 #include "LimitCrack.h"
+#include "dialog.h"
 
-UnicodeSupport::UnicodeSupport(LPCSTR FontName)
+UnicodeSupport::UnicodeSupport(LPCSTR FontName, DWORD Color, DWORD Background)
 {
 	DrawTextInScreen_ISH= NULL;
 	ValidChar_ISH= NULL;
 	DeleteChar_ISH= NULL;
 	DBSC2rdByte_ISH= NULL;
 	Blt_BottomState0_Text_ISH= NULL;
+	Blt_BottomState1_Text_ISH= NULL;
 	PopadState_ISH= NULL;
 //	CreateWindowExW_ISH= NULL;
 
@@ -29,13 +31,40 @@ UnicodeSupport::UnicodeSupport(LPCSTR FontName)
 
 	lpCandList= NULL;
 	CurrentCandListLen= 0;
-	
+	FontExtent.cx= 0;
+	FontExtent.cy= 0;
+
+	CursorX = -1;
+	CursorY = -1;
+	CharStartHeight= 0;
+	CharElemHeight= 0;
+
 	ImeSurfaceBackground= 0x01;
 	lpImeSurface= NULL;
 	Orginal_hIMC = ImmAssociateContext ( *reinterpret_cast<HWND *>(0x51F320+ 0x0040), NULL); 
 	hIMC= NULL;
-	memset ( IMEName, 0, 0x100);
-	memset ( InputStrBuf, 0, 0x100);
+	memset ( IMEName, 0, sizeof(IMEName));
+	memset ( InputStrBuf, 0, sizeof(InputStrBuf));
+	memset ( CompReadStr, 0, sizeof(CompReadStr));
+	
+
+	if (0x10000000<=Color)
+	{
+		FontColor= 0xffffff;
+	}
+	else
+	{
+		FontColor= Color;
+	}
+	if (0x10000000<=Background)
+	{
+		HDCBackground= 0x000000;
+	}
+	else
+	{
+		HDCBackground= Background;
+	}
+	
 	
 	if ((NULL==FontName)
 		||(0==FontName[0]))
@@ -56,9 +85,11 @@ UnicodeSupport::UnicodeSupport(LPCSTR FontName)
 		FALSE,                                           //   bItalic 
 		FALSE,                                           //   bUnderline 
 		FALSE,                                                   //   cStrikeOut 
-		GB2312_CHARSET,                             //   nCharSet 
-		OUT_TT_PRECIS,
-		CLIP_DEFAULT_PRECIS,ANTIALIASED_QUALITY, FF_DONTCARE|DEFAULT_PITCH,
+		GB2312_CHARSET,
+		OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,
+		DEFAULT_QUALITY,
+		0,
+
 		FontName);     //   lpszFacename 
 	
 	if (NULL==UnicodeYellowFont)
@@ -78,6 +109,8 @@ UnicodeSupport::UnicodeSupport(LPCSTR FontName)
 	Blt_BottomState1_Text_ISH= new InlineSingleHook ( Blt_BottomState1_TextAddr, 5, INLINE_5BYTESLAGGERJMP, Blt_BottomState1_Text);
 	PopadState_ISH= new InlineSingleHook ( PopadStateAddr, 5, INLINE_5BYTESLAGGERJMP, PopadState);
 
+	GetStrExtent_ISH= new InlineSingleHook ( GetStrExtentAddr, 5, INLINE_5BYTESLAGGERJMP, GetStrExtent);
+	GetTextExtent_AssignCharLen_ISH= new InlineSingleHook ( GetTextExtent_AssignCharLenAddr, 5, INLINE_5BYTESLAGGERJMP, GetTextExtent_AssignCharLen);
 /*
 	BYTE Tag_[]= {0x5D, 0xC2, 0x30, 0x00};
 	InnerCreateWindow= reinterpret_cast<unsigned int>(memfind ( reinterpret_cast<LPVOID>(CreateWindowExW), 0x100, Tag_, 0x4))- 5;
@@ -86,7 +119,6 @@ UnicodeSupport::UnicodeSupport(LPCSTR FontName)
 
 	CreateWindowExW_ISH=  new InlineSingleHook ( reinterpret_cast<unsigned int>(CreateWindowExW), 5, INLINE_5BYTESLAGGERJMP, CreateWindowExW_new);
 	CreateWindowExW_ISH->SetParamOfHook ( reinterpret_cast<LPVOID>(&VisibleWnd_Vec));*/
-
 
 	UnicodeValid= TRUE;
 
@@ -106,6 +138,21 @@ UnicodeSupport::UnicodeSupport(LPCSTR FontName)
 	yPos= *reinterpret_cast<DWORD *>(0x51F320+ 0xd8) - 300;
 
 	RestoreLocalSurf ( );
+
+	HDC ImeHdc;
+	lpImeSurface->GetDC ( &ImeHdc);
+	if (NULL==ImeHdc)
+	{
+		return ; //
+	}
+	SetHDCFont ( ImeHdc, UnicodeYellowFont);
+	GetTextExtentPoint32 ( ImeHdc, "  ", 2, &FontExtent);
+
+	FontExtent.cx= FontExtent.cx/ 2;
+/*
+	FontExtent.cx= FontExtent.cx/ 2;
+	FontExtent.cy= FontExtent.cy/ 2;*/
+	lpImeSurface->ReleaseDC ( ImeHdc);
 }
 
 UnicodeSupport::UnicodeSupport(void)
@@ -115,6 +162,10 @@ UnicodeSupport::UnicodeSupport(void)
 	DeleteChar_ISH= NULL;
 	DBSC2rdByte_ISH= NULL;
 	PopadState_ISH= NULL;
+	GetStrExtent_ISH= NULL;
+	 Blt_BottomState0_Text_ISH= NULL;
+	 Blt_BottomState1_Text_ISH= NULL;
+	GetTextExtent_AssignCharLen_ISH= NULL;
 
 	UnicodeWhiteFont= NULL;
 	UnicodeYellowFont=NULL;
@@ -127,9 +178,23 @@ UnicodeSupport::UnicodeSupport(void)
 	CurrentCandListLen= 0;
 
 
+	FontColor= 0xffffff;
 
-	memset ( IMEName, 0, 0x100);
-	memset ( InputStrBuf, 0, 0x100);
+	HDCBackground= 0x000000;
+
+
+	FontExtent.cx= 0;
+	FontExtent.cy= 0;
+
+	CursorX = -1;
+	CursorY = -1;
+	CharStartHeight= 0;
+	CharElemHeight= 0;
+
+	memset ( IMEName, 0, sizeof(IMEName));
+	memset ( InputStrBuf, 0, sizeof(InputStrBuf));
+	memset ( CompReadStr, 0, sizeof(CompReadStr));
+
 
 	Orginal_hIMC = ImmAssociateContext(*reinterpret_cast<HWND *>(0x51F320+ 0x0040), NULL); 
 	hIMC= NULL;
@@ -197,6 +262,7 @@ UnicodeSupport::~UnicodeSupport(void)
 		{
 			temp2_PSSS= temp_PSSS;
 			temp_PSSS= temp_PSSS->Next;
+			
 		}
 		//allow IME
 		if (NULL!=Orginal_hIMC)
@@ -258,6 +324,7 @@ PSpecScreenSurface UnicodeSupport::NewSpecScreenSurface (OFFSCREEN * OFFSCREEN_P
 
 	//TADDraw_lp= (LPDIRECTDRAW)LocalShare->TADirectDraw;
 	////
+
 	if (IsIDDrawLost())
 	{
 		RestoreLocalSurf ( );/////////ugly
@@ -306,7 +373,8 @@ void UnicodeSupport::FreeSpecScreenSurface (PSpecScreenSurface ForFree_PSSS)
 					}
 				}
 			}
-			free ( ForFree_PSSS);//* 结构的释放，可能会出错  ???? *//
+			ForFree_PSSS->Next= NULL;
+			free ( ForFree_PSSS);
 		}
 
 }
@@ -361,9 +429,16 @@ BOOL UnicodeSupport::UnicodeDrawTextA (OFFSCREEN * OFFSCREEN_Ptr, char * Str_cst
 // 		IDDrawSurface::OutptTxt ( "y:");
 // 		IDDrawSurface::OutptInt ( Y_Off);
 
-		PSpecScreenSurface temp_PSSS= GetSpecScreenSurface ( OFFSCREEN_Ptr);
+		
 		if (TRUE==UnicodeValid)
 		{//only drawText when shall using unicode
+			
+			if (IsIDDrawLost())
+			{
+				RestoreLocalSurf ( );/////////ugly
+			}
+
+			PSpecScreenSurface temp_PSSS= GetSpecScreenSurface ( OFFSCREEN_Ptr);
 
 			//*现在的实现，会让屏幕刷新速度慢到爆 *//
 			// Copy Context Screen In
@@ -395,9 +470,7 @@ BOOL UnicodeSupport::UnicodeDrawTextA (OFFSCREEN * OFFSCREEN_Ptr, char * Str_cst
 			if (DD_OK==(temp_PSSS->DDSurface_P)->GetDC ( &(temp_PSSS->mySurface_HDC)))
 			{
 				//SetBkMode ( temp_PSSS->mySurface_HDC, TRANSPARENT);
-				SelectObject ( temp_PSSS->mySurface_HDC, UnicodeYellowFont);
-				SetTextColor ( temp_PSSS->mySurface_HDC, RGB(0xd0, 0xd0, 0xb3));///黄色 (?)
-				SetBkColor (  temp_PSSS->mySurface_HDC, RGB(139,139,139));
+				SetHDCFont (  temp_PSSS->mySurface_HDC, UnicodeYellowFont);
 				::DrawTextExA ( temp_PSSS->mySurface_HDC, Str_cstrp, -1, &(TextRect), DT_NOCLIP, NULL);
 			}
 			else
@@ -533,6 +606,12 @@ bool UnicodeSupport::Blt (LPDIRECTDRAWSURFACE DescSurface)
 			DescSurface->Blt(&Dest, lpImeSurface, &Src, DDBLT_WAIT| DDBLT_KEYSRCOVERRIDE, &ddbltfx);
 		}
 
+		if ((CursorY!=-1)
+			&&(CursorX!=-1))
+		{
+			((Dialog *)LocalShare->Dialog)->BlitCursor ( DescSurface, CursorX, CursorY);
+		}
+
 		return true;
 	}
 	__except (EXCEPTION_EXECUTE_HANDLER)
@@ -610,7 +689,7 @@ void UnicodeSupport::ReleaseCandidateList (void)
 
 }
 
-int UnicodeSupport::DrawSeparator (HDC ImeHdc, int Length, int * Curt_Width, int * Curt_Height)
+int UnicodeSupport::DrawSeparator (HDC ImeHdc, int Length, int * Curt_Width, int * Curt_Height, HBRUSH Brush)
 {
 	RECT tmp_Rect;
 	tmp_Rect.left= 0;
@@ -619,7 +698,7 @@ int UnicodeSupport::DrawSeparator (HDC ImeHdc, int Length, int * Curt_Width, int
 	*Curt_Height+= Length;
 	tmp_Rect.bottom= *Curt_Height;
 
-	return FillRect ( ImeHdc, &tmp_Rect, (HBRUSH) COLOR_BTNHIGHLIGHT);
+	return FillRect ( ImeHdc, &tmp_Rect, Brush);
 }
 void UnicodeSupport::DrawALine_Ime (HDC ImeHdc, LPSTR StrBuf, int * Curt_Width, int * Curt_Height)
 {
@@ -642,6 +721,65 @@ void UnicodeSupport::DrawALine_Ime (HDC ImeHdc, LPSTR StrBuf, int * Curt_Width, 
 	}
 }
 
+bool UnicodeSupport::UpdateImeInput (void)
+{
+
+	HKL hKL;
+	hKL= GetKeyboardLayout( 0 );
+	if( ImmIsIME( hKL ))
+	{
+		//HIMC hIMC = ImmGetContext( hWnd );
+		ImmEscape ( hKL, hIMC, IME_ESC_IME_NAME, IMEName); 
+		//ImmReleaseContext( hWnd, hIMC );
+	}
+	else 
+	{
+		IMEName[0]= 0;
+		//strcpy_s ( , 0x100, "");
+	}
+
+	memset ( InputStrBuf, 0, sizeof(InputStrBuf));
+	ImmGetCompositionString	( hIMC, GCS_RESULTSTR, InputStrBuf, sizeof(InputStrBuf));
+
+	memset ( CompReadStr, 0, sizeof(CompReadStr));
+	ImmGetCompositionString	( hIMC, GCS_COMPREADSTR, CompReadStr, sizeof(CompReadStr));
+
+	DWORD NewLen;
+
+	NewLen= ImmGetCandidateList ( hIMC, 0, NULL, 0);
+	if ((NULL==lpCandList)||
+		(NewLen>CurrentCandListLen))
+	{
+		if (NULL!=lpCandList)
+		{
+			delete lpCandList;
+		}
+		lpCandList= reinterpret_cast<LPCANDIDATELIST>(new BYTE[NewLen]);
+		CurrentCandListLen= NewLen;
+	}
+
+	memset ( lpCandList, 0, CurrentCandListLen);
+
+	ReleaseCandidateList ( );
+	ImmGetCandidateList ( hIMC, 0, lpCandList, CurrentCandListLen);
+	if ((IME_CAND_CODE==lpCandList->dwStyle)
+		&&(1==lpCandList->dwCount))
+	{
+		CandidateList.push_back ( reinterpret_cast<char *>(lpCandList->dwOffset));
+		//IDDrawSurface::OutptTxt ( CandidateList.back ( ));
+	}
+	else
+	{
+		for (DWORD i= 0; i<lpCandList->dwCount; ++i)
+		{
+			CandidateList.push_back ( duplicate_str (reinterpret_cast<LPSTR>(lpCandList)+ lpCandList->dwOffset[i]));
+			//CandidateList.back ( );
+			//IDDrawSurface::OutptTxt ( CandidateList.back ( ));
+		}
+	}
+
+	return true;
+}
 bool UnicodeSupport::UpdateImeFrame (void)
 {
 	Width= 0;
@@ -680,34 +818,56 @@ bool UnicodeSupport::UpdateImeFrame (void)
 	}
 
 	//SetBkMode ( ImeHdc, TRANSPARENT);
-	SelectObject ( ImeHdc, UnicodeYellowFont);
-	SetTextColor ( ImeHdc, RGB(0xd0, 0xd0, 0xb3));///黄色 (?)
-	SetBkColor ( ImeHdc, RGB(139,139,139));
+	SetHDCFont (  ImeHdc, UnicodeYellowFont);
 
-	DrawSeparator ( ImeHdc, 10, &Width, &Height);
+	//DrawSeparator ( ImeHdc, 10, &Width, &Height);
+	int SeparatorHeight= 10;
+// 	if (LMouseDown)
+// 	{
+// 		SeparatorHeight= 5;
+// 	}
+
 	if (0!=IMEName[0])
 	{
 		DrawALine_Ime ( ImeHdc, IMEName, &Width, &Height);
-		DrawSeparator ( ImeHdc, 10, &Width, &Height);
+		DrawSeparator ( ImeHdc, SeparatorHeight, &Width, &Height);
+	}
+	
+	if (0!=CompReadStr[0])
+	{
+		DrawALine_Ime ( ImeHdc, CompReadStr, &Width, &Height);
+		//DrawSeparator ( ImeHdc, 10, &Width, &Height);
 	}
 	if (0!=InputStrBuf[0])
 	{
 		DrawALine_Ime ( ImeHdc, InputStrBuf, &Width, &Height);
-		DrawSeparator ( ImeHdc, 10, &Width, &Height);
 	}
+	//DrawSeparator ( ImeHdc, 5, &Width, &Height);
+	CharStartHeight= Height;
 
 	char CandLine[0x100];
 	int i= 1;
 	for (vector<LPSTR>::iterator Cand_iter= CandidateList.begin ( ); Cand_iter!=CandidateList.end ( ); ++Cand_iter, ++i)
 	{
+		int tmp= Height;// ugly
 		wsprintfA ( CandLine, "%d.%s", i,  *Cand_iter);
+		DrawSeparator ( ImeHdc, SeparatorHeight, &Width, &Height);
 		DrawALine_Ime ( ImeHdc, CandLine, &Width, &Height);
-		DrawSeparator ( ImeHdc, 10, &Width, &Height);
+		CharElemHeight= Height- tmp;
 	}
 
 	lpImeSurface->ReleaseDC ( ImeHdc);
 
 	return true;
+}
+
+void UnicodeSupport::SetHDCFont (HDC Hdc, HFONT font)
+{
+	SelectObject ( Hdc, font);
+	SetTextColor ( Hdc, FontColor);///黄色 (?)
+	SetBkColor ( Hdc, HDCBackground);
+
+	//SetBkMode ( Hdc, TRANSPARENT);
 }
 
 void UnicodeSupport::SendStr (char * InputStrBuf)
@@ -730,6 +890,7 @@ bool UnicodeSupport::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 	{ 
 	case WM_LBUTTONUP:
 	case WM_LBUTTONDOWN:
+	case WM_MOUSEMOVE:
 		int X, Y;
 		X = (int) LOWORD(lParam);    // horizontal position 
 		Y = (int) HIWORD(lParam);    // vertical position 
@@ -744,6 +905,8 @@ bool UnicodeSupport::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 					&&(Y<(yPos+ Height)))
 				{// inner ime surface
 					LMouseDown= TRUE;
+
+
 					RTN_b= TRUE;
 				}
 			}
@@ -752,12 +915,75 @@ bool UnicodeSupport::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 		{
 			if (LMouseDown)
 			{
-				xPos= X;
-				yPos= Y;
+				bool Outside_b= false;
+
+				if (X<xPos)
+				{
+					Outside_b= true;
+				}
+				if ((xPos+ Width)<X)
+				{
+					Outside_b= true;
+				}
+				if (Y<yPos)
+				{
+					Outside_b= true;
+				}
+				if ((yPos+ Height)<Y)
+				{
+					Outside_b= true;
+				}
+
+				if (Outside_b)
+				{
+					xPos= X;
+					yPos= Y;
+				}
+				else
+				{
+					int Offset_tmp;
+					Offset_tmp= Y- yPos- CharStartHeight- 1;
+					if (0<Offset_tmp)
+					{
+						int Index;
+						Index= (Offset_tmp)/ CharElemHeight;
+						if ((0<=Index)&&(Index<(int)lpCandList->dwCount))
+						{
+							UpdateImeInput ();
+
+							SendStr ( (reinterpret_cast<LPSTR>(lpCandList)+ lpCandList->dwOffset[Index]));
+							ImmNotifyIME ( hIMC, NI_COMPOSITIONSTR, CPS_COMPLETE, 0);
+							InputStrBuf[0]= 0;
+							//ImmNotifyIME ( hIMC, NI_CLOSECANDIDATE, Index, 0);
+						}
+					}
+
+				}
+
+
+
 				LMouseDown= FALSE;
 				RTN_b= TRUE;
 			}
 		}
+		else if (WM_MOUSEMOVE==Msg)
+		{
+			if (ImeShowing)
+			{
+			
+				if(X>xPos && X<(xPos+ Width) && Y>(yPos) && Y<((yPos)+ Height))
+				{
+					CursorX = X;
+					CursorY = Y;
+				}
+				else
+				{
+					CursorX = -1;
+					CursorY = -1;
+				}
+			}
+		}
+
 
 
 		break;
@@ -774,42 +1000,33 @@ bool UnicodeSupport::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 	case WM_IME_COMPOSITION:
 		IDDrawSurface::OutptTxt ( "WM_IME_COMPOSITION");
 #ifdef DEBUG_INFO
-		IDDrawSurface::OutptTxt ( IME_COMPOSITION_STR[lParam- GCS_COMPREADSTR]);
+		//IDDrawSurface::OutptTxt ( IME_COMPOSITION_STR[lParam- GCS_COMPREADSTR]);
 #endif
-		DWORD dwIndex;
+//		DWORD dwIndex;
 
 		//RTN_b= true;
 		switch((BOOL)lParam)
 		{
-		case GCS_COMPSTR:
-			
 		case GCS_COMPREADSTR:
-			//dwIndex= GCS_COMPREADSTR;
-			//IDDrawSurface::OutptTxt ( "GCS_COMPSTR");
-			dwIndex= (BOOL)lParam;
-			memset ( InputStrBuf, 0, sizeof(InputStrBuf));
-			
-			ImmGetCompositionString	( hIMC, dwIndex, InputStrBuf, sizeof(InputStrBuf));
-			//RTN_b= true;
-			strcat_s ( InputStrBuf, sizeof(InputStrBuf), InputStrBuf);
-			IDDrawSurface::OutptTxt ( InputStrBuf);
+		case GCS_COMPSTR:
+
+			UpdateImeInput ( );
+
+			IDDrawSurface::OutptTxt ( CompReadStr);
+
 			UpdateImeFrame ( );
 			ImeShowing= TRUE;
 			break;
 
 		case GCS_RESULTSTR:
 			//IDDrawSurface::OutptTxt ( "GCS_RESULTSTR");
-			memset ( InputStrBuf, 0, sizeof(InputStrBuf));
-			ImmGetCompositionString	( hIMC, GCS_RESULTSTR, InputStrBuf, sizeof(InputStrBuf));
-
-			strcat_s ( InputStrBuf, sizeof(InputStrBuf), InputStrBuf);
+			//strcat_s ( InputStrBuf, sizeof(InputStrBuf), InputStrBuf);
+			UpdateImeInput ( );
 
 			IDDrawSurface::OutptTxt ( InputStrBuf);
-
 			SendStr ( InputStrBuf);
 
 			InputStrBuf[0]= 0; // no need the str at now
-
 			UpdateImeFrame ( );
 			ImeShowing= FALSE;
 
@@ -828,14 +1045,13 @@ bool UnicodeSupport::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 	case WM_IME_NOTIFY:
 		IDDrawSurface::OutptTxt ( "WM_IME_NOTIFY");
 #ifdef DEBUG_INFO
-		IDDrawSurface::OutptTxt ( IME_NOTIFY_STR[wParam- IMN_CLOSESTATUSWINDOW]);
+		//IDDrawSurface::OutptTxt ( IME_NOTIFY_STR[wParam- IMN_CLOSESTATUSWINDOW]);
 #endif
 		switch (wParam)
 		{
 		case IMN_OPENCANDIDATE:
 		case IMN_CHANGECANDIDATE:
 			//IDDrawSurface::OutptTxt ( "IMN_CHANGECANDIDATE");
-			DWORD NewLen;
 			if (IMN_CHANGECANDIDATE==wParam)
 			{
 				memset ( InputStrBuf, 0, sizeof(InputStrBuf));
@@ -848,52 +1064,13 @@ bool UnicodeSupport::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 				InputStrBuf[0]= 0;
 			}
 			
-			NewLen= ImmGetCandidateList ( hIMC, 0, NULL, 0);
-			if ((NULL==lpCandList)||
-				(NewLen>CurrentCandListLen))
-			{
-				if (NULL!=lpCandList)
-				{
-					delete lpCandList;
-				}
-				lpCandList= reinterpret_cast<LPCANDIDATELIST>(new BYTE[NewLen]);
-				CurrentCandListLen= NewLen;
-			}
+			UpdateImeInput ( );
 
-			memset ( lpCandList, 0, CurrentCandListLen);
-			
-			ReleaseCandidateList ( );
-			ImmGetCandidateList ( hIMC, 0, lpCandList, CurrentCandListLen);
-			if ((IME_CAND_CODE==lpCandList->dwStyle)
-				&&(1==lpCandList->dwCount))
-			{
-				CandidateList.push_back ( reinterpret_cast<char *>(lpCandList->dwOffset));
-				//IDDrawSurface::OutptTxt ( CandidateList.back ( ));
-			}
-			else
-			{
-				for (DWORD i= 0; i<lpCandList->dwCount; ++i)
-				{
-					CandidateList.push_back ( duplicate_str (reinterpret_cast<LPSTR>(lpCandList)+ lpCandList->dwOffset[i]));
-					//CandidateList.back ( );
-					//IDDrawSurface::OutptTxt ( CandidateList.back ( ));
-				}
-			}
 			UpdateImeFrame ( );
 			RTN_b= true;
 			ImeShowing= TRUE;
 			break;
 		case IMN_CLOSECANDIDATE:
-			//cls the lpImeSurface;
-			//IDDrawSurface::OutptTxt ( "IMN_CLOSECANDIDATE");
-
-			//memset ( InputStrBuf, 0, sizeof(InputStrBuf));
-			//ImmGetCompositionString	( hIMC, GCS_RESULTSTR, InputStrBuf, sizeof(InputStrBuf));
-
-			//strcat_s ( InputStrBuf, sizeof(InputStrBuf), InputStrBuf);
-			//IDDrawSurface::OutptTxt ( InputStrBuf);
-
-			//SendStr ( InputStrBuf);
 
 			ReleaseCandidateList ( );	
 			InputStrBuf[0]= 0;
@@ -910,21 +1087,9 @@ bool UnicodeSupport::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 		break;
 	case WM_INPUTLANGCHANGE:
 		IDDrawSurface::OutptTxt ( "WM_INPUTLANGCHANGE");
-		HKL hKL;
-		hKL= GetKeyboardLayout( 0 );
-		if( ImmIsIME( hKL ))
-		{
-			//HIMC hIMC = ImmGetContext( hWnd );
-			ImmEscape ( hKL, hIMC, IME_ESC_IME_NAME, IMEName); 
-			//ImmReleaseContext( hWnd, hIMC );
-		}
-		else 
-		{
-			IMEName[0]= 0;
-			//strcpy_s ( , 0x100, "");
-		}
-		IDDrawSurface::OutptTxt ( IMEName);
+		UpdateImeInput ( );
 
+		IDDrawSurface::OutptTxt ( IMEName);
 		UpdateImeFrame ( );
 		break;
 	case WM_IME_ENDCOMPOSITION:
@@ -976,6 +1141,7 @@ LPSTR IME_COMPOSITION_STR[]=
 	"GCS_RESULTSTR",
 	"GCS_RESULTCLAUSE"
 };
+
 LPSTR IME_NOTIFY_STR[]= 
 {
 	"IMN_CLOSESTATUSWINDOW",
@@ -1279,7 +1445,7 @@ int __stdcall PopadState (PInlineX86StackBuffer X86StrackBuffer)
 		X86StrackBuffer->Esi= 0xFFFFFFE1u; 
 		X86StrackBuffer->Eax= reinterpret_cast<DWORD>(*TAmainStruct_PtrPtr);
 		return X86STRACKBUFFERCHANGE;
-		
+
 	}
 	__except (EXCEPTION_EXECUTE_HANDLER)
 	{
@@ -1287,6 +1453,43 @@ int __stdcall PopadState (PInlineX86StackBuffer X86StrackBuffer)
 	}
 	return 0;
 }
+
+
+//.text:004A5030 000 56                                                              push    esi
+//.text:004A5031 004 8B 74 24 08                                                     mov     esi, [esp+4+str]
+ int __stdcall GetStrExtent (PInlineX86StackBuffer X86StrackBuffer)
+ {
+	 LPSTR Str= *reinterpret_cast<LPSTR *>(X86StrackBuffer->Esp+ 0x4);
+	 if (NULL==Str)
+	 {
+		 return 0;
+	 }
+	 //GetTextExtentPoint32 ( ImeHdc, StrBuf, strnlen ( StrBuf, 0x100), &Size_buf);
+	 X86StrackBuffer->Eax= getDBCSlen ( Str)* 8; //(NowCrackLimit->NowSupportUnicode->FontExtent.cx);
+	 X86StrackBuffer->rtnAddr_Pvoid=  *reinterpret_cast<LPVOID *>(X86StrackBuffer->Esp);
+	 X86StrackBuffer->Esp= X86StrackBuffer->Esp+ 8;
+
+	 return X86STRACKBUFFERCHANGE;
+ }
+// 
+//  .text:004C1480 000 56                                                              push    esi
+// 	 .text:004C1481 004 57                                                              push    edi
+// 	 .text:004C1482 008 8B 7C 24 10                                                     mov     edi, [esp+8+str]
+
+ int __stdcall GetTextExtent_AssignCharLen(PInlineX86StackBuffer X86StrackBuffer)
+ {
+	 LPSTR Str= *reinterpret_cast<LPSTR *>(X86StrackBuffer->Esp+ 0x8);
+	 if (NULL==Str)
+	 {
+		 return 0;
+	 }
+	 //GetTextExtentPoint32 ( ImeHdc, StrBuf, strnlen ( StrBuf, 0x100), &Size_buf);
+	 X86StrackBuffer->Eax= getDBCSlen ( Str)* (* *reinterpret_cast<BYTE * *>(X86StrackBuffer->Esp+ 0x4));//(NowCrackLimit->NowSupportUnicode->FontExtent.cx);
+	 X86StrackBuffer->rtnAddr_Pvoid=  *reinterpret_cast<LPVOID *>(X86StrackBuffer->Esp);
+	 X86StrackBuffer->Esp= X86StrackBuffer->Esp+ 0xc;
+
+	 return X86STRACKBUFFERCHANGE;
+ }
 /*
 
 unsigned int InnerCreateWindow;
