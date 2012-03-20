@@ -121,6 +121,9 @@ Dialog::~Dialog()
 
 void Dialog::ShowDialog()
 {
+	WhiteboardKeyFocus= true;
+	KeyCodeFocus= false;
+
 	posX= 640- DialogWidth;
 	posY= 30;
 	CorrectPos(); //make sure dialog is inside screen

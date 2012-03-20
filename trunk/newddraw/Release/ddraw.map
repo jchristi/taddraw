@@ -1,6 +1,6 @@
  ddraw
 
- Timestamp is 4f66dc73 (Mon Mar 19 15:12:51 2012)
+ Timestamp is 4f682395 (Tue Mar 20 14:28:37 2012)
 
  Preferred load address is 10000000
 
@@ -37,8 +37,8 @@
  0002:00006964 00000210H .idata$4                DATA
  0002:00006b74 00000926H .idata$6                DATA
  0002:000074a0 0000004dH .edata                  DATA
- 0003:00000000 00003a58H .data                   DATA
- 0003:00003a60 000020a0H .bss                    DATA
+ 0003:00000000 00003ac8H .data                   DATA
+ 0003:00003ae0 000020a0H .bss                    DATA
  0004:00000000 00000310H .rsrc$01                DATA
  0004:00000310 0001d7a8H .rsrc$02                DATA
 
@@ -144,8 +144,8 @@
  0001:00003550       ?UpdateOverlay@IDDrawSurface@@UAGJPAUtagRECT@@PAUIDirectDrawSurface@@0KPAU_DDOVERLAYFX@@@Z 10004550 f   iddrawsurface.obj
  0001:00003590       ?UpdateOverlayDisplay@IDDrawSurface@@UAGJK@Z 10004590 f   iddrawsurface.obj
  0001:000035c0       ?UpdateOverlayZOrder@IDDrawSurface@@UAGJKPAUIDirectDrawSurface@@@Z 100045c0 f   iddrawsurface.obj
- 0001:000035f0       ?OutptInt@IDDrawSurface@@SGXH@Z 100045f0 f   iddrawsurface.obj
  0001:000035f0       ?OutptTxt@IDDrawSurface@@SGXPAD@Z 100045f0 f   iddrawsurface.obj
+ 0001:000035f0       ?OutptInt@IDDrawSurface@@SGXH@Z 100045f0 f   iddrawsurface.obj
  0001:00003600       ?ReplaceTAProc@IDDrawSurface@@AAEXXZ 10004600 f   iddrawsurface.obj
  0001:00003630       ?Set@IDDrawSurface@@QAEX_N@Z 10004630 f   iddrawsurface.obj
  0001:00003650       ?CreateClipplist@IDDrawSurface@@QAEXXZ 10004650 f   iddrawsurface.obj
@@ -183,382 +183,382 @@
  0001:00006980       ?push_front@?$deque@UTAShareMemStruct@CDDDTA@@V?$allocator@UTAShareMemStruct@CDDDTA@@@std@@@std@@QAEXABUTAShareMemStruct@CDDDTA@@@Z 10007980 f i dddta.obj
  0001:00006aa0       ?_Growmap@?$deque@UTAShareMemStruct@CDDDTA@@V?$allocator@UTAShareMemStruct@CDDDTA@@@std@@@std@@IAEXI@Z 10007aa0 f i dddta.obj
  0001:00006e40       ?_Tidy@?$deque@UTAShareMemStruct@CDDDTA@@V?$allocator@UTAShareMemStruct@CDDDTA@@@std@@@std@@IAEXXZ 10007e40 f i dddta.obj
+ 0001:00006f10       ??0?$_Deque_val@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QAE@V?$allocator@UMMHS@AlliesWhiteboard@@@1@@Z 10007f10 f i whiteboard.obj
  0001:00006f10       ??0?$_Deque_val@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAE@V?$allocator@PAVGraphicElement@@@1@@Z 10007f10 f i whiteboard.obj
  0001:00006f10       ??0?$_Deque_val@UTAShareMemStruct@CDDDTA@@V?$allocator@UTAShareMemStruct@CDDDTA@@@std@@@std@@QAE@V?$allocator@UTAShareMemStruct@CDDDTA@@@1@@Z 10007f10 f i dddta.obj
- 0001:00006f10       ??0?$_Deque_val@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QAE@V?$allocator@UMMHS@AlliesWhiteboard@@@1@@Z 10007f10 f i whiteboard.obj
- 0001:00006fd0       ?pop_back@?$deque@UTAShareMemStruct@CDDDTA@@V?$allocator@UTAShareMemStruct@CDDDTA@@@std@@@std@@QAEXXZ 10007fd0 f i dddta.obj
- 0001:00007080       ??D?$_Deque_const_iterator@UTAShareMemStruct@CDDDTA@@V?$allocator@UTAShareMemStruct@CDDDTA@@@std@@@std@@QBEABUTAShareMemStruct@CDDDTA@@XZ 10008080 f i dddta.obj
- 0001:00007100       ??$_Cons_val@V?$allocator@UTAShareMemStruct@CDDDTA@@@std@@UTAShareMemStruct@CDDDTA@@ABU34@@std@@YGXAAV?$allocator@UTAShareMemStruct@CDDDTA@@@0@PAUTAShareMemStruct@CDDDTA@@ABU23@@Z 10008100 f i dddta.obj
- 0001:00007160       ??$_Cons_val@V?$allocator@U_Container_proxy@std@@@std@@U_Container_proxy@2@U32@@std@@YGXAAV?$allocator@U_Container_proxy@std@@@0@PAU_Container_proxy@0@$$QAU20@@Z 10008160 f i dddta.obj
- 0001:000071a0       ??$_Allocate@UTAShareMemStruct@CDDDTA@@@std@@YGPAUTAShareMemStruct@CDDDTA@@IPAU12@@Z 100081a0 f i dddta.obj
- 0001:00007210       ??1bad_alloc@std@@UAE@XZ   10008210 f i dddta.obj
- 0001:00007230       ??_Ebad_alloc@std@@UAEPAXI@Z 10008230 f i dddta.obj
- 0001:00007230       ??_Gbad_alloc@std@@UAEPAXI@Z 10008230 f i dddta.obj
- 0001:00007270       ??$_Allocate@U_Container_proxy@std@@@std@@YGPAU_Container_proxy@0@IPAU10@@Z 10008270 f i dddta.obj
- 0001:000072e0       ??0bad_alloc@std@@QAE@ABV01@@Z 100082e0 f i dddta.obj
- 0001:00007310       ??0CChangeQueue@@QAE@XZ    10008310 f   changequeue.obj
- 0001:00007350       ??0CIncome@@QAE@XZ         10008350 f   cinomce.obj
- 0001:00007410       ??1CIncome@@QAE@XZ         10008410 f   cinomce.obj
- 0001:00007440       ?BlitIncome@CIncome@@QAEXPAUIDirectDrawSurface@@@Z 10008440 f   cinomce.obj
- 0001:00007740       ?ShowAllIncome@CIncome@@AAEHXZ 10008740 f   cinomce.obj
- 0001:00007830       ?ShowAllyIncome@CIncome@@AAEHXZ 10008830 f   cinomce.obj
- 0001:00007900       ?ShowMyViewIncome@CIncome@@AAEXHH@Z 10008900 f   cinomce.obj
- 0001:000079d0       ?ShowPlayerIncome@CIncome@@AAEXHHH@Z 100089d0 f   cinomce.obj
- 0001:00007cd0       ?DrawStorageText@CIncome@@AAEHMHH@Z 10008cd0 f   cinomce.obj
- 0001:00007de0       ?DrawTextA@CIncome@@AAEXPADHHD@Z 10008de0 f   cinomce.obj
- 0001:00007f40       ?PaintStoragebar@CIncome@@AAEXHHHH@Z 10008f40 f   cinomce.obj
- 0001:00008110       ?FillRect@CIncome@@AAEXD@Z 10009110 f   cinomce.obj
- 0001:00008180       ?Set@CIncome@@QAEXH@Z      10009180 f   cinomce.obj
- 0001:000081a0       ?ReadPos@CIncome@@AAEXXZ   100091a0 f   cinomce.obj
- 0001:00008250       ?WritePos@CIncome@@AAEXXZ  10009250 f   cinomce.obj
- 0001:000082d0       ?Message@CIncome@@QAE_NPAUHWND__@@IIJ@Z 100092d0 f   cinomce.obj
- 0001:00008800       ?CorrectPos@CIncome@@AAEXXZ 10009800 f   cinomce.obj
- 0001:00008890       ?GetPlayerColor@CIncome@@AAEEH@Z 10009890 f   cinomce.obj
- 0001:00008920       ?DrawPlayerRect@CIncome@@AAEXHHD@Z 10009920 f   cinomce.obj
- 0001:00008980       ??$sprintf_s@$0GE@@@YAHAAY0GE@DPBDZZ 10009980 f i cinomce.obj
- 0001:000089b0       ??0CWarp@@QAE@XZ           100099b0 f   commanderwarp.obj
- 0001:00008a40       ??1CWarp@@QAE@XZ           10009a40 f   commanderwarp.obj
- 0001:00008a70       ?SetPos@CWarp@@AAEXHH@Z    10009a70 f   commanderwarp.obj
- 0001:00008ad0       ?Message@CWarp@@QAE_NPAUHWND__@@IIJ@Z 10009ad0 f   commanderwarp.obj
- 0001:00008d30       ?Blit@CWarp@@QAEXPAUIDirectDrawSurface@@@Z 10009d30 f   commanderwarp.obj
- 0001:00008e60       ?WithinButton@CWarp@@AAE_NHH@Z 10009e60 f   commanderwarp.obj
- 0001:00008eb0       ?BlitBtn@CWarp@@AAEXPAUIDirectDrawSurface@@@Z 10009eb0 f   commanderwarp.obj
- 0001:00008fc0       ??0Dialog@@QAE@XZ          10009fc0 f   dialog.obj
- 0001:00009340       ??1Dialog@@QAE@XZ          1000a340 f   dialog.obj
- 0001:00009560       ?ShowDialog@Dialog@@QAEXXZ 1000a560 f   dialog.obj
- 0001:000095b0       ?HideDialog@Dialog@@QAEXXZ 1000a5b0 f   dialog.obj
- 0001:000095e0       ?BlitDialog@Dialog@@QAEXPAUIDirectDrawSurface@@@Z 1000a5e0 f   dialog.obj
- 0001:000096f0       ?RestoreCursor@Dialog@@AAEXXZ 1000a6f0 f   dialog.obj
- 0001:00009790       ?RestoreAll@Dialog@@AAEXXZ 1000a790 f   dialog.obj
- 0001:00009920       ?Message@Dialog@@QAE_NPAUHWND__@@IIJ@Z 1000a920 f   dialog.obj
- 0001:0000a790       ?RenderDialog@Dialog@@AAEXXZ 1000b790 f   dialog.obj
- 0001:0000a8e0       ?Inside@Dialog@@AAE_NHHH@Z 1000b8e0 f   dialog.obj
- 0001:0000ab20       ?DrawTextA@Dialog@@QAEXPAUIDirectDrawSurface@@HHPAD@Z 1000bb20 f   dialog.obj
- 0001:0000ade0       ?DrawSmallText@Dialog@@QAEXPAUIDirectDrawSurface@@HHPAD@Z 1000bde0 f   dialog.obj
- 0001:0000b0a0       ?SetAll@Dialog@@AAEXXZ     1000c0a0 f   dialog.obj
- 0001:0000b160       ?ReadPos@Dialog@@AAEXXZ    1000c160 f   dialog.obj
- 0001:0000b1f0       ?WriteSettings@Dialog@@AAEXXZ 1000c1f0 f   dialog.obj
- 0001:0000b340       ?ReadSettings@Dialog@@AAEXXZ 1000c340 f   dialog.obj
- 0001:0000b560       ?WritePos@Dialog@@AAEXXZ   1000c560 f   dialog.obj
- 0001:0000b5e0       ?CorrectPos@Dialog@@AAEXXZ 1000c5e0 f   dialog.obj
- 0001:0000b670       ?DrawTinyText@Dialog@@AAEXPADHHD@Z 1000c670 f   dialog.obj
- 0001:0000b760       ?FillRect@Dialog@@AAEXHHHHD@Z 1000c760 f   dialog.obj
- 0001:0000b7d0       ?DrawBackgroundButton@Dialog@@AAEXXZ 1000c7d0 f   dialog.obj
- 0001:0000b960       ?DrawKeyCode@Dialog@@AAEXXZ 1000c960 f   dialog.obj
- 0001:0000bab0       ?DrawShareBox@Dialog@@AAEXXZ 1000cab0 f   dialog.obj
- 0001:0000bdd0       ?DrawOptimizeDT@Dialog@@AAEXXZ 1000cdd0 f   dialog.obj
- 0001:0000beb0       ?DrawVSync@Dialog@@AAEXXZ  1000ceb0 f   dialog.obj
- 0001:0000c030       ?DrawFullRings@Dialog@@AAEXXZ 1000d030 f   dialog.obj
- 0001:0000c110       ?DrawWhiteboardKey@Dialog@@AAEXXZ 1000d110 f   dialog.obj
- 0001:0000c260       ?BlitCursor@Dialog@@QAEXPAUIDirectDrawSurface@@HH@Z 1000d260 f   dialog.obj
- 0001:0000c3e0       ?EnterOption@@YGHPAUtagInlineX86StackBuffer@@@Z 1000d3e0 f   dialog.obj
- 0001:0000c400       ?PressInOption@@YGHPAUtagInlineX86StackBuffer@@@Z 1000d400 f   dialog.obj
- 0001:0000c420       ??0CIdleUnits@@QAE@XZ      1000d420 f   idlevillager.obj
- 0001:0000c460       ??1CIdleUnits@@QAE@XZ      1000d460 f   idlevillager.obj
- 0001:0000c480       ?FindIdleConst@CIdleUnits@@AAEXXZ 1000d480 f   idlevillager.obj
- 0001:0000c6b0       ?Message@CIdleUnits@@QAE_NPAUHWND__@@IIJ@Z 1000d6b0 f   idlevillager.obj
- 0001:0000c790       ??0CMapRect@@QAE@XZ        1000d790 f   maprect.obj
- 0001:0000cbe0       ??1CMapRect@@QAE@XZ        1000dbe0 f   maprect.obj
- 0001:0000cc10       ?LockBlit@CMapRect@@QAEXPADH@Z 1000dc10 f   maprect.obj
- 0001:0000cf90       ?GetMapMaxX@CMapRect@@AAEHXZ 1000df90 f   maprect.obj
- 0001:0000cfb0       ?GetMapMaxY@CMapRect@@AAEHXZ 1000dfb0 f   maprect.obj
- 0001:0000cfd0       ?PaintRect@CMapRect@@AAEXXZ 1000dfd0 f   maprect.obj
- 0001:0000d1d0       ?WorldToMiniX@CMapRect@@QAEHH@Z 1000e1d0 f   maprect.obj
- 0001:0000d200       ?WorldToMiniY@CMapRect@@QAEHH@Z 1000e200 f   maprect.obj
- 0001:0000d230       ??0CMinimapHandler@@QAE@XZ 1000e230 f   MinimapHandler.obj
- 0001:0000d270       ??_ECMinimapHandler@@UAEPAXI@Z 1000e270 f i MinimapHandler.obj
- 0001:0000d270       ??_GCMinimapHandler@@UAEPAXI@Z 1000e270 f i MinimapHandler.obj
- 0001:0000d2a0       ??1CMinimapHandler@@UAE@XZ 1000e2a0 f   MinimapHandler.obj
- 0001:0000d2c0       ??0TADRConfig@@QAE@XZ      1000e2c0 f   TAConfig.obj
- 0001:0000d630       ??1TADRConfig@@QAE@XZ      1000e630 f   TAConfig.obj
- 0001:0000d800       ?GetIniBool@TADRConfig@@QAEHPBDH@Z 1000e800 f   TAConfig.obj
- 0001:0000d8b0       ?GetIniInt@TADRConfig@@QAEHPBDH@Z 1000e8b0 f   TAConfig.obj
- 0001:0000d8e0       ?GetIniStr@TADRConfig@@QAEHPBDPADK1@Z 1000e8e0 f   TAConfig.obj
- 0001:0000d910       ?TARegPath_HKEY@TADRConfig@@AAEPAUHKEY__@@XZ 1000e910 f   TAConfig.obj
- 0001:0000d970       ?WriteTAReg_Dword@TADRConfig@@QAEJPADK@Z 1000e970 f   TAConfig.obj
- 0001:0000d9b0       ?WriteTAReg_Str@TADRConfig@@QAEJPADPBDK@Z 1000e9b0 f   TAConfig.obj
- 0001:0000da00       ?LoadIniRegSetting@TADRConfig@@AAEXPAE@Z 1000ea00 f   TAConfig.obj
- 0001:0000dfb0       ?strlwr_s@Checked@ATL@@YAXPADI@Z 1000efb0 f i TAConfig.obj
- 0001:0000e080       ?AtlThrowImpl@ATL@@YGXJ@Z  1000f080 f i TAConfig.obj
- 0001:0000e0b0       ?strupr_s@Checked@ATL@@YAXPADI@Z 1000f0b0 f i TAConfig.obj
- 0001:0000e180       ?EnumIniRegInfo_Begin@TADRConfig@@QAEHPAPAU_EnumRegInfo@@PAPBDPAPBX@Z 1000f180 f   TAConfig.obj
- 0001:0000e250       ?EnumIniRegInfo_Next@TADRConfig@@QAEHPAPAU_EnumRegInfo@@PAPBDPAPBX@Z 1000f250 f   TAConfig.obj
- 0001:0000e3b0       ?EnumIniRegInfo_End@TADRConfig@@QAEHPAPAU_EnumRegInfo@@@Z 1000f3b0 f   TAConfig.obj
- 0001:0000e420       ?GetIniCrc@TADRConfig@@QAEIXZ 1000f420 f   TAConfig.obj
- 0001:0000e500       ??0RegDword@@QAE@PADHK@Z   1000f500 f   TAConfig.obj
- 0001:0000e570       ??1RegDword@@QAE@XZ        1000f570 f   TAConfig.obj
- 0001:0000e5a0       ?Name@RegString@@QAEPBDXZ  1000f5a0 f   TAConfig.obj
- 0001:0000e5a0       ?Name@RegDword@@QAEPBDXZ   1000f5a0 f   TAConfig.obj
- 0001:0000e5b0       ?Value@RegDword@@QAEKXZ    1000f5b0 f   TAConfig.obj
- 0001:0000e5b0       ?AddrToHook@SingleHook@@UAEQAXXZ 1000f5b0 f   Hook.obj
- 0001:0000e5b0       ?Str@RegString@@QAEPBDXZ   1000f5b0 f   TAConfig.obj
- 0001:0000e5d0       ??0RegString@@QAE@PADH0H@Z 1000f5d0 f   TAConfig.obj
- 0001:0000e670       ??1RegString@@QAE@XZ       1000f670 f   TAConfig.obj
- 0001:0000e6c0       ?back@?$vector@PAVRegString@@V?$allocator@PAVRegString@@@std@@@std@@QAEAAPAVRegString@@XZ 1000f6c0 f i TAConfig.obj
- 0001:0000e700       ??1_Container_base12@std@@QAE@XZ 1000f700 f i dddta.obj
- 0001:0000e700       ?SetVisibleList@Dialog@@AAEXXZ 1000f700 f i dialog.obj
- 0001:0000e700       ??1?$_Deque_iterator@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QAE@XZ 1000f700 f i whiteboard.obj
- 0001:0000e700       ??1_TAHPI@@QAE@XZ          1000f700 f i HPIfunc.obj
- 0001:0000e700       ??1?$_Vector_val@PAVRegString@@V?$allocator@PAVRegString@@@std@@@std@@QAE@XZ 1000f700 f i TAConfig.obj
- 0001:0000e700       ?Draw@GraphicText@@UAEXXZ  1000f700 f i whiteboard.obj
- 0001:0000e700       ??1?$_Deque_iterator@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAE@XZ 1000f700 f i whiteboard.obj
- 0001:0000e700       ??1CChangeQueue@@QAE@XZ    1000f700 f i changequeue.obj
- 0001:0000e700       ??1?$_Vector_val@PADV?$allocator@PAD@std@@@std@@QAE@XZ 1000f700 f i UnicodeSupport.obj
- 0001:0000e700       ?Draw@GraphicLine@@UAEXXZ  1000f700 f i whiteboard.obj
- 0001:0000e700       ?Draw@GraphicElement@@UAEXXZ 1000f700 f i whiteboard.obj
- 0001:0000e700       ?Erase@PCX@@QAEXXZ         1000f700 f i PCX.obj
- 0001:0000e700       ??1?$_Vector_val@PAVRegDword@@V?$allocator@PAVRegDword@@@std@@@std@@QAE@XZ 1000f700 f i TAConfig.obj
- 0001:0000e700       ??1?$_Deque_iterator@UTAShareMemStruct@CDDDTA@@V?$allocator@UTAShareMemStruct@CDDDTA@@@std@@@std@@QAE@XZ 1000f700 f i dddta.obj
- 0001:0000e700       ??1?$_Vector_val@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAE@XZ 1000f700 f i whiteboard.obj
- 0001:0000e710       ??$_Cons_val@V?$allocator@PAVRegString@@@std@@PAVRegString@@AAPAV3@@std@@YGXAAV?$allocator@PAVRegString@@@0@PAPAVRegString@@AAPAV2@@Z 1000f710 f i TAConfig.obj
- 0001:0000e710       ??$_Cons_val@V?$allocator@PAVRegDword@@@std@@PAVRegDword@@AAPAV3@@std@@YGXAAV?$allocator@PAVRegDword@@@0@PAPAVRegDword@@AAPAV2@@Z 1000f710 f i TAConfig.obj
- 0001:0000e710       ??$_Cons_val@V?$allocator@PAVGraphicElement@@@std@@PAVGraphicElement@@PAV3@@std@@YGXAAV?$allocator@PAVGraphicElement@@@0@PAPAVGraphicElement@@$$QAPAV2@@Z 1000f710 f i whiteboard.obj
- 0001:0000e710       ??$_Cons_val@V?$allocator@PAD@std@@PADPAD@std@@YGXAAV?$allocator@PAD@0@PAPAD$$QAPAD@Z 1000f710 f i UnicodeSupport.obj
- 0001:0000e710       ??$_Cons_val@V?$allocator@PAVGraphicElement@@@std@@PAVGraphicElement@@AAPAV3@@std@@YGXAAV?$allocator@PAVGraphicElement@@@0@PAPAVGraphicElement@@AAPAV2@@Z 1000f710 f i ElementHandler.obj
- 0001:0000e750       ??0CTAHook@@QAE@XZ         1000f750 f   tahook.obj
- 0001:0000ea10       ??1CTAHook@@QAE@XZ         1000fa10 f   tahook.obj
- 0001:0000eaa0       ?Message@CTAHook@@QAE_NPAUHWND__@@IIJ@Z 1000faa0 f   tahook.obj
- 0001:0000f400       ?Set@CTAHook@@QAEXHPAD_N1H@Z 10010400 f   tahook.obj
- 0001:0000f450       ?WriteShareMacro@CTAHook@@QAEXXZ 10010450 f   tahook.obj
- 0001:0000f5a0       ?Blit@CTAHook@@QAEXPAUIDirectDrawSurface@@@Z 100105a0 f   tahook.obj
- 0001:0000f5b0       ?TABlit@CTAHook@@QAEXXZ    100105b0 f   tahook.obj
- 0001:0000f600       ?WriteDTLine@CTAHook@@AAEXXZ 10010600 f   tahook.obj
- 0001:0000f6a0       ?CalculateLine@CTAHook@@AAEXXZ 100106a0 f   tahook.obj
- 0001:0000f950       ?UpdateSpacing@CTAHook@@AAEXXZ 10010950 f   tahook.obj
- 0001:0000f990       ?OptimizeDTRows@CTAHook@@AAEXXZ 10010990 f   tahook.obj
- 0001:0000fd00       ?VisualizeRow@CTAHook@@AAEXXZ 10010d00 f   tahook.obj
- 0001:0000fe30       ?GetMaxScrollX@CTAHook@@SGHXZ 10010e30 f   tahook.obj
- 0001:0000fe70       ?GetMaxScrollY@CTAHook@@SGHXZ 10010e70 f   tahook.obj
- 0001:0000feb0       ?CalculateRing@CTAHook@@AAEXXZ 10010eb0 f   tahook.obj
- 0001:0000ffb0       ?CalculateRing@CTAHook@@AAEXHHHH@Z 10010fb0 f   tahook.obj
- 0001:00010340       ?ClickBuilding@CTAHook@@AAEXHH@Z 10011340 f   tahook.obj
- 0001:000103b0       ?GetFootX@CTAHook@@AAEFXZ  100113b0 f   tahook.obj
- 0001:000103e0       ?GetFootY@CTAHook@@AAEFXZ  100113e0 f   tahook.obj
- 0001:00010410       ?DrawBuildRect@CTAHook@@AAEXHHHHH@Z 10011410 f   tahook.obj
- 0001:00010600       ?EnableTABuildRect@CTAHook@@AAEXXZ 10011600 f   tahook.obj
- 0001:00010630       ?DisableTABuildRect@CTAHook@@AAEXXZ 10011630 f   tahook.obj
- 0001:00010660       ?PaintMinimapRect@CTAHook@@AAEXXZ 10011660 f   tahook.obj
- 0001:00010690       ??0UnicodeSupport@@QAE@PBDKK@Z 10011690 f   UnicodeSupport.obj
- 0001:00010cd0       ?CreateSurfaceFromContextScreen@UnicodeSupport@@QAEPAUIDirectDrawSurface@@PAU_OFFSCREEN@@PAUIDirectDraw@@PAPAU2@@Z 10011cd0 f   UnicodeSupport.obj
- 0001:00010d80       ?NewSpecScreenSurface@UnicodeSupport@@AAEPAUtagSpecScreenSurface@@PAU_OFFSCREEN@@@Z 10011d80 f   UnicodeSupport.obj
- 0001:00010e70       ?FreeSpecScreenSurface@UnicodeSupport@@AAEXPAUtagSpecScreenSurface@@@Z 10011e70 f   UnicodeSupport.obj
- 0001:00010f50       ?GetSpecScreenSurface@UnicodeSupport@@AAEPAUtagSpecScreenSurface@@PAU_OFFSCREEN@@@Z 10011f50 f   UnicodeSupport.obj
- 0001:00011020       ?UnicodeDrawTextA@UnicodeSupport@@QAEHPAU_OFFSCREEN@@PADPAUIDirectDraw@@HH@Z 10012020 f   UnicodeSupport.obj
- 0001:00011300       ?IsIDDrawLost@UnicodeSupport@@AAEHXZ 10012300 f   UnicodeSupport.obj
- 0001:00011330       ?RestoreLocalSurf@UnicodeSupport@@AAEXXZ 10012330 f   UnicodeSupport.obj
- 0001:00011430       ?Blt@UnicodeSupport@@QAE_NPAUIDirectDrawSurface@@@Z 10012430 f   UnicodeSupport.obj
- 0001:000116d0       ?ReleaseCandidateList@UnicodeSupport@@AAEXXZ 100126d0 f   UnicodeSupport.obj
- 0001:000117c0       ?DrawSeparator@UnicodeSupport@@AAEHPAUHDC__@@HPAH1PAUHBRUSH__@@@Z 100127c0 f   UnicodeSupport.obj
- 0001:00011830       ?DrawALine_Ime@UnicodeSupport@@AAEXPAUHDC__@@PADPAH2@Z 10012830 f   UnicodeSupport.obj
- 0001:000118d0       ?UpdateImeInput@UnicodeSupport@@AAE_NXZ 100128d0 f   UnicodeSupport.obj
- 0001:00011af0       ?UpdateImeFrame@UnicodeSupport@@AAE_NXZ 10012af0 f   UnicodeSupport.obj
- 0001:00011ef0       ?SetHDCFont@UnicodeSupport@@AAEXPAUHDC__@@PAUHFONT__@@@Z 10012ef0 f   UnicodeSupport.obj
- 0001:00011f30       ?SendStr@UnicodeSupport@@AAEXPAD@Z 10012f30 f   UnicodeSupport.obj
- 0001:00011f80       ?Message@UnicodeSupport@@QAE_NPAUHWND__@@IIJ@Z 10012f80 f   UnicodeSupport.obj
- 0001:000124e0       ?CopyToContextScreenMem@@YGXPAU_OFFSCREEN@@PAUtagSpecScreenSurface@@@Z 100134e0 f   UnicodeSupport.obj
- 0001:00012560       ?CopyToSpecSurfaceMem@@YGXPAUtagSpecScreenSurface@@PAU_OFFSCREEN@@@Z 10013560 f   UnicodeSupport.obj
- 0001:000125e0       ?USDrawTextInScreen_HookRouter@@YGHPAUtagInlineX86StackBuffer@@@Z 100135e0 f   UnicodeSupport.obj
- 0001:00012710       ?myValidChar@@YGHPAUtagInlineX86StackBuffer@@@Z 10013710 f   UnicodeSupport.obj
- 0001:00012870       ?myDeleteChar@@YGHPAUtagInlineX86StackBuffer@@@Z 10013870 f   UnicodeSupport.obj
- 0001:00012950       ?Blt_BottomState0_Text@@YGHPAUtagInlineX86StackBuffer@@@Z 10013950 f   UnicodeSupport.obj
- 0001:00012a80       ?Blt_BottomState1_Text@@YGHPAUtagInlineX86StackBuffer@@@Z 10013a80 f   UnicodeSupport.obj
- 0001:00012bb0       ?PopadState@@YGHPAUtagInlineX86StackBuffer@@@Z 10013bb0 f   UnicodeSupport.obj
- 0001:00012c60       ?GetStrExtent@@YGHPAUtagInlineX86StackBuffer@@@Z 10013c60 f   UnicodeSupport.obj
- 0001:00012cc0       ?GetTextExtent_AssignCharLen@@YGHPAUtagInlineX86StackBuffer@@@Z 10013cc0 f   UnicodeSupport.obj
- 0001:00012d20       ?push_back@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEX$$QAPAVGraphicElement@@@Z 10013d20 f i whiteboard.obj
- 0001:00012d20       ?push_back@?$vector@PADV?$allocator@PAD@std@@@std@@QAEX$$QAPAD@Z 10013d20 f i UnicodeSupport.obj
- 0001:00012e00       ?_Tidy@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@IAEXXZ 10013e00 f i whiteboard.obj
- 0001:00012e00       ?_Tidy@?$vector@PAVRegString@@V?$allocator@PAVRegString@@@std@@@std@@IAEXXZ 10013e00 f i TAConfig.obj
- 0001:00012e00       ?_Tidy@?$vector@PAVRegDword@@V?$allocator@PAVRegDword@@@std@@@std@@IAEXXZ 10013e00 f i TAConfig.obj
- 0001:00012e00       ?_Tidy@?$vector@PADV?$allocator@PAD@std@@@std@@IAEXXZ 10013e00 f i UnicodeSupport.obj
- 0001:00012e60       ??$_Dest_val@V?$allocator@PAD@std@@PAD@std@@YGXAAV?$allocator@PAD@0@PAPAD@Z 10013e60 f i UnicodeSupport.obj
- 0001:00012e60       ??$_Dest_val@V?$allocator@PAVGraphicElement@@@std@@PAVGraphicElement@@@std@@YGXAAV?$allocator@PAVGraphicElement@@@0@PAPAVGraphicElement@@@Z 10013e60 f i whiteboard.obj
- 0001:00012e60       ??$_Dest_val@V?$allocator@PAVRegString@@@std@@PAVRegString@@@std@@YGXAAV?$allocator@PAVRegString@@@0@PAPAVRegString@@@Z 10013e60 f i TAConfig.obj
- 0001:00012e60       ??$_Dest_val@V?$allocator@PAUMMHS@AlliesWhiteboard@@@std@@PAUMMHS@AlliesWhiteboard@@@std@@YGXAAV?$allocator@PAUMMHS@AlliesWhiteboard@@@0@PAPAUMMHS@AlliesWhiteboard@@@Z 10013e60 f i whiteboard.obj
- 0001:00012e60       ??$_Dest_val@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@UMMHS@AlliesWhiteboard@@@std@@YGXAAV?$allocator@UMMHS@AlliesWhiteboard@@@0@PAUMMHS@AlliesWhiteboard@@@Z 10013e60 f i whiteboard.obj
- 0001:00012e60       ??$_Dest_val@V?$allocator@UTAShareMemStruct@CDDDTA@@@std@@UTAShareMemStruct@CDDDTA@@@std@@YGXAAV?$allocator@UTAShareMemStruct@CDDDTA@@@0@PAUTAShareMemStruct@CDDDTA@@@Z 10013e60 f i dddta.obj
- 0001:00012e60       ??$_Dest_val@V?$allocator@U_Container_proxy@std@@@std@@U_Container_proxy@2@@std@@YGXAAV?$allocator@U_Container_proxy@std@@@0@PAU_Container_proxy@0@@Z 10013e60 f i dddta.obj
- 0001:00012e60       ??$_Dest_val@V?$allocator@PAVRegDword@@@std@@PAVRegDword@@@std@@YGXAAV?$allocator@PAVRegDword@@@0@PAPAVRegDword@@@Z 10013e60 f i TAConfig.obj
- 0001:00012e60       ??$_Dest_val@V?$allocator@PAUTAShareMemStruct@CDDDTA@@@std@@PAUTAShareMemStruct@CDDDTA@@@std@@YGXAAV?$allocator@PAUTAShareMemStruct@CDDDTA@@@0@PAPAUTAShareMemStruct@CDDDTA@@@Z 10013e60 f i dddta.obj
- 0001:00012e60       ??$_Dest_val@V?$allocator@U_Node@?$_List_nod@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@@std@@U_Node@?$_List_nod@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@2@@std@@YGXAAV?$allocator@U_Node@?$_List_nod@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@@0@PAU_Node@?$_List_nod@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@0@@Z 10013e60 f i ElementHandler.obj
- 0001:00012e60       ??$_Dest_val@V?$allocator@PAPAVGraphicElement@@@std@@PAPAVGraphicElement@@@std@@YGXAAV?$allocator@PAPAVGraphicElement@@@0@PAPAPAVGraphicElement@@@Z 10013e60 f i whiteboard.obj
- 0001:00012e70       ??0LimitCrack@@QAE@XZ      10013e70 f   LimitCrack.obj
- 0001:00013380       ??1LimitCrack@@QAE@XZ      10014380 f   LimitCrack.obj
- 0001:00013520       ??0IncreaseAISearchMapEntriesLimit@@QAE@K@Z 10014520 f   LimitCrack.obj
- 0001:000135c0       ??1IncreaseAISearchMapEntriesLimit@@QAE@XZ 100145c0 f   LimitCrack.obj
- 0001:00013610       ??0IncreaseWeaponTypeLimit@@QAE@K@Z 10014610 f   LimitCrack.obj
- 0001:00013640       ?NewLimit@IncreaseWeaponTypeLimit@@AAEXK@Z 10014640 f   LimitCrack.obj
- 0001:00013780       ??1IncreaseWeaponTypeLimit@@QAE@XZ 10014780 f   LimitCrack.obj
- 0001:000139a0       ?WriteWeaponAryPtr@IncreaseWeaponTypeLimit@@AAEPAXPAPAX@Z 100149a0 f   LimitCrack.obj
- 0001:00013b10       ?WriteWeaponAryLen@IncreaseWeaponTypeLimit@@AAEKK@Z 10014b10 f   LimitCrack.obj
- 0001:00013be0       ?WeaponType_IdLimit@IncreaseWeaponTypeLimit@@AAEXXZ 10014be0 f   LimitCrack.obj
- 0001:00013d40       ??0IncreaseUnitTypeLimit@@QAE@H@Z 10014d40 f   LimitCrack.obj
- 0001:00013d60       ??1IncreaseUnitTypeLimit@@QAE@XZ 10014d60 f   LimitCrack.obj
- 0001:000140c0       ?WriteNewLimit@IncreaseUnitTypeLimit@@AAEXK@Z 100150c0 f   LimitCrack.obj
- 0001:00014830       ??0IncreaseCompositeBuf@@QAE@KK@Z 10015830 f   LimitCrack.obj
- 0001:00014850       ??1IncreaseCompositeBuf@@QAE@XZ 10015850 f   LimitCrack.obj
- 0001:000148b0       ?WriteNewLimit@IncreaseCompositeBuf@@AAEXKK@Z 100158b0 f   LimitCrack.obj
- 0001:000149a0       ?Sfx_mallocBufSizeRouter@@YGHPAUtagInlineX86StackBuffer@@@Z 100159a0 f   LimitCrack.obj
- 0001:000149c0       ??0IncreaseSfxLimit@@QAE@K@Z 100159c0 f   LimitCrack.obj
- 0001:000149f0       ??1IncreaseSfxLimit@@QAE@XZ 100159f0 f   LimitCrack.obj
- 0001:00014ac0       ?SetNewLimit@IncreaseSfxLimit@@AAEXKK@Z 10015ac0 f   LimitCrack.obj
- 0001:00014c20       ??0AlliesWhiteboard@@QAE@XZ 10015c20 f   whiteboard.obj
- 0001:00014e30       ??1AlliesWhiteboard@@QAE@XZ 10015e30 f   whiteboard.obj
- 0001:00014f00       ?Blit@AlliesWhiteboard@@QAEXPAUIDirectDrawSurface@@@Z 10015f00 f   whiteboard.obj
- 0001:00014f70       ?LockBlit@AlliesWhiteboard@@QAEXPADH@Z 10015f70 f   whiteboard.obj
- 0001:000151a0       ?Message@AlliesWhiteboard@@QAE_NPAUHWND__@@IIJ@Z 100161a0 f   whiteboard.obj
- 0001:00015c20       ??_GGraphicMoveText@@UAEPAXI@Z 10016c20 f i whiteboard.obj
- 0001:00015c20       ??_GGraphicElement@@UAEPAXI@Z 10016c20 f i whiteboard.obj
- 0001:00015c20       ??_EGraphicElement@@UAEPAXI@Z 10016c20 f i whiteboard.obj
- 0001:00015c20       ??_EGraphicMoveText@@UAEPAXI@Z 10016c20 f i whiteboard.obj
- 0001:00015c20       ??_GGraphicLine@@UAEPAXI@Z 10016c20 f i whiteboard.obj
- 0001:00015c20       ??_GDeleteGraphic@@UAEPAXI@Z 10016c20 f i whiteboard.obj
- 0001:00015c20       ??_EGraphicLine@@UAEPAXI@Z 10016c20 f i whiteboard.obj
- 0001:00015c20       ??_EDeleteGraphic@@UAEPAXI@Z 10016c20 f i whiteboard.obj
- 0001:00015c50       ??0GraphicText@@QAE@HHPADD@Z 10016c50 f i whiteboard.obj
- 0001:00015d20       ??1GraphicElement@@UAE@XZ  10016d20 f i whiteboard.obj
- 0001:00015d40       ??_GGraphicText@@UAEPAXI@Z 10016d40 f i whiteboard.obj
- 0001:00015d40       ??_EGraphicText@@UAEPAXI@Z 10016d40 f i whiteboard.obj
- 0001:00015d90       ?Set@AlliesWhiteboard@@QAEXH@Z 10016d90 f   whiteboard.obj
- 0001:00015db0       ?DrawTextInput@AlliesWhiteboard@@AAEXPAUIDirectDrawSurface@@@Z 10016db0 f   whiteboard.obj
- 0001:00015fd0       ?TextInputKeyDown@AlliesWhiteboard@@AAEXH@Z 10016fd0 f   whiteboard.obj
- 0001:00016190       ??0GraphicTextEdited@@QAE@HHPADD@Z 10017190 f i whiteboard.obj
- 0001:00016260       ??_GGraphicTextEdited@@UAEPAXI@Z 10017260 f i whiteboard.obj
- 0001:00016260       ??_EGraphicTextEdited@@UAEPAXI@Z 10017260 f i whiteboard.obj
- 0001:000162b0       ?TextInputChar@AlliesWhiteboard@@AAEXD@Z 100172b0 f   whiteboard.obj
- 0001:00016330       ?AddTextMarker@AlliesWhiteboard@@AAEXXZ 10017330 f   whiteboard.obj
- 0001:00016480       ?RestoreAll@AlliesWhiteboard@@AAEXXZ 10017480 f   whiteboard.obj
- 0001:000164f0       ?DrawMarkers@AlliesWhiteboard@@AAEXPAUIDirectDrawSurface@@@Z 100174f0 f   whiteboard.obj
- 0001:00016670       ?DrawMinimapMarkers@AlliesWhiteboard@@QAEXPADH_N@Z 10017670 f   whiteboard.obj
- 0001:00016e40       ?GetMarkers@AlliesWhiteboard@@QAEXPAUMarkerArray@@@Z 10017e40 f   whiteboard.obj
- 0001:00017020       ?DrawTextMarker@AlliesWhiteboard@@AAEXPAUIDirectDrawSurface@@HHPADD@Z 10018020 f   whiteboard.obj
- 0001:00017190       ?DeleteMarker@AlliesWhiteboard@@AAEXHH@Z 10018190 f   whiteboard.obj
- 0001:00017230       ?EreaseArea@AlliesWhiteboard@@AAEXHH@Z 10018230 f   whiteboard.obj
- 0001:00017300       ?MouseMove@AlliesWhiteboard@@AAEXHHHH@Z 10018300 f   whiteboard.obj
- 0001:000174c0       ?ReceiveMarkers@AlliesWhiteboard@@AAEXXZ 100184c0 f   whiteboard.obj
- 0001:00017950       ?SendMarkers@AlliesWhiteboard@@AAEXXZ 10018950 f   whiteboard.obj
- 0001:00018240       ?DrawLine@AlliesWhiteboard@@QAEXHHHHDPADH@Z 10019240 f   whiteboard.obj
- 0001:00018350       ?DrawFreeLine@AlliesWhiteboard@@QAEXHHHHDPADH@Z 10019350 f   whiteboard.obj
- 0001:000183a0       ?EchoMarker@AlliesWhiteboard@@AAEXPAD@Z 100193a0 f   whiteboard.obj
- 0001:00018400       ?GetTextElementAt@AlliesWhiteboard@@AAEPAVGraphicElement@@HHH@Z 10019400 f   whiteboard.obj
- 0001:00018520       ?ScrollToCenter@AlliesWhiteboard@@QAEXHH@Z 10019520 f   whiteboard.obj
- 0001:00018520       ?ScrollToCenter@CIdleUnits@@AAEXHH@Z 10019520 f   idlevillager.obj
- 0001:000185e0       ?DrawRotateRect@AlliesWhiteboard@@AAEXHHHPADH@Z 100195e0 f   whiteboard.obj
- 0001:00018850       ?Clip_Line@AlliesWhiteboard@@QAEHAAH000@Z 10019850 f   whiteboard.obj
- 0001:00019320       ?Draw_Line@AlliesWhiteboard@@QAEHHHHHEPAEH@Z 1001a320 f   whiteboard.obj
- 0001:00019460       ?GenerateLookupTables@AlliesWhiteboard@@AAEXXZ 1001a460 f   whiteboard.obj
- 0001:000194f0       ?push_back@?$deque@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEX$$QAPAVGraphicElement@@@Z 1001a4f0 f i whiteboard.obj
- 0001:000195d0       ??1?$deque@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAE@XZ 1001a5d0 f i whiteboard.obj
- 0001:00019650       ?pop_front@?$deque@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEXXZ 1001a650 f i whiteboard.obj
- 0001:00019710       ??1?$deque@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QAE@XZ 1001a710 f i whiteboard.obj
- 0001:00019790       ?back@?$deque@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QAEAAUMMHS@AlliesWhiteboard@@XZ 1001a790 f i whiteboard.obj
- 0001:00019820       ?push_front@?$deque@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QAEXABUMMHS@AlliesWhiteboard@@@Z 1001a820 f i whiteboard.obj
- 0001:00019940       ?pop_back@?$deque@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QAEXXZ 1001a940 f i whiteboard.obj
- 0001:000199f0       ??1?$vector@PADV?$allocator@PAD@std@@@std@@QAE@XZ 1001a9f0 f i UnicodeSupport.obj
- 0001:000199f0       ??1?$vector@PAVRegDword@@V?$allocator@PAVRegDword@@@std@@@std@@QAE@XZ 1001a9f0 f i TAConfig.obj
- 0001:000199f0       ??1?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAE@XZ 1001a9f0 f i whiteboard.obj
- 0001:000199f0       ??1?$vector@PAVRegString@@V?$allocator@PAVRegString@@@std@@@std@@QAE@XZ 1001a9f0 f i TAConfig.obj
- 0001:00019a40       ?begin@?$deque@UTAShareMemStruct@CDDDTA@@V?$allocator@UTAShareMemStruct@CDDDTA@@@std@@@std@@QAE?AV?$_Deque_iterator@UTAShareMemStruct@CDDDTA@@V?$allocator@UTAShareMemStruct@CDDDTA@@@std@@@2@XZ 1001aa40 f i dddta.obj
- 0001:00019a40       ?begin@?$deque@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QAE?AV?$_Deque_iterator@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@2@XZ 1001aa40 f i whiteboard.obj
- 0001:00019a40       ?begin@?$deque@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAE?AV?$_Deque_iterator@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@2@XZ 1001aa40 f i whiteboard.obj
- 0001:00019aa0       ?_Growmap@?$deque@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@IAEXI@Z 1001aaa0 f i whiteboard.obj
- 0001:00019e50       ?_Tidy@?$deque@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@IAEXXZ 1001ae50 f i whiteboard.obj
- 0001:00019f20       ??1?$_Deque_val@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QAE@XZ 1001af20 f i whiteboard.obj
- 0001:00019f20       ??1?$_Deque_val@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAE@XZ 1001af20 f i whiteboard.obj
- 0001:00019f20       ??1?$_Deque_val@UTAShareMemStruct@CDDDTA@@V?$allocator@UTAShareMemStruct@CDDDTA@@@std@@@std@@QAE@XZ 1001af20 f i dddta.obj
- 0001:00019fa0       ?end@?$deque@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QAE?AV?$_Deque_iterator@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@2@XZ 1001afa0 f i whiteboard.obj
- 0001:0001a010       ?_Growmap@?$deque@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@IAEXI@Z 1001b010 f i whiteboard.obj
- 0001:0001a3b0       ?_Tidy@?$deque@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@IAEXXZ 1001b3b0 f i whiteboard.obj
- 0001:0001a480       ?_Assign_rv@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEX$$QAV12@@Z 1001b480 f i whiteboard.obj
- 0001:0001a570       ??H?$_Deque_iterator@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QBE?AV01@H@Z 1001b570 f i whiteboard.obj
- 0001:0001a570       ??H?$_Deque_iterator@UTAShareMemStruct@CDDDTA@@V?$allocator@UTAShareMemStruct@CDDDTA@@@std@@@std@@QBE?AV01@H@Z 1001b570 f i dddta.obj
- 0001:0001a620       ??G?$_Deque_iterator@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QBE?AV01@H@Z 1001b620 f i whiteboard.obj
- 0001:0001a6d0       ?pop_back@?$deque@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEXXZ 1001b6d0 f i whiteboard.obj
- 0001:0001a780       ?clear@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEXXZ 1001b780 f i whiteboard.obj
- 0001:0001a7d0       ??D?$_Deque_const_iterator@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QBEABQAVGraphicElement@@XZ 1001b7d0 f i whiteboard.obj
- 0001:0001a850       ??D?$_Deque_const_iterator@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QBEABUMMHS@AlliesWhiteboard@@XZ 1001b850 f i whiteboard.obj
- 0001:0001a8d0       ?erase@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAE?AV?$_Vector_iterator@V?$_Vector_val@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@@2@V?$_Vector_const_iterator@V?$_Vector_val@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@@2@0@Z 1001b8d0 f i whiteboard.obj
- 0001:0001a980       ?_Reserve@?$vector@PAVRegString@@V?$allocator@PAVRegString@@@std@@@std@@IAEXI@Z 1001b980 f i TAConfig.obj
- 0001:0001a980       ?_Reserve@?$vector@PAVRegDword@@V?$allocator@PAVRegDword@@@std@@@std@@IAEXI@Z 1001b980 f i TAConfig.obj
- 0001:0001a980       ?_Reserve@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@IAEXI@Z 1001b980 f i whiteboard.obj
- 0001:0001a980       ?_Reserve@?$vector@PADV?$allocator@PAD@std@@@std@@IAEXI@Z 1001b980 f i UnicodeSupport.obj
- 0001:0001aa10       ?reserve@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEXI@Z 1001ba10 f i whiteboard.obj
- 0001:0001aa10       ?reserve@?$vector@PADV?$allocator@PAD@std@@@std@@QAEXI@Z 1001ba10 f i UnicodeSupport.obj
- 0001:0001aa10       ?reserve@?$vector@PAVRegString@@V?$allocator@PAVRegString@@@std@@@std@@QAEXI@Z 1001ba10 f i TAConfig.obj
- 0001:0001aa10       ?reserve@?$vector@PAVRegDword@@V?$allocator@PAVRegDword@@@std@@@std@@QAEXI@Z 1001ba10 f i TAConfig.obj
- 0001:0001ab90       ?_Grow_to@?$vector@PAVRegString@@V?$allocator@PAVRegString@@@std@@@std@@IBEII@Z 1001bb90 f i TAConfig.obj
- 0001:0001ab90       ?_Grow_to@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@IBEII@Z 1001bb90 f i whiteboard.obj
- 0001:0001ab90       ?_Grow_to@?$vector@PADV?$allocator@PAD@std@@@std@@IBEII@Z 1001bb90 f i UnicodeSupport.obj
- 0001:0001ab90       ?_Grow_to@?$vector@PAVRegDword@@V?$allocator@PAVRegDword@@@std@@@std@@IBEII@Z 1001bb90 f i TAConfig.obj
- 0001:0001ac10       ??$_Cons_val@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@UMMHS@AlliesWhiteboard@@ABU34@@std@@YGXAAV?$allocator@UMMHS@AlliesWhiteboard@@@0@PAUMMHS@AlliesWhiteboard@@ABU23@@Z 1001bc10 f i whiteboard.obj
- 0001:0001ac60       ??$_Allocate@PAVGraphicElement@@@std@@YGPAPAVGraphicElement@@IPAPAV1@@Z 1001bc60 f i whiteboard.obj
- 0001:0001ac60       ??$_Allocate@PAVRegDword@@@std@@YGPAPAVRegDword@@IPAPAV1@@Z 1001bc60 f i TAConfig.obj
- 0001:0001ac60       ??$_Allocate@PAD@std@@YGPAPADIPAPAD@Z 1001bc60 f i UnicodeSupport.obj
- 0001:0001ac60       ??$_Allocate@PAUTAShareMemStruct@CDDDTA@@@std@@YGPAPAUTAShareMemStruct@CDDDTA@@IPAPAU12@@Z 1001bc60 f i dddta.obj
- 0001:0001ac60       ??$_Allocate@PAVRegString@@@std@@YGPAPAVRegString@@IPAPAV1@@Z 1001bc60 f i TAConfig.obj
- 0001:0001ac60       ??$_Allocate@PAUMMHS@AlliesWhiteboard@@@std@@YGPAPAUMMHS@AlliesWhiteboard@@IPAPAU12@@Z 1001bc60 f i whiteboard.obj
- 0001:0001ac60       ??$_Allocate@PAPAVGraphicElement@@@std@@YGPAPAPAVGraphicElement@@IPAPAPAV1@@Z 1001bc60 f i whiteboard.obj
- 0001:0001acd0       ??0PCX@@QAE@XZ             1001bcd0 f   PCX.obj
- 0001:0001ad10       ??1PCX@@QAE@XZ             1001bd10 f   PCX.obj
- 0001:0001ad50       ?SetBuffer@PCX@@QAEPAEPAE@Z 1001bd50 f   PCX.obj
- 0001:0001ad80       ?WriteLine@PCX@@AAEPAEPAEK@Z 1001bd80 f   PCX.obj
- 0001:0001af00       ?Save@PCX@@QAEHPBD@Z       1001bf00 f   PCX.obj
- 0001:0001b1f0       ?NewBuffer@PCX@@QAEPAEFF@Z 1001c1f0 f   PCX.obj
- 0001:0001b260       ?CreateSurfPCXResource@@YGPAUIDirectDrawSurface@@G_N@Z 1001c260 f   pcxread.obj
- 0001:0001b4c0       ?RestoreFromPCX@@YGXGPAUIDirectDrawSurface@@@Z 1001c4c0 f   pcxread.obj
- 0001:0001b680       ?PCX2BitMap@@YGXPAEPAUpcx_picture_typ@@J@Z 1001c680 f   pcxread.obj
- 0001:0001b880       _X86ShallToRedirect@20     1001c880 f   etc.obj
- 0001:0001bb00       _X86RedirectOpcodeToNewBase@16 1001cb00 f   etc.obj
- 0001:0001bea0       _GetMinValidLenWithMatchOpcode@8 1001cea0 f   etc.obj
- 0001:0001bee0       _MemWriteWithBackup@16     1001cee0 f   etc.obj
- 0001:0001bfe0       _GetOpCodeSize@4           1001cfe0 f   etc.obj
- 0001:0001c290       _trim_crlf_@4              1001d290 f   etc.obj
- 0001:0001c380       _RegWriteData@24           1001d380 f   etc.obj
- 0001:0001c420       _RegWriteDword@16          1001d420 f   etc.obj
- 0001:0001c440       _RegWriteStr@20            1001d440 f   etc.obj
- 0001:0001c470       _CalcCRC@8                 1001d470 f   etc.obj
- 0001:0001c530       _duplicate_str@4           1001d530 f   etc.obj
- 0001:0001c590       _getDBCSlen@4              1001d590 f   etc.obj
- 0001:0001c600       ??0SingleHook@@QAE@XZ      1001d600 f   Hook.obj
- 0001:0001c630       ??0SingleHook@@QAE@IKHPAE@Z 1001d630 f   Hook.obj
- 0001:0001c630       ??0SingleHook@@QAE@PAEKH0@Z 1001d630 f   Hook.obj
- 0001:0001c670       ??1SingleHook@@QAE@XZ      1001d670 f   Hook.obj
- 0001:0001c6e0       ?Hook@SingleHook@@UAEXXZ   1001d6e0 f   Hook.obj
- 0001:0001c720       ?UnHook@SingleHook@@UAEXXZ 1001d720 f   Hook.obj
- 0001:0001c760       ?AddrToHook@SingleHook@@UAEPAXPAX@Z 1001d760 f   Hook.obj
- 0001:0001c780       ?ThisHookMode@SingleHook@@UAEHH@Z 1001d780 f   Hook.obj
- 0001:0001c7a0       ?ThisHookMode@SingleHook@@UAE?BHXZ 1001d7a0 f   Hook.obj
- 0001:0001c7c0       ?LenToHook@SingleHook@@UAEKK@Z 1001d7c0 f   Hook.obj
- 0001:0001c7e0       ?InitHookClass@SingleHook@@UAEXPAEKH0@Z 1001d7e0 f   Hook.obj
- 0001:0001c960       ?X86InlineHookRouter@@YGXXZ 1001d960 f   InlineHook.obj
- 0001:0001ca30       ?X86CurrentThreadStackBufferFixRtnAddr@@YGPAUtagInlineX86StackBuffer@@PAPAU1@@Z 1001da30 f   InlineHook.obj
- 0001:0001cae0       ?X86CurrentThreadStackBuffer@@YGPAUtagInlineX86StackBuffer@@PAPAU1@@Z 1001dae0 f   InlineHook.obj
- 0001:0001cb70       ??0InlineSingleHook@@QAE@IKHP6GHPAUtagInlineX86StackBuffer@@@Z@Z 1001db70 f   InlineHook.obj
- 0001:0001cc00       ??1InlineSingleHook@@QAE@XZ 1001dc00 f   InlineHook.obj
- 0001:0001cd10       ?InitHookClass@InlineSingleHook@@AAEXQAEKHPAX1@Z 1001dd10 f   InlineHook.obj
- 0001:0001cff0       ?Hook@InlineSingleHook@@UAEXXZ 1001dff0 f   InlineHook.obj
- 0001:0001d0d0       ?RtnAddrOfHook@InlineSingleHook@@QAEQAXXZ 1001e0d0 f   InlineHook.obj
- 0001:0001d0f0       ??0CElementHandler@@QAE@XZ 1001e0f0 f   ElementHandler.obj
- 0001:0001d130       ??_GCElementHandler@@UAEPAXI@Z 1001e130 f i ElementHandler.obj
- 0001:0001d130       ??_ECElementHandler@@UAEPAXI@Z 1001e130 f i ElementHandler.obj
- 0001:0001d160       ??1CElementHandler@@UAE@XZ 1001e160 f   ElementHandler.obj
- 0001:0001d2e0       ?AddElement@CElementHandler@@QAEXPAVGraphicElement@@@Z 1001e2e0 f   ElementHandler.obj
- 0001:0001d350       ?DeleteOn@CElementHandler@@QAEXHH@Z 1001e350 f   ElementHandler.obj
- 0001:0001d390       ?DeleteBetween@CElementHandler@@QAEXHHHH@Z 1001e390 f   ElementHandler.obj
- 0001:0001d600       ?GetArea@CElementHandler@@QAE?AV?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@HHHH@Z 1001e600 f   ElementHandler.obj
- 0001:0001d8b0       ?MoveTextElement@CElementHandler@@QAEPAVGraphicElement@@PAV2@HH@Z 1001e8b0 f   ElementHandler.obj
- 0001:0001da20       ??0?$list@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAE@XZ 1001ea20 f i ElementHandler.obj
- 0001:0001da80       ??1?$list@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAE@XZ 1001ea80 f i ElementHandler.obj
- 0001:0001daf0       ?erase@?$list@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAE?AV?$_List_iterator@V?$_List_val@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@@2@V?$_List_const_iterator@V?$_List_val@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@@2@@Z 1001eaf0 f i ElementHandler.obj
- 0001:0001db80       ?remove@?$list@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEXABQAVGraphicElement@@@Z 1001eb80 f i ElementHandler.obj
- 0001:0001dc20       ?back@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEAAPAVGraphicElement@@XZ 1001ec20 f i ElementHandler.obj
- 0001:0001dc60       ?push_back@?$vector@PAVRegString@@V?$allocator@PAVRegString@@@std@@@std@@QAEXABQAVRegString@@@Z 1001ec60 f i TAConfig.obj
- 0001:0001dc60       ?push_back@?$vector@PAVRegDword@@V?$allocator@PAVRegDword@@@std@@@std@@QAEXABQAVRegDword@@@Z 1001ec60 f i TAConfig.obj
- 0001:0001dc60       ?push_back@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEXABQAVGraphicElement@@@Z 1001ec60 f i ElementHandler.obj
- 0001:0001dd40       ?pop_back@?$vector@PAVRegString@@V?$allocator@PAVRegString@@@std@@@std@@QAEXXZ 1001ed40 f i TAConfig.obj
- 0001:0001dd40       ?pop_back@?$vector@PAVRegDword@@V?$allocator@PAVRegDword@@@std@@@std@@QAEXXZ 1001ed40 f i TAConfig.obj
- 0001:0001dd40       ?pop_back@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEXXZ 1001ed40 f i ElementHandler.obj
- 0001:0001dd40       ?pop_back@?$vector@PADV?$allocator@PAD@std@@@std@@QAEXXZ 1001ed40 f i UnicodeSupport.obj
+ 0001:00006fd0       ??H?$_Deque_iterator@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QBE?AV01@H@Z 10007fd0 f i whiteboard.obj
+ 0001:00006fd0       ??H?$_Deque_iterator@UTAShareMemStruct@CDDDTA@@V?$allocator@UTAShareMemStruct@CDDDTA@@@std@@@std@@QBE?AV01@H@Z 10007fd0 f i dddta.obj
+ 0001:00007080       ?pop_back@?$deque@UTAShareMemStruct@CDDDTA@@V?$allocator@UTAShareMemStruct@CDDDTA@@@std@@@std@@QAEXXZ 10008080 f i dddta.obj
+ 0001:00007130       ??D?$_Deque_const_iterator@UTAShareMemStruct@CDDDTA@@V?$allocator@UTAShareMemStruct@CDDDTA@@@std@@@std@@QBEABUTAShareMemStruct@CDDDTA@@XZ 10008130 f i dddta.obj
+ 0001:000071b0       ??$_Cons_val@V?$allocator@UTAShareMemStruct@CDDDTA@@@std@@UTAShareMemStruct@CDDDTA@@ABU34@@std@@YGXAAV?$allocator@UTAShareMemStruct@CDDDTA@@@0@PAUTAShareMemStruct@CDDDTA@@ABU23@@Z 100081b0 f i dddta.obj
+ 0001:00007210       ??$_Cons_val@V?$allocator@U_Container_proxy@std@@@std@@U_Container_proxy@2@U32@@std@@YGXAAV?$allocator@U_Container_proxy@std@@@0@PAU_Container_proxy@0@$$QAU20@@Z 10008210 f i dddta.obj
+ 0001:00007250       ??$_Allocate@UTAShareMemStruct@CDDDTA@@@std@@YGPAUTAShareMemStruct@CDDDTA@@IPAU12@@Z 10008250 f i dddta.obj
+ 0001:000072c0       ??1bad_alloc@std@@UAE@XZ   100082c0 f i dddta.obj
+ 0001:000072e0       ??_Gbad_alloc@std@@UAEPAXI@Z 100082e0 f i dddta.obj
+ 0001:000072e0       ??_Ebad_alloc@std@@UAEPAXI@Z 100082e0 f i dddta.obj
+ 0001:00007320       ??$_Allocate@U_Container_proxy@std@@@std@@YGPAU_Container_proxy@0@IPAU10@@Z 10008320 f i dddta.obj
+ 0001:00007390       ??0bad_alloc@std@@QAE@ABV01@@Z 10008390 f i dddta.obj
+ 0001:000073c0       ??0CChangeQueue@@QAE@XZ    100083c0 f   changequeue.obj
+ 0001:00007400       ??0CIncome@@QAE@XZ         10008400 f   cinomce.obj
+ 0001:000074c0       ??1CIncome@@QAE@XZ         100084c0 f   cinomce.obj
+ 0001:000074f0       ?BlitIncome@CIncome@@QAEXPAUIDirectDrawSurface@@@Z 100084f0 f   cinomce.obj
+ 0001:000077f0       ?ShowAllIncome@CIncome@@AAEHXZ 100087f0 f   cinomce.obj
+ 0001:000078e0       ?ShowAllyIncome@CIncome@@AAEHXZ 100088e0 f   cinomce.obj
+ 0001:000079b0       ?ShowMyViewIncome@CIncome@@AAEXHH@Z 100089b0 f   cinomce.obj
+ 0001:00007a80       ?ShowPlayerIncome@CIncome@@AAEXHHH@Z 10008a80 f   cinomce.obj
+ 0001:00007d80       ?DrawStorageText@CIncome@@AAEHMHH@Z 10008d80 f   cinomce.obj
+ 0001:00007e90       ?DrawTextA@CIncome@@AAEXPADHHD@Z 10008e90 f   cinomce.obj
+ 0001:00007ff0       ?PaintStoragebar@CIncome@@AAEXHHHH@Z 10008ff0 f   cinomce.obj
+ 0001:000081c0       ?FillRect@CIncome@@AAEXD@Z 100091c0 f   cinomce.obj
+ 0001:00008230       ?Set@CIncome@@QAEXH@Z      10009230 f   cinomce.obj
+ 0001:00008250       ?ReadPos@CIncome@@AAEXXZ   10009250 f   cinomce.obj
+ 0001:00008300       ?WritePos@CIncome@@AAEXXZ  10009300 f   cinomce.obj
+ 0001:00008380       ?Message@CIncome@@QAE_NPAUHWND__@@IIJ@Z 10009380 f   cinomce.obj
+ 0001:000088b0       ?CorrectPos@CIncome@@AAEXXZ 100098b0 f   cinomce.obj
+ 0001:00008940       ?GetPlayerColor@CIncome@@AAEEH@Z 10009940 f   cinomce.obj
+ 0001:000089d0       ?DrawPlayerRect@CIncome@@AAEXHHD@Z 100099d0 f   cinomce.obj
+ 0001:00008a30       ??$sprintf_s@$0GE@@@YAHAAY0GE@DPBDZZ 10009a30 f i cinomce.obj
+ 0001:00008a60       ??0CWarp@@QAE@XZ           10009a60 f   commanderwarp.obj
+ 0001:00008af0       ??1CWarp@@QAE@XZ           10009af0 f   commanderwarp.obj
+ 0001:00008b20       ?SetPos@CWarp@@AAEXHH@Z    10009b20 f   commanderwarp.obj
+ 0001:00008b80       ?Message@CWarp@@QAE_NPAUHWND__@@IIJ@Z 10009b80 f   commanderwarp.obj
+ 0001:00008de0       ?Blit@CWarp@@QAEXPAUIDirectDrawSurface@@@Z 10009de0 f   commanderwarp.obj
+ 0001:00008f10       ?WithinButton@CWarp@@AAE_NHH@Z 10009f10 f   commanderwarp.obj
+ 0001:00008f60       ?BlitBtn@CWarp@@AAEXPAUIDirectDrawSurface@@@Z 10009f60 f   commanderwarp.obj
+ 0001:00009070       ??0Dialog@@QAE@XZ          1000a070 f   dialog.obj
+ 0001:000093f0       ??1Dialog@@QAE@XZ          1000a3f0 f   dialog.obj
+ 0001:00009610       ?ShowDialog@Dialog@@QAEXXZ 1000a610 f   dialog.obj
+ 0001:00009670       ?HideDialog@Dialog@@QAEXXZ 1000a670 f   dialog.obj
+ 0001:000096a0       ?BlitDialog@Dialog@@QAEXPAUIDirectDrawSurface@@@Z 1000a6a0 f   dialog.obj
+ 0001:000097b0       ?RestoreCursor@Dialog@@AAEXXZ 1000a7b0 f   dialog.obj
+ 0001:00009850       ?RestoreAll@Dialog@@AAEXXZ 1000a850 f   dialog.obj
+ 0001:000099e0       ?Message@Dialog@@QAE_NPAUHWND__@@IIJ@Z 1000a9e0 f   dialog.obj
+ 0001:0000a850       ?RenderDialog@Dialog@@AAEXXZ 1000b850 f   dialog.obj
+ 0001:0000a9a0       ?Inside@Dialog@@AAE_NHHH@Z 1000b9a0 f   dialog.obj
+ 0001:0000abe0       ?DrawTextA@Dialog@@QAEXPAUIDirectDrawSurface@@HHPAD@Z 1000bbe0 f   dialog.obj
+ 0001:0000aea0       ?DrawSmallText@Dialog@@QAEXPAUIDirectDrawSurface@@HHPAD@Z 1000bea0 f   dialog.obj
+ 0001:0000b160       ?SetAll@Dialog@@AAEXXZ     1000c160 f   dialog.obj
+ 0001:0000b220       ?ReadPos@Dialog@@AAEXXZ    1000c220 f   dialog.obj
+ 0001:0000b2b0       ?WriteSettings@Dialog@@AAEXXZ 1000c2b0 f   dialog.obj
+ 0001:0000b400       ?ReadSettings@Dialog@@AAEXXZ 1000c400 f   dialog.obj
+ 0001:0000b620       ?WritePos@Dialog@@AAEXXZ   1000c620 f   dialog.obj
+ 0001:0000b6a0       ?CorrectPos@Dialog@@AAEXXZ 1000c6a0 f   dialog.obj
+ 0001:0000b730       ?DrawTinyText@Dialog@@AAEXPADHHD@Z 1000c730 f   dialog.obj
+ 0001:0000b820       ?FillRect@Dialog@@AAEXHHHHD@Z 1000c820 f   dialog.obj
+ 0001:0000b890       ?DrawBackgroundButton@Dialog@@AAEXXZ 1000c890 f   dialog.obj
+ 0001:0000ba20       ?DrawKeyCode@Dialog@@AAEXXZ 1000ca20 f   dialog.obj
+ 0001:0000bb70       ?DrawShareBox@Dialog@@AAEXXZ 1000cb70 f   dialog.obj
+ 0001:0000be90       ?DrawOptimizeDT@Dialog@@AAEXXZ 1000ce90 f   dialog.obj
+ 0001:0000bf70       ?DrawVSync@Dialog@@AAEXXZ  1000cf70 f   dialog.obj
+ 0001:0000c0f0       ?DrawFullRings@Dialog@@AAEXXZ 1000d0f0 f   dialog.obj
+ 0001:0000c1d0       ?DrawWhiteboardKey@Dialog@@AAEXXZ 1000d1d0 f   dialog.obj
+ 0001:0000c320       ?BlitCursor@Dialog@@QAEXPAUIDirectDrawSurface@@HH@Z 1000d320 f   dialog.obj
+ 0001:0000c4a0       ?EnterOption@@YGHPAUtagInlineX86StackBuffer@@@Z 1000d4a0 f   dialog.obj
+ 0001:0000c4c0       ?PressInOption@@YGHPAUtagInlineX86StackBuffer@@@Z 1000d4c0 f   dialog.obj
+ 0001:0000c4e0       ??0CIdleUnits@@QAE@XZ      1000d4e0 f   idlevillager.obj
+ 0001:0000c520       ??1CIdleUnits@@QAE@XZ      1000d520 f   idlevillager.obj
+ 0001:0000c540       ?FindIdleConst@CIdleUnits@@AAEXXZ 1000d540 f   idlevillager.obj
+ 0001:0000c770       ?ScrollToCenter@AlliesWhiteboard@@QAEXHH@Z 1000d770 f   whiteboard.obj
+ 0001:0000c770       ?ScrollToCenter@CIdleUnits@@AAEXHH@Z 1000d770 f   idlevillager.obj
+ 0001:0000c830       ?Message@CIdleUnits@@QAE_NPAUHWND__@@IIJ@Z 1000d830 f   idlevillager.obj
+ 0001:0000c910       ??0CMapRect@@QAE@XZ        1000d910 f   maprect.obj
+ 0001:0000cd60       ??1CMapRect@@QAE@XZ        1000dd60 f   maprect.obj
+ 0001:0000cd90       ?LockBlit@CMapRect@@QAEXPADH@Z 1000dd90 f   maprect.obj
+ 0001:0000d110       ?GetMapMaxX@CMapRect@@AAEHXZ 1000e110 f   maprect.obj
+ 0001:0000d130       ?GetMapMaxY@CMapRect@@AAEHXZ 1000e130 f   maprect.obj
+ 0001:0000d150       ?PaintRect@CMapRect@@AAEXXZ 1000e150 f   maprect.obj
+ 0001:0000d350       ?WorldToMiniX@CMapRect@@QAEHH@Z 1000e350 f   maprect.obj
+ 0001:0000d380       ?WorldToMiniY@CMapRect@@QAEHH@Z 1000e380 f   maprect.obj
+ 0001:0000d3b0       ??0CMinimapHandler@@QAE@XZ 1000e3b0 f   MinimapHandler.obj
+ 0001:0000d3f0       ??_GCMinimapHandler@@UAEPAXI@Z 1000e3f0 f i MinimapHandler.obj
+ 0001:0000d3f0       ??_ECMinimapHandler@@UAEPAXI@Z 1000e3f0 f i MinimapHandler.obj
+ 0001:0000d420       ??1CMinimapHandler@@UAE@XZ 1000e420 f   MinimapHandler.obj
+ 0001:0000d440       ??0TADRConfig@@QAE@XZ      1000e440 f   TAConfig.obj
+ 0001:0000d7b0       ??1TADRConfig@@QAE@XZ      1000e7b0 f   TAConfig.obj
+ 0001:0000d980       ?GetIniBool@TADRConfig@@QAEHPBDH@Z 1000e980 f   TAConfig.obj
+ 0001:0000da30       ?GetIniInt@TADRConfig@@QAEHPBDH@Z 1000ea30 f   TAConfig.obj
+ 0001:0000da60       ?GetIniStr@TADRConfig@@QAEHPBDPADK1@Z 1000ea60 f   TAConfig.obj
+ 0001:0000da90       ?TARegPath_HKEY@TADRConfig@@AAEPAUHKEY__@@XZ 1000ea90 f   TAConfig.obj
+ 0001:0000daf0       ?WriteTAReg_Dword@TADRConfig@@QAEJPADK@Z 1000eaf0 f   TAConfig.obj
+ 0001:0000db30       ?WriteTAReg_Str@TADRConfig@@QAEJPADPBDK@Z 1000eb30 f   TAConfig.obj
+ 0001:0000db80       ?LoadIniRegSetting@TADRConfig@@AAEXPAE@Z 1000eb80 f   TAConfig.obj
+ 0001:0000e130       ?strlwr_s@Checked@ATL@@YAXPADI@Z 1000f130 f i TAConfig.obj
+ 0001:0000e200       ?AtlThrowImpl@ATL@@YGXJ@Z  1000f200 f i TAConfig.obj
+ 0001:0000e230       ?strupr_s@Checked@ATL@@YAXPADI@Z 1000f230 f i TAConfig.obj
+ 0001:0000e300       ?EnumIniRegInfo_Begin@TADRConfig@@QAEHPAPAU_EnumRegInfo@@PAPBDPAPBX@Z 1000f300 f   TAConfig.obj
+ 0001:0000e3d0       ?EnumIniRegInfo_Next@TADRConfig@@QAEHPAPAU_EnumRegInfo@@PAPBDPAPBX@Z 1000f3d0 f   TAConfig.obj
+ 0001:0000e530       ?EnumIniRegInfo_End@TADRConfig@@QAEHPAPAU_EnumRegInfo@@@Z 1000f530 f   TAConfig.obj
+ 0001:0000e5a0       ?GetIniCrc@TADRConfig@@QAEIXZ 1000f5a0 f   TAConfig.obj
+ 0001:0000e680       ??0RegDword@@QAE@PADHK@Z   1000f680 f   TAConfig.obj
+ 0001:0000e6f0       ??1RegDword@@QAE@XZ        1000f6f0 f   TAConfig.obj
+ 0001:0000e720       ?Name@RegString@@QAEPBDXZ  1000f720 f   TAConfig.obj
+ 0001:0000e720       ?Name@RegDword@@QAEPBDXZ   1000f720 f   TAConfig.obj
+ 0001:0000e730       ?AddrToHook@SingleHook@@UAEQAXXZ 1000f730 f   Hook.obj
+ 0001:0000e730       ?Value@RegDword@@QAEKXZ    1000f730 f   TAConfig.obj
+ 0001:0000e730       ?Str@RegString@@QAEPBDXZ   1000f730 f   TAConfig.obj
+ 0001:0000e750       ??0RegString@@QAE@PADH0H@Z 1000f750 f   TAConfig.obj
+ 0001:0000e7f0       ??1RegString@@QAE@XZ       1000f7f0 f   TAConfig.obj
+ 0001:0000e840       ?back@?$vector@PAVRegString@@V?$allocator@PAVRegString@@@std@@@std@@QAEAAPAVRegString@@XZ 1000f840 f i TAConfig.obj
+ 0001:0000e880       ??1?$_Vector_val@PAVRegDword@@V?$allocator@PAVRegDword@@@std@@@std@@QAE@XZ 1000f880 f i TAConfig.obj
+ 0001:0000e880       ?SetVisibleList@Dialog@@AAEXXZ 1000f880 f i dialog.obj
+ 0001:0000e880       ??1?$_Deque_iterator@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QAE@XZ 1000f880 f i whiteboard.obj
+ 0001:0000e880       ??1?$_Deque_iterator@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAE@XZ 1000f880 f i whiteboard.obj
+ 0001:0000e880       ??1_TAHPI@@QAE@XZ          1000f880 f i HPIfunc.obj
+ 0001:0000e880       ??1?$_Vector_val@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAE@XZ 1000f880 f i whiteboard.obj
+ 0001:0000e880       ??1?$_Vector_val@PADV?$allocator@PAD@std@@@std@@QAE@XZ 1000f880 f i UnicodeSupport.obj
+ 0001:0000e880       ??1?$_Vector_val@PAVRegString@@V?$allocator@PAVRegString@@@std@@@std@@QAE@XZ 1000f880 f i TAConfig.obj
+ 0001:0000e880       ??1_Container_base12@std@@QAE@XZ 1000f880 f i dddta.obj
+ 0001:0000e880       ??1CChangeQueue@@QAE@XZ    1000f880 f i changequeue.obj
+ 0001:0000e880       ??1?$_Deque_iterator@UTAShareMemStruct@CDDDTA@@V?$allocator@UTAShareMemStruct@CDDDTA@@@std@@@std@@QAE@XZ 1000f880 f i dddta.obj
+ 0001:0000e880       ?Draw@GraphicElement@@UAEXXZ 1000f880 f i whiteboard.obj
+ 0001:0000e880       ?Erase@PCX@@QAEXXZ         1000f880 f i PCX.obj
+ 0001:0000e880       ?Draw@GraphicLine@@UAEXXZ  1000f880 f i whiteboard.obj
+ 0001:0000e880       ?Draw@GraphicText@@UAEXXZ  1000f880 f i whiteboard.obj
+ 0001:0000e890       ??$_Cons_val@V?$allocator@PAD@std@@PADPAD@std@@YGXAAV?$allocator@PAD@0@PAPAD$$QAPAD@Z 1000f890 f i UnicodeSupport.obj
+ 0001:0000e890       ??$_Cons_val@V?$allocator@PAVRegDword@@@std@@PAVRegDword@@AAPAV3@@std@@YGXAAV?$allocator@PAVRegDword@@@0@PAPAVRegDword@@AAPAV2@@Z 1000f890 f i TAConfig.obj
+ 0001:0000e890       ??$_Cons_val@V?$allocator@PAVRegString@@@std@@PAVRegString@@AAPAV3@@std@@YGXAAV?$allocator@PAVRegString@@@0@PAPAVRegString@@AAPAV2@@Z 1000f890 f i TAConfig.obj
+ 0001:0000e890       ??$_Cons_val@V?$allocator@PAVGraphicElement@@@std@@PAVGraphicElement@@AAPAV3@@std@@YGXAAV?$allocator@PAVGraphicElement@@@0@PAPAVGraphicElement@@AAPAV2@@Z 1000f890 f i ElementHandler.obj
+ 0001:0000e890       ??$_Cons_val@V?$allocator@PAVGraphicElement@@@std@@PAVGraphicElement@@PAV3@@std@@YGXAAV?$allocator@PAVGraphicElement@@@0@PAPAVGraphicElement@@$$QAPAV2@@Z 1000f890 f i whiteboard.obj
+ 0001:0000e8d0       ??0CTAHook@@QAE@XZ         1000f8d0 f   tahook.obj
+ 0001:0000eb90       ??1CTAHook@@QAE@XZ         1000fb90 f   tahook.obj
+ 0001:0000ec20       ?Message@CTAHook@@QAE_NPAUHWND__@@IIJ@Z 1000fc20 f   tahook.obj
+ 0001:0000f580       ?Set@CTAHook@@QAEXHPAD_N1H@Z 10010580 f   tahook.obj
+ 0001:0000f5d0       ?WriteShareMacro@CTAHook@@QAEXXZ 100105d0 f   tahook.obj
+ 0001:0000f720       ?Blit@CTAHook@@QAEXPAUIDirectDrawSurface@@@Z 10010720 f   tahook.obj
+ 0001:0000f730       ?TABlit@CTAHook@@QAEXXZ    10010730 f   tahook.obj
+ 0001:0000f780       ?WriteDTLine@CTAHook@@AAEXXZ 10010780 f   tahook.obj
+ 0001:0000f820       ?CalculateLine@CTAHook@@AAEXXZ 10010820 f   tahook.obj
+ 0001:0000fad0       ?UpdateSpacing@CTAHook@@AAEXXZ 10010ad0 f   tahook.obj
+ 0001:0000fb10       ?OptimizeDTRows@CTAHook@@AAEXXZ 10010b10 f   tahook.obj
+ 0001:0000fe80       ?VisualizeRow@CTAHook@@AAEXXZ 10010e80 f   tahook.obj
+ 0001:0000ffb0       ?GetMaxScrollX@CTAHook@@SGHXZ 10010fb0 f   tahook.obj
+ 0001:0000fff0       ?GetMaxScrollY@CTAHook@@SGHXZ 10010ff0 f   tahook.obj
+ 0001:00010030       ?CalculateRing@CTAHook@@AAEXXZ 10011030 f   tahook.obj
+ 0001:00010130       ?CalculateRing@CTAHook@@AAEXHHHH@Z 10011130 f   tahook.obj
+ 0001:000104c0       ?ClickBuilding@CTAHook@@AAEXHH@Z 100114c0 f   tahook.obj
+ 0001:00010530       ?GetFootX@CTAHook@@AAEFXZ  10011530 f   tahook.obj
+ 0001:00010560       ?GetFootY@CTAHook@@AAEFXZ  10011560 f   tahook.obj
+ 0001:00010590       ?DrawBuildRect@CTAHook@@AAEXHHHHH@Z 10011590 f   tahook.obj
+ 0001:00010780       ?EnableTABuildRect@CTAHook@@AAEXXZ 10011780 f   tahook.obj
+ 0001:000107b0       ?DisableTABuildRect@CTAHook@@AAEXXZ 100117b0 f   tahook.obj
+ 0001:000107e0       ?PaintMinimapRect@CTAHook@@AAEXXZ 100117e0 f   tahook.obj
+ 0001:00010810       ??0UnicodeSupport@@QAE@PBDKK@Z 10011810 f   UnicodeSupport.obj
+ 0001:00010e50       ?CreateSurfaceFromContextScreen@UnicodeSupport@@QAEPAUIDirectDrawSurface@@PAU_OFFSCREEN@@PAUIDirectDraw@@PAPAU2@@Z 10011e50 f   UnicodeSupport.obj
+ 0001:00010f00       ?NewSpecScreenSurface@UnicodeSupport@@AAEPAUtagSpecScreenSurface@@PAU_OFFSCREEN@@@Z 10011f00 f   UnicodeSupport.obj
+ 0001:00010ff0       ?FreeSpecScreenSurface@UnicodeSupport@@AAEXPAUtagSpecScreenSurface@@@Z 10011ff0 f   UnicodeSupport.obj
+ 0001:000110d0       ?GetSpecScreenSurface@UnicodeSupport@@AAEPAUtagSpecScreenSurface@@PAU_OFFSCREEN@@@Z 100120d0 f   UnicodeSupport.obj
+ 0001:000111a0       ?UnicodeDrawTextA@UnicodeSupport@@QAEHPAU_OFFSCREEN@@PADPAUIDirectDraw@@HH@Z 100121a0 f   UnicodeSupport.obj
+ 0001:00011480       ?IsIDDrawLost@UnicodeSupport@@AAEHXZ 10012480 f   UnicodeSupport.obj
+ 0001:000114b0       ?RestoreLocalSurf@UnicodeSupport@@AAEXXZ 100124b0 f   UnicodeSupport.obj
+ 0001:000115b0       ?Blt@UnicodeSupport@@QAE_NPAUIDirectDrawSurface@@@Z 100125b0 f   UnicodeSupport.obj
+ 0001:00011850       ?ReleaseCandidateList@UnicodeSupport@@AAEXXZ 10012850 f   UnicodeSupport.obj
+ 0001:00011940       ?DrawSeparator@UnicodeSupport@@AAEHPAUHDC__@@HPAH1PAUHBRUSH__@@@Z 10012940 f   UnicodeSupport.obj
+ 0001:000119b0       ?DrawALine_Ime@UnicodeSupport@@AAEXPAUHDC__@@PADPAH2@Z 100129b0 f   UnicodeSupport.obj
+ 0001:00011a50       ?UpdateImeInput@UnicodeSupport@@AAE_NXZ 10012a50 f   UnicodeSupport.obj
+ 0001:00011c70       ?UpdateImeFrame@UnicodeSupport@@AAE_NXZ 10012c70 f   UnicodeSupport.obj
+ 0001:00012070       ?SetHDCFont@UnicodeSupport@@AAEXPAUHDC__@@PAUHFONT__@@@Z 10013070 f   UnicodeSupport.obj
+ 0001:000120b0       ?SendStr@UnicodeSupport@@AAEXPAD@Z 100130b0 f   UnicodeSupport.obj
+ 0001:00012100       ?Message@UnicodeSupport@@QAE_NPAUHWND__@@IIJ@Z 10013100 f   UnicodeSupport.obj
+ 0001:00012660       ?CopyToContextScreenMem@@YGXPAU_OFFSCREEN@@PAUtagSpecScreenSurface@@@Z 10013660 f   UnicodeSupport.obj
+ 0001:000126e0       ?CopyToSpecSurfaceMem@@YGXPAUtagSpecScreenSurface@@PAU_OFFSCREEN@@@Z 100136e0 f   UnicodeSupport.obj
+ 0001:00012760       ?USDrawTextInScreen_HookRouter@@YGHPAUtagInlineX86StackBuffer@@@Z 10013760 f   UnicodeSupport.obj
+ 0001:00012890       ?myValidChar@@YGHPAUtagInlineX86StackBuffer@@@Z 10013890 f   UnicodeSupport.obj
+ 0001:000129f0       ?myDeleteChar@@YGHPAUtagInlineX86StackBuffer@@@Z 100139f0 f   UnicodeSupport.obj
+ 0001:00012ad0       ?Blt_BottomState0_Text@@YGHPAUtagInlineX86StackBuffer@@@Z 10013ad0 f   UnicodeSupport.obj
+ 0001:00012c00       ?Blt_BottomState1_Text@@YGHPAUtagInlineX86StackBuffer@@@Z 10013c00 f   UnicodeSupport.obj
+ 0001:00012d30       ?PopadState@@YGHPAUtagInlineX86StackBuffer@@@Z 10013d30 f   UnicodeSupport.obj
+ 0001:00012de0       ?GetStrExtent@@YGHPAUtagInlineX86StackBuffer@@@Z 10013de0 f   UnicodeSupport.obj
+ 0001:00012e40       ?GetTextExtent_AssignCharLen@@YGHPAUtagInlineX86StackBuffer@@@Z 10013e40 f   UnicodeSupport.obj
+ 0001:00012ea0       ?push_back@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEX$$QAPAVGraphicElement@@@Z 10013ea0 f i whiteboard.obj
+ 0001:00012ea0       ?push_back@?$vector@PADV?$allocator@PAD@std@@@std@@QAEX$$QAPAD@Z 10013ea0 f i UnicodeSupport.obj
+ 0001:00012f80       ?pop_back@?$vector@PADV?$allocator@PAD@std@@@std@@QAEXXZ 10013f80 f i UnicodeSupport.obj
+ 0001:00012f80       ?pop_back@?$vector@PAVRegString@@V?$allocator@PAVRegString@@@std@@@std@@QAEXXZ 10013f80 f i TAConfig.obj
+ 0001:00012f80       ?pop_back@?$vector@PAVRegDword@@V?$allocator@PAVRegDword@@@std@@@std@@QAEXXZ 10013f80 f i TAConfig.obj
+ 0001:00012f80       ?pop_back@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEXXZ 10013f80 f i ElementHandler.obj
+ 0001:00012fd0       ?_Tidy@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@IAEXXZ 10013fd0 f i whiteboard.obj
+ 0001:00012fd0       ?_Tidy@?$vector@PAVRegDword@@V?$allocator@PAVRegDword@@@std@@@std@@IAEXXZ 10013fd0 f i TAConfig.obj
+ 0001:00012fd0       ?_Tidy@?$vector@PADV?$allocator@PAD@std@@@std@@IAEXXZ 10013fd0 f i UnicodeSupport.obj
+ 0001:00012fd0       ?_Tidy@?$vector@PAVRegString@@V?$allocator@PAVRegString@@@std@@@std@@IAEXXZ 10013fd0 f i TAConfig.obj
+ 0001:00013030       ??$_Dest_val@V?$allocator@U_Node@?$_List_nod@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@@std@@U_Node@?$_List_nod@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@2@@std@@YGXAAV?$allocator@U_Node@?$_List_nod@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@@0@PAU_Node@?$_List_nod@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@0@@Z 10014030 f i ElementHandler.obj
+ 0001:00013030       ??$_Dest_val@V?$allocator@PAVGraphicElement@@@std@@PAVGraphicElement@@@std@@YGXAAV?$allocator@PAVGraphicElement@@@0@PAPAVGraphicElement@@@Z 10014030 f i whiteboard.obj
+ 0001:00013030       ??$_Dest_val@V?$allocator@PAVRegDword@@@std@@PAVRegDword@@@std@@YGXAAV?$allocator@PAVRegDword@@@0@PAPAVRegDword@@@Z 10014030 f i TAConfig.obj
+ 0001:00013030       ??$_Dest_val@V?$allocator@PAUMMHS@AlliesWhiteboard@@@std@@PAUMMHS@AlliesWhiteboard@@@std@@YGXAAV?$allocator@PAUMMHS@AlliesWhiteboard@@@0@PAPAUMMHS@AlliesWhiteboard@@@Z 10014030 f i whiteboard.obj
+ 0001:00013030       ??$_Dest_val@V?$allocator@PAVRegString@@@std@@PAVRegString@@@std@@YGXAAV?$allocator@PAVRegString@@@0@PAPAVRegString@@@Z 10014030 f i TAConfig.obj
+ 0001:00013030       ??$_Dest_val@V?$allocator@PAPAVGraphicElement@@@std@@PAPAVGraphicElement@@@std@@YGXAAV?$allocator@PAPAVGraphicElement@@@0@PAPAPAVGraphicElement@@@Z 10014030 f i whiteboard.obj
+ 0001:00013030       ??$_Dest_val@V?$allocator@UTAShareMemStruct@CDDDTA@@@std@@UTAShareMemStruct@CDDDTA@@@std@@YGXAAV?$allocator@UTAShareMemStruct@CDDDTA@@@0@PAUTAShareMemStruct@CDDDTA@@@Z 10014030 f i dddta.obj
+ 0001:00013030       ??$_Dest_val@V?$allocator@PAD@std@@PAD@std@@YGXAAV?$allocator@PAD@0@PAPAD@Z 10014030 f i UnicodeSupport.obj
+ 0001:00013030       ??$_Dest_val@V?$allocator@U_Container_proxy@std@@@std@@U_Container_proxy@2@@std@@YGXAAV?$allocator@U_Container_proxy@std@@@0@PAU_Container_proxy@0@@Z 10014030 f i dddta.obj
+ 0001:00013030       ??$_Dest_val@V?$allocator@PAUTAShareMemStruct@CDDDTA@@@std@@PAUTAShareMemStruct@CDDDTA@@@std@@YGXAAV?$allocator@PAUTAShareMemStruct@CDDDTA@@@0@PAPAUTAShareMemStruct@CDDDTA@@@Z 10014030 f i dddta.obj
+ 0001:00013030       ??$_Dest_val@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@UMMHS@AlliesWhiteboard@@@std@@YGXAAV?$allocator@UMMHS@AlliesWhiteboard@@@0@PAUMMHS@AlliesWhiteboard@@@Z 10014030 f i whiteboard.obj
+ 0001:00013040       ??0LimitCrack@@QAE@XZ      10014040 f   LimitCrack.obj
+ 0001:00013550       ??1LimitCrack@@QAE@XZ      10014550 f   LimitCrack.obj
+ 0001:000136f0       ??0IncreaseAISearchMapEntriesLimit@@QAE@K@Z 100146f0 f   LimitCrack.obj
+ 0001:00013790       ??1IncreaseAISearchMapEntriesLimit@@QAE@XZ 10014790 f   LimitCrack.obj
+ 0001:000137e0       ??0IncreaseWeaponTypeLimit@@QAE@K@Z 100147e0 f   LimitCrack.obj
+ 0001:00013810       ?NewLimit@IncreaseWeaponTypeLimit@@AAEXK@Z 10014810 f   LimitCrack.obj
+ 0001:00013950       ??1IncreaseWeaponTypeLimit@@QAE@XZ 10014950 f   LimitCrack.obj
+ 0001:00013b70       ?WriteWeaponAryPtr@IncreaseWeaponTypeLimit@@AAEPAXPAPAX@Z 10014b70 f   LimitCrack.obj
+ 0001:00013ce0       ?WriteWeaponAryLen@IncreaseWeaponTypeLimit@@AAEKK@Z 10014ce0 f   LimitCrack.obj
+ 0001:00013db0       ?WeaponType_IdLimit@IncreaseWeaponTypeLimit@@AAEXXZ 10014db0 f   LimitCrack.obj
+ 0001:00013f10       ??0IncreaseUnitTypeLimit@@QAE@H@Z 10014f10 f   LimitCrack.obj
+ 0001:00013f30       ??1IncreaseUnitTypeLimit@@QAE@XZ 10014f30 f   LimitCrack.obj
+ 0001:00014290       ?WriteNewLimit@IncreaseUnitTypeLimit@@AAEXK@Z 10015290 f   LimitCrack.obj
+ 0001:00014a00       ??0IncreaseCompositeBuf@@QAE@KK@Z 10015a00 f   LimitCrack.obj
+ 0001:00014a20       ??1IncreaseCompositeBuf@@QAE@XZ 10015a20 f   LimitCrack.obj
+ 0001:00014a80       ?WriteNewLimit@IncreaseCompositeBuf@@AAEXKK@Z 10015a80 f   LimitCrack.obj
+ 0001:00014b70       ?Sfx_mallocBufSizeRouter@@YGHPAUtagInlineX86StackBuffer@@@Z 10015b70 f   LimitCrack.obj
+ 0001:00014b90       ??0IncreaseSfxLimit@@QAE@K@Z 10015b90 f   LimitCrack.obj
+ 0001:00014bc0       ??1IncreaseSfxLimit@@QAE@XZ 10015bc0 f   LimitCrack.obj
+ 0001:00014c90       ?SetNewLimit@IncreaseSfxLimit@@AAEXKK@Z 10015c90 f   LimitCrack.obj
+ 0001:00014df0       ??0AlliesWhiteboard@@QAE@XZ 10015df0 f   whiteboard.obj
+ 0001:00015000       ??1AlliesWhiteboard@@QAE@XZ 10016000 f   whiteboard.obj
+ 0001:000150d0       ?Blit@AlliesWhiteboard@@QAEXPAUIDirectDrawSurface@@@Z 100160d0 f   whiteboard.obj
+ 0001:00015140       ?LockBlit@AlliesWhiteboard@@QAEXPADH@Z 10016140 f   whiteboard.obj
+ 0001:00015370       ?Message@AlliesWhiteboard@@QAE_NPAUHWND__@@IIJ@Z 10016370 f   whiteboard.obj
+ 0001:00015df0       ??_EGraphicElement@@UAEPAXI@Z 10016df0 f i whiteboard.obj
+ 0001:00015df0       ??_EGraphicLine@@UAEPAXI@Z 10016df0 f i whiteboard.obj
+ 0001:00015df0       ??_GGraphicMoveText@@UAEPAXI@Z 10016df0 f i whiteboard.obj
+ 0001:00015df0       ??_GGraphicLine@@UAEPAXI@Z 10016df0 f i whiteboard.obj
+ 0001:00015df0       ??_GDeleteGraphic@@UAEPAXI@Z 10016df0 f i whiteboard.obj
+ 0001:00015df0       ??_EGraphicMoveText@@UAEPAXI@Z 10016df0 f i whiteboard.obj
+ 0001:00015df0       ??_GGraphicElement@@UAEPAXI@Z 10016df0 f i whiteboard.obj
+ 0001:00015df0       ??_EDeleteGraphic@@UAEPAXI@Z 10016df0 f i whiteboard.obj
+ 0001:00015e20       ??0GraphicText@@QAE@HHPADD@Z 10016e20 f i whiteboard.obj
+ 0001:00015ef0       ??1GraphicElement@@UAE@XZ  10016ef0 f i whiteboard.obj
+ 0001:00015f10       ??_EGraphicText@@UAEPAXI@Z 10016f10 f i whiteboard.obj
+ 0001:00015f10       ??_GGraphicText@@UAEPAXI@Z 10016f10 f i whiteboard.obj
+ 0001:00015f60       ?Set@AlliesWhiteboard@@QAEXH@Z 10016f60 f   whiteboard.obj
+ 0001:00015f80       ?DrawTextInput@AlliesWhiteboard@@AAEXPAUIDirectDrawSurface@@@Z 10016f80 f   whiteboard.obj
+ 0001:000161a0       ?TextInputKeyDown@AlliesWhiteboard@@AAEXH@Z 100171a0 f   whiteboard.obj
+ 0001:00016360       ??0GraphicTextEdited@@QAE@HHPADD@Z 10017360 f i whiteboard.obj
+ 0001:00016430       ??_GGraphicTextEdited@@UAEPAXI@Z 10017430 f i whiteboard.obj
+ 0001:00016430       ??_EGraphicTextEdited@@UAEPAXI@Z 10017430 f i whiteboard.obj
+ 0001:00016480       ?TextInputChar@AlliesWhiteboard@@AAEXD@Z 10017480 f   whiteboard.obj
+ 0001:00016500       ?AddTextMarker@AlliesWhiteboard@@AAEXXZ 10017500 f   whiteboard.obj
+ 0001:00016650       ?RestoreAll@AlliesWhiteboard@@AAEXXZ 10017650 f   whiteboard.obj
+ 0001:000166c0       ?DrawMarkers@AlliesWhiteboard@@AAEXPAUIDirectDrawSurface@@@Z 100176c0 f   whiteboard.obj
+ 0001:00016840       ?DrawMinimapMarkers@AlliesWhiteboard@@QAEXPADH_N@Z 10017840 f   whiteboard.obj
+ 0001:00017010       ?GetMarkers@AlliesWhiteboard@@QAEXPAUMarkerArray@@@Z 10018010 f   whiteboard.obj
+ 0001:000171f0       ?DrawTextMarker@AlliesWhiteboard@@AAEXPAUIDirectDrawSurface@@HHPADD@Z 100181f0 f   whiteboard.obj
+ 0001:00017360       ?DeleteMarker@AlliesWhiteboard@@AAEXHH@Z 10018360 f   whiteboard.obj
+ 0001:00017400       ?EreaseArea@AlliesWhiteboard@@AAEXHH@Z 10018400 f   whiteboard.obj
+ 0001:000174d0       ?MouseMove@AlliesWhiteboard@@AAEXHHHH@Z 100184d0 f   whiteboard.obj
+ 0001:00017690       ?ReceiveMarkers@AlliesWhiteboard@@AAEXXZ 10018690 f   whiteboard.obj
+ 0001:00017b20       ?SendMarkers@AlliesWhiteboard@@AAEXXZ 10018b20 f   whiteboard.obj
+ 0001:00018410       ?DrawLine@AlliesWhiteboard@@QAEXHHHHDPADH@Z 10019410 f   whiteboard.obj
+ 0001:00018520       ?DrawFreeLine@AlliesWhiteboard@@QAEXHHHHDPADH@Z 10019520 f   whiteboard.obj
+ 0001:00018570       ?EchoMarker@AlliesWhiteboard@@AAEXPAD@Z 10019570 f   whiteboard.obj
+ 0001:000185d0       ?GetTextElementAt@AlliesWhiteboard@@AAEPAVGraphicElement@@HHH@Z 100195d0 f   whiteboard.obj
+ 0001:000186f0       ?DrawRotateRect@AlliesWhiteboard@@AAEXHHHPADH@Z 100196f0 f   whiteboard.obj
+ 0001:00018960       ?Clip_Line@AlliesWhiteboard@@QAEHAAH000@Z 10019960 f   whiteboard.obj
+ 0001:00019430       ?Draw_Line@AlliesWhiteboard@@QAEHHHHHEPAEH@Z 1001a430 f   whiteboard.obj
+ 0001:00019570       ?GenerateLookupTables@AlliesWhiteboard@@AAEXXZ 1001a570 f   whiteboard.obj
+ 0001:00019600       ?push_back@?$deque@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEX$$QAPAVGraphicElement@@@Z 1001a600 f i whiteboard.obj
+ 0001:000196e0       ??1?$deque@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAE@XZ 1001a6e0 f i whiteboard.obj
+ 0001:00019760       ?pop_front@?$deque@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEXXZ 1001a760 f i whiteboard.obj
+ 0001:00019820       ??1?$deque@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QAE@XZ 1001a820 f i whiteboard.obj
+ 0001:000198a0       ?back@?$deque@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QAEAAUMMHS@AlliesWhiteboard@@XZ 1001a8a0 f i whiteboard.obj
+ 0001:00019930       ?push_front@?$deque@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QAEXABUMMHS@AlliesWhiteboard@@@Z 1001a930 f i whiteboard.obj
+ 0001:00019a50       ?pop_back@?$deque@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QAEXXZ 1001aa50 f i whiteboard.obj
+ 0001:00019b00       ??1?$vector@PAVRegDword@@V?$allocator@PAVRegDword@@@std@@@std@@QAE@XZ 1001ab00 f i TAConfig.obj
+ 0001:00019b00       ??1?$vector@PAVRegString@@V?$allocator@PAVRegString@@@std@@@std@@QAE@XZ 1001ab00 f i TAConfig.obj
+ 0001:00019b00       ??1?$vector@PADV?$allocator@PAD@std@@@std@@QAE@XZ 1001ab00 f i UnicodeSupport.obj
+ 0001:00019b00       ??1?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAE@XZ 1001ab00 f i whiteboard.obj
+ 0001:00019b50       ?begin@?$deque@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QAE?AV?$_Deque_iterator@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@2@XZ 1001ab50 f i whiteboard.obj
+ 0001:00019b50       ?begin@?$deque@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAE?AV?$_Deque_iterator@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@2@XZ 1001ab50 f i whiteboard.obj
+ 0001:00019b50       ?begin@?$deque@UTAShareMemStruct@CDDDTA@@V?$allocator@UTAShareMemStruct@CDDDTA@@@std@@@std@@QAE?AV?$_Deque_iterator@UTAShareMemStruct@CDDDTA@@V?$allocator@UTAShareMemStruct@CDDDTA@@@std@@@2@XZ 1001ab50 f i dddta.obj
+ 0001:00019bb0       ?_Growmap@?$deque@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@IAEXI@Z 1001abb0 f i whiteboard.obj
+ 0001:00019f60       ?_Tidy@?$deque@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@IAEXXZ 1001af60 f i whiteboard.obj
+ 0001:0001a030       ??1?$_Deque_val@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QAE@XZ 1001b030 f i whiteboard.obj
+ 0001:0001a030       ??1?$_Deque_val@UTAShareMemStruct@CDDDTA@@V?$allocator@UTAShareMemStruct@CDDDTA@@@std@@@std@@QAE@XZ 1001b030 f i dddta.obj
+ 0001:0001a030       ??1?$_Deque_val@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAE@XZ 1001b030 f i whiteboard.obj
+ 0001:0001a0b0       ?end@?$deque@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QAE?AV?$_Deque_iterator@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@2@XZ 1001b0b0 f i whiteboard.obj
+ 0001:0001a120       ?_Growmap@?$deque@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@IAEXI@Z 1001b120 f i whiteboard.obj
+ 0001:0001a4c0       ?_Tidy@?$deque@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@IAEXXZ 1001b4c0 f i whiteboard.obj
+ 0001:0001a590       ?_Assign_rv@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEX$$QAV12@@Z 1001b590 f i whiteboard.obj
+ 0001:0001a680       ??G?$_Deque_iterator@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QBE?AV01@H@Z 1001b680 f i whiteboard.obj
+ 0001:0001a730       ?pop_back@?$deque@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEXXZ 1001b730 f i whiteboard.obj
+ 0001:0001a7e0       ?clear@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEXXZ 1001b7e0 f i whiteboard.obj
+ 0001:0001a830       ??D?$_Deque_const_iterator@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QBEABQAVGraphicElement@@XZ 1001b830 f i whiteboard.obj
+ 0001:0001a8b0       ??D?$_Deque_const_iterator@UMMHS@AlliesWhiteboard@@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@@std@@QBEABUMMHS@AlliesWhiteboard@@XZ 1001b8b0 f i whiteboard.obj
+ 0001:0001a930       ?erase@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAE?AV?$_Vector_iterator@V?$_Vector_val@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@@2@V?$_Vector_const_iterator@V?$_Vector_val@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@@2@0@Z 1001b930 f i whiteboard.obj
+ 0001:0001a9e0       ?_Reserve@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@IAEXI@Z 1001b9e0 f i whiteboard.obj
+ 0001:0001a9e0       ?_Reserve@?$vector@PADV?$allocator@PAD@std@@@std@@IAEXI@Z 1001b9e0 f i UnicodeSupport.obj
+ 0001:0001a9e0       ?_Reserve@?$vector@PAVRegString@@V?$allocator@PAVRegString@@@std@@@std@@IAEXI@Z 1001b9e0 f i TAConfig.obj
+ 0001:0001a9e0       ?_Reserve@?$vector@PAVRegDword@@V?$allocator@PAVRegDword@@@std@@@std@@IAEXI@Z 1001b9e0 f i TAConfig.obj
+ 0001:0001aa70       ?reserve@?$vector@PAVRegDword@@V?$allocator@PAVRegDword@@@std@@@std@@QAEXI@Z 1001ba70 f i TAConfig.obj
+ 0001:0001aa70       ?reserve@?$vector@PAVRegString@@V?$allocator@PAVRegString@@@std@@@std@@QAEXI@Z 1001ba70 f i TAConfig.obj
+ 0001:0001aa70       ?reserve@?$vector@PADV?$allocator@PAD@std@@@std@@QAEXI@Z 1001ba70 f i UnicodeSupport.obj
+ 0001:0001aa70       ?reserve@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEXI@Z 1001ba70 f i whiteboard.obj
+ 0001:0001abf0       ?_Grow_to@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@IBEII@Z 1001bbf0 f i whiteboard.obj
+ 0001:0001abf0       ?_Grow_to@?$vector@PAVRegString@@V?$allocator@PAVRegString@@@std@@@std@@IBEII@Z 1001bbf0 f i TAConfig.obj
+ 0001:0001abf0       ?_Grow_to@?$vector@PADV?$allocator@PAD@std@@@std@@IBEII@Z 1001bbf0 f i UnicodeSupport.obj
+ 0001:0001abf0       ?_Grow_to@?$vector@PAVRegDword@@V?$allocator@PAVRegDword@@@std@@@std@@IBEII@Z 1001bbf0 f i TAConfig.obj
+ 0001:0001ac70       ??$_Cons_val@V?$allocator@UMMHS@AlliesWhiteboard@@@std@@UMMHS@AlliesWhiteboard@@ABU34@@std@@YGXAAV?$allocator@UMMHS@AlliesWhiteboard@@@0@PAUMMHS@AlliesWhiteboard@@ABU23@@Z 1001bc70 f i whiteboard.obj
+ 0001:0001acc0       ??$_Allocate@PAVRegString@@@std@@YGPAPAVRegString@@IPAPAV1@@Z 1001bcc0 f i TAConfig.obj
+ 0001:0001acc0       ??$_Allocate@PAD@std@@YGPAPADIPAPAD@Z 1001bcc0 f i UnicodeSupport.obj
+ 0001:0001acc0       ??$_Allocate@PAVRegDword@@@std@@YGPAPAVRegDword@@IPAPAV1@@Z 1001bcc0 f i TAConfig.obj
+ 0001:0001acc0       ??$_Allocate@PAUTAShareMemStruct@CDDDTA@@@std@@YGPAPAUTAShareMemStruct@CDDDTA@@IPAPAU12@@Z 1001bcc0 f i dddta.obj
+ 0001:0001acc0       ??$_Allocate@PAPAVGraphicElement@@@std@@YGPAPAPAVGraphicElement@@IPAPAPAV1@@Z 1001bcc0 f i whiteboard.obj
+ 0001:0001acc0       ??$_Allocate@PAVGraphicElement@@@std@@YGPAPAVGraphicElement@@IPAPAV1@@Z 1001bcc0 f i whiteboard.obj
+ 0001:0001acc0       ??$_Allocate@PAUMMHS@AlliesWhiteboard@@@std@@YGPAPAUMMHS@AlliesWhiteboard@@IPAPAU12@@Z 1001bcc0 f i whiteboard.obj
+ 0001:0001ad30       ??0PCX@@QAE@XZ             1001bd30 f   PCX.obj
+ 0001:0001ad70       ??1PCX@@QAE@XZ             1001bd70 f   PCX.obj
+ 0001:0001adb0       ?SetBuffer@PCX@@QAEPAEPAE@Z 1001bdb0 f   PCX.obj
+ 0001:0001ade0       ?WriteLine@PCX@@AAEPAEPAEK@Z 1001bde0 f   PCX.obj
+ 0001:0001af60       ?Save@PCX@@QAEHPBD@Z       1001bf60 f   PCX.obj
+ 0001:0001b250       ?NewBuffer@PCX@@QAEPAEFF@Z 1001c250 f   PCX.obj
+ 0001:0001b2c0       ?CreateSurfPCXResource@@YGPAUIDirectDrawSurface@@G_N@Z 1001c2c0 f   pcxread.obj
+ 0001:0001b520       ?RestoreFromPCX@@YGXGPAUIDirectDrawSurface@@@Z 1001c520 f   pcxread.obj
+ 0001:0001b6e0       ?PCX2BitMap@@YGXPAEPAUpcx_picture_typ@@J@Z 1001c6e0 f   pcxread.obj
+ 0001:0001b8e0       _X86ShallToRedirect@20     1001c8e0 f   etc.obj
+ 0001:0001bb60       _X86RedirectOpcodeToNewBase@16 1001cb60 f   etc.obj
+ 0001:0001bf00       _GetMinValidLenWithMatchOpcode@8 1001cf00 f   etc.obj
+ 0001:0001bf40       _MemWriteWithBackup@16     1001cf40 f   etc.obj
+ 0001:0001c030       _GetOpCodeSize@4           1001d030 f   etc.obj
+ 0001:0001c2e0       _trim_crlf_@4              1001d2e0 f   etc.obj
+ 0001:0001c3d0       _RegWriteData@24           1001d3d0 f   etc.obj
+ 0001:0001c470       _RegWriteDword@16          1001d470 f   etc.obj
+ 0001:0001c490       _RegWriteStr@20            1001d490 f   etc.obj
+ 0001:0001c4c0       _CalcCRC@8                 1001d4c0 f   etc.obj
+ 0001:0001c580       _duplicate_str@4           1001d580 f   etc.obj
+ 0001:0001c5e0       _getDBCSlen@4              1001d5e0 f   etc.obj
+ 0001:0001c650       ??0SingleHook@@QAE@XZ      1001d650 f   Hook.obj
+ 0001:0001c680       ??0SingleHook@@QAE@IKHPAE@Z 1001d680 f   Hook.obj
+ 0001:0001c680       ??0SingleHook@@QAE@PAEKH0@Z 1001d680 f   Hook.obj
+ 0001:0001c6c0       ??1SingleHook@@QAE@XZ      1001d6c0 f   Hook.obj
+ 0001:0001c730       ?Hook@SingleHook@@UAEXXZ   1001d730 f   Hook.obj
+ 0001:0001c770       ?UnHook@SingleHook@@UAEXXZ 1001d770 f   Hook.obj
+ 0001:0001c7b0       ?AddrToHook@SingleHook@@UAEPAXPAX@Z 1001d7b0 f   Hook.obj
+ 0001:0001c7d0       ?ThisHookMode@SingleHook@@UAEHH@Z 1001d7d0 f   Hook.obj
+ 0001:0001c7f0       ?ThisHookMode@SingleHook@@UAE?BHXZ 1001d7f0 f   Hook.obj
+ 0001:0001c810       ?LenToHook@SingleHook@@UAEKK@Z 1001d810 f   Hook.obj
+ 0001:0001c830       ?InitHookClass@SingleHook@@UAEXPAEKH0@Z 1001d830 f   Hook.obj
+ 0001:0001c9b0       ?X86InlineHookRouter@@YGXXZ 1001d9b0 f   InlineHook.obj
+ 0001:0001ca80       ?X86CurrentThreadStackBufferFixRtnAddr@@YGPAUtagInlineX86StackBuffer@@PAPAU1@@Z 1001da80 f   InlineHook.obj
+ 0001:0001cb30       ?X86CurrentThreadStackBuffer@@YGPAUtagInlineX86StackBuffer@@PAPAU1@@Z 1001db30 f   InlineHook.obj
+ 0001:0001cbc0       ??0InlineSingleHook@@QAE@IKHP6GHPAUtagInlineX86StackBuffer@@@Z@Z 1001dbc0 f   InlineHook.obj
+ 0001:0001cc50       ??1InlineSingleHook@@QAE@XZ 1001dc50 f   InlineHook.obj
+ 0001:0001cd60       ?InitHookClass@InlineSingleHook@@AAEXQAEKHPAX1@Z 1001dd60 f   InlineHook.obj
+ 0001:0001d040       ?Hook@InlineSingleHook@@UAEXXZ 1001e040 f   InlineHook.obj
+ 0001:0001d120       ?RtnAddrOfHook@InlineSingleHook@@QAEQAXXZ 1001e120 f   InlineHook.obj
+ 0001:0001d140       ??0CElementHandler@@QAE@XZ 1001e140 f   ElementHandler.obj
+ 0001:0001d180       ??_ECElementHandler@@UAEPAXI@Z 1001e180 f i ElementHandler.obj
+ 0001:0001d180       ??_GCElementHandler@@UAEPAXI@Z 1001e180 f i ElementHandler.obj
+ 0001:0001d1b0       ??1CElementHandler@@UAE@XZ 1001e1b0 f   ElementHandler.obj
+ 0001:0001d330       ?AddElement@CElementHandler@@QAEXPAVGraphicElement@@@Z 1001e330 f   ElementHandler.obj
+ 0001:0001d3a0       ?DeleteOn@CElementHandler@@QAEXHH@Z 1001e3a0 f   ElementHandler.obj
+ 0001:0001d3e0       ?DeleteBetween@CElementHandler@@QAEXHHHH@Z 1001e3e0 f   ElementHandler.obj
+ 0001:0001d650       ?GetArea@CElementHandler@@QAE?AV?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@HHHH@Z 1001e650 f   ElementHandler.obj
+ 0001:0001d900       ?MoveTextElement@CElementHandler@@QAEPAVGraphicElement@@PAV2@HH@Z 1001e900 f   ElementHandler.obj
+ 0001:0001da70       ??0?$list@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAE@XZ 1001ea70 f i ElementHandler.obj
+ 0001:0001dad0       ??1?$list@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAE@XZ 1001ead0 f i ElementHandler.obj
+ 0001:0001db40       ?erase@?$list@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAE?AV?$_List_iterator@V?$_List_val@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@@2@V?$_List_const_iterator@V?$_List_val@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@@2@@Z 1001eb40 f i ElementHandler.obj
+ 0001:0001dbd0       ?remove@?$list@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEXABQAVGraphicElement@@@Z 1001ebd0 f i ElementHandler.obj
+ 0001:0001dc70       ?back@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEAAPAVGraphicElement@@XZ 1001ec70 f i ElementHandler.obj
+ 0001:0001dcb0       ?push_back@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEXABQAVGraphicElement@@@Z 1001ecb0 f i ElementHandler.obj
+ 0001:0001dcb0       ?push_back@?$vector@PAVRegDword@@V?$allocator@PAVRegDword@@@std@@@std@@QAEXABQAVRegDword@@@Z 1001ecb0 f i TAConfig.obj
+ 0001:0001dcb0       ?push_back@?$vector@PAVRegString@@V?$allocator@PAVRegString@@@std@@@std@@QAEXABQAVRegString@@@Z 1001ecb0 f i TAConfig.obj
  0001:0001dd90       ?_Insert@?$list@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEXV?$_List_const_iterator@V?$_List_val@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@@2@ABQAVGraphicElement@@@Z 1001ed90 f i ElementHandler.obj
  0001:0001de20       ??1?$_List_val@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAE@XZ 1001ee20 f i ElementHandler.obj
  0001:0001de50       ?clear@?$list@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEXXZ 1001ee50 f i ElementHandler.obj
@@ -566,12 +566,12 @@
  0001:0001df80       ??$_Cons_val@V?$allocator@PAVRegDword@@@std@@PAVRegDword@@ABQAV3@@std@@YGXAAV?$allocator@PAVRegDword@@@0@PAPAVRegDword@@ABQAV2@@Z 1001ef80 f i TAConfig.obj
  0001:0001df80       ??$_Cons_val@V?$allocator@PAVGraphicElement@@@std@@PAVGraphicElement@@ABQAV3@@std@@YGXAAV?$allocator@PAVGraphicElement@@@0@PAPAVGraphicElement@@ABQAV2@@Z 1001ef80 f i ElementHandler.obj
  0001:0001df80       ??$_Cons_val@V?$allocator@PAVRegString@@@std@@PAVRegString@@ABQAV3@@std@@YGXAAV?$allocator@PAVRegString@@@0@PAPAVRegString@@ABQAV2@@Z 1001ef80 f i TAConfig.obj
- 0001:0001dfc0       ??$_Allocate@U_Node@?$_List_nod@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@@std@@YGPAU_Node@?$_List_nod@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@0@IPAU120@@Z 1001efc0 f i ElementHandler.obj
  0001:0001dfc0       ??$_Allocate@UMMHS@AlliesWhiteboard@@@std@@YGPAUMMHS@AlliesWhiteboard@@IPAU12@@Z 1001efc0 f i whiteboard.obj
+ 0001:0001dfc0       ??$_Allocate@U_Node@?$_List_nod@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@@std@@YGPAU_Node@?$_List_nod@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@0@IPAU120@@Z 1001efc0 f i ElementHandler.obj
  0001:0001e030       ??_Glength_error@std@@UAEPAXI@Z 1001f030 f i xthrow.obj
  0001:0001e030       ??_Glogic_error@std@@UAEPAXI@Z 1001f030 f i xthrow.obj
- 0001:0001e030       ??_Elength_error@std@@UAEPAXI@Z 1001f030 f i xthrow.obj
  0001:0001e030       ??_Elogic_error@std@@UAEPAXI@Z 1001f030 f i xthrow.obj
+ 0001:0001e030       ??_Elength_error@std@@UAEPAXI@Z 1001f030 f i xthrow.obj
  0001:0001e060       ??0logic_error@std@@QAE@ABV01@@Z 1001f060 f i xthrow.obj
  0001:0001e090       ?_Xlength_error@std@@YAXPBD@Z 1001f090 f   xthrow.obj
  0001:0001e0d0       ??1length_error@std@@UAE@XZ 1001f0d0 f i xthrow.obj
@@ -609,8 +609,8 @@
  0001:0001e8f0       _memcpy                    1001f8f0 f   LIBCMT:memcpy.obj
  0001:0001ec51       _sprintf_s                 1001fc51 f   LIBCMT:sprintf.obj
  0001:0001ec6f       ??1type_info@@UAE@XZ       1001fc6f f   LIBCMT:typinfo.obj
- 0001:0001ec7f       ??_Gtype_info@@UAEPAXI@Z   1001fc7f f i LIBCMT:typinfo.obj
  0001:0001ec7f       ??_Etype_info@@UAEPAXI@Z   1001fc7f f i LIBCMT:typinfo.obj
+ 0001:0001ec7f       ??_Gtype_info@@UAEPAXI@Z   1001fc7f f i LIBCMT:typinfo.obj
  0001:0001eca0       ??8type_info@@QBE_NABV0@@Z 1001fca0 f   LIBCMT:typinfo.obj
  0001:0001ecc0       _strlen                    1001fcc0 f   LIBCMT:strlen.obj
  0001:0001ed4b       ??0_LocaleUpdate@@QAE@PAUlocaleinfo_struct@@@Z 1001fd4b f i LIBCMT:strftime.obj
@@ -636,8 +636,8 @@
  0001:000216c9       ??0exception@std@@QAE@ABQBD@Z 100226c9 f   LIBCMT:stdexcpt.obj
  0001:000216f0       ??4exception@std@@QAEAAV01@ABV01@@Z 100226f0 f   LIBCMT:stdexcpt.obj
  0001:00021725       ??1exception@std@@UAE@XZ   10022725 f   LIBCMT:stdexcpt.obj
- 0001:00021730       ??_Eexception@std@@UAEPAXI@Z 10022730 f i LIBCMT:stdexcpt.obj
  0001:00021730       ??_Gexception@std@@UAEPAXI@Z 10022730 f i LIBCMT:stdexcpt.obj
+ 0001:00021730       ??_Eexception@std@@UAEPAXI@Z 10022730 f i LIBCMT:stdexcpt.obj
  0001:00021757       ??0exception@std@@QAE@ABV01@@Z 10022757 f   LIBCMT:stdexcpt.obj
  0001:0002177c       __vsnprintf_helper         1002277c f   LIBCMT:vsnprnc.obj
  0001:00021846       __vsprintf_s_l             10022846 f   LIBCMT:vsnprnc.obj
@@ -681,8 +681,8 @@
  0001:00022bc6       __initp_heap_handler       10023bc6 f   LIBCMT:handler.obj
  0001:00022bd5       __callnewh                 10023bd5 f   LIBCMT:handler.obj
  0001:00022bfd       ??1bad_exception@std@@UAE@XZ 10023bfd f i LIBCMT:frame.obj
- 0001:00022c08       ??_Ebad_exception@std@@UAEPAXI@Z 10023c08 f i LIBCMT:frame.obj
  0001:00022c08       ??_Gbad_exception@std@@UAEPAXI@Z 10023c08 f i LIBCMT:frame.obj
+ 0001:00022c08       ??_Ebad_exception@std@@UAEPAXI@Z 10023c08 f i LIBCMT:frame.obj
  0001:00022c2f       ___TypeMatch               10023c2f f   LIBCMT:frame.obj
  0001:00022c8e       ___FrameUnwindFilter       10023c8e f   LIBCMT:frame.obj
  0001:00022cdd       ___FrameUnwindToState      10023cdd f   LIBCMT:frame.obj
@@ -858,16 +858,16 @@
  0001:00029627       __lock                     1002a627 f   LIBCMT:mlock.obj
  0001:0002965a       __EH_prolog3_catch         1002a65a f   LIBCMT:ehprolg3.obj
  0001:00029690       ?_ValidateRead@@YAHPBXI@Z  1002a690 f   LIBCMT:validate.obj
- 0001:00029690       ?_ValidateWrite@@YAHPAXI@Z 1002a690 f   LIBCMT:validate.obj
  0001:00029690       ?_ValidateExecute@@YAHP6GHXZ@Z 1002a690 f   LIBCMT:validate.obj
+ 0001:00029690       ?_ValidateWrite@@YAHPAXI@Z 1002a690 f   LIBCMT:validate.obj
  0001:000296a2       _abort                     1002a6a2 f   LIBCMT:abort.obj
  0001:000296e0       __global_unwind2           1002a6e0 f   LIBCMT:exsup.obj
  0001:00029745       __local_unwind2            1002a745 f   LIBCMT:exsup.obj
  0001:000297c9       __abnormal_termination     1002a7c9 f   LIBCMT:exsup.obj
  0001:000297ec       __NLG_Notify1              1002a7ec f   LIBCMT:exsup.obj
  0001:000297f5       __NLG_Notify               1002a7f5 f   LIBCMT:exsup.obj
- 0001:0002980c       __NLG_Dispatch             1002a80c     LIBCMT:exsup.obj
  0001:0002980c       __NLG_Dispatch2            1002a80c     LIBCMT:exsup.obj
+ 0001:0002980c       __NLG_Dispatch             1002a80c     LIBCMT:exsup.obj
  0001:00029814       __NLG_Call                 1002a814 f   LIBCMT:exsup.obj
  0001:00029816       __NLG_Return2              1002a816     LIBCMT:exsup.obj
  0001:00029817       __crt_debugger_hook        1002a817 f   LIBCMT:dbghook.obj
@@ -913,8 +913,8 @@
  0001:0002b7e9       __recalloc                 1002c7e9 f   LIBCMT:recalloc.obj
  0001:0002b857       __getenv_helper_nolock     1002c857 f   LIBCMT:getenv.obj
  0001:0002b8de       ____lc_codepage_func       1002c8de f   LIBCMT:initctyp.obj
- 0001:0002b910       __alloca_probe             1002c910     LIBCMT:chkstk.obj
  0001:0002b910       __chkstk                   1002c910 f   LIBCMT:chkstk.obj
+ 0001:0002b910       __alloca_probe             1002c910     LIBCMT:chkstk.obj
  0001:0002b940       __allmul                   1002c940 f   LIBCMT:llmul.obj
  0001:0002b980       _strcspn                   1002c980 f   LIBCMT:strcspn.obj
  0001:0002b9d0       _strpbrk                   1002c9d0 f   LIBCMT:strpbrk.obj
@@ -954,8 +954,8 @@
  0001:0002ea36       __raise_exc                1002fa36 f   LIBCMT:_fpexcept_.obj
  0001:0002ea59       __handle_exc               1002fa59 f   LIBCMT:_fpexcept_.obj
  0001:0002ec3d       __set_errno_from_matherr   1002fc3d f   LIBCMT:_fpexcept_.obj
- 0001:0002ec6a       __matherr                  1002fc6a f   LIBCMT:_matherr_.obj
  0001:0002ec6a       __CRT_RTC_INITW            1002fc6a f   LIBCMT:chkesp.obj
+ 0001:0002ec6a       __matherr                  1002fc6a f   LIBCMT:_matherr_.obj
  0001:0002ec6d       __statfp                   1002fc6d f   LIBCMT:_fpctrl_.obj
  0001:0002ec7d       __clrfp                    1002fc7d f   LIBCMT:_fpctrl_.obj
  0001:0002ec8e       __ctrlfp                   1002fc8e f   LIBCMT:_fpctrl_.obj
@@ -1357,8 +1357,8 @@
  0002:00001154       ??_C@_05JAMEPDIN@am?1pm?$AA@ 10033154     LIBCMT:strftime.obj
  0002:00001180       ??_7exception@std@@6B@     10033180     LIBCMT:stdexcpt.obj
  0002:00001188       ??_C@_0BC@EOODALEL@Unknown?5exception?$AA@ 10033188     LIBCMT:stdexcpt.obj
- 0002:0000119c       __pRawDllMain              1003319c     LIBCMT:dllcrt0.obj
  0002:0000119c       __pDefaultRawDllMain       1003319c     LIBCMT:dllcrt0.obj
+ 0002:0000119c       __pRawDllMain              1003319c     LIBCMT:dllcrt0.obj
  0002:000011a0       __pDestructExceptionObject 100331a0     LIBCMT:frame.obj
  0002:000011a8       ??_7bad_exception@std@@6B@ 100331a8     LIBCMT:frame.obj
  0002:000011b0       ??_C@_0O@DPKOEFFH@bad?5exception?$AA@ 100331b0     LIBCMT:frame.obj
@@ -1863,182 +1863,184 @@
  0003:000017ed       ?NumSub@@3DA               1003b7ed     tahook.obj
  0003:000017f0       ?WeaponRelatedPtr@@3PAPAPAXA 1003b7f0     LimitCrack.obj
  0003:00001828       ?WeaponAryLen@@3PAPAKA     1003b828     LimitCrack.obj
- 0003:00001834       ?IDlimitAddrAry@@3PAKA     1003b834     LimitCrack.obj
- 0003:0000186c       ?IDlimit0_bits@@3PAEA      1003b86c     LimitCrack.obj
- 0003:00001874       ?IDlimit1_bits@@3PAEA      1003b874     LimitCrack.obj
- 0003:0000187c       ?IDlimit3_bits@@3PAEA      1003b87c     LimitCrack.obj
- 0003:00001884       ?IDlimit4_bits@@3PAEA      1003b884     LimitCrack.obj
- 0003:0000188c       ?IDlimit5_bits@@3PAEA      1003b88c     LimitCrack.obj
- 0003:0000189c       ?IDlimit6_bits@@3PAEA      1003b89c     LimitCrack.obj
- 0003:000018a8       ?IDlimit7_bits@@3PAEA      1003b8a8     LimitCrack.obj
- 0003:000018b0       ?IDlimit8_bits@@3PAEA      1003b8b0     LimitCrack.obj
- 0003:000018b8       ?IDlimit11_bits@@3PAEA     1003b8b8     LimitCrack.obj
- 0003:000018c0       ?IDlimit12_bits@@3PAEA     1003b8c0     LimitCrack.obj
- 0003:000018cc       ?IDlimit13_bits@@3PAEA     1003b8cc     LimitCrack.obj
- 0003:000018d8       ?IDlimitBitsAry@@3PAPAEA   1003b8d8     LimitCrack.obj
- 0003:00001910       ?IDlimitLenAry@@3PAKA      1003b910     LimitCrack.obj
- 0003:00001948       ?SfxVectorLimitAry@@3PAIA  1003b948     LimitCrack.obj
- 0003:00001990       ??_R0?AVGraphicElement@@@8 1003b990     whiteboard.obj
- 0003:000019b0       ??_R0?AVGraphicMoveText@@@8 1003b9b0     whiteboard.obj
- 0003:000019d0       ??_R0?AVGraphicText@@@8    1003b9d0     whiteboard.obj
- 0003:000019ec       ??_R0?AVGraphicTextEdited@@@8 1003b9ec     whiteboard.obj
- 0003:00001a0c       ??_R0?AVDeleteGraphic@@@8  1003ba0c     whiteboard.obj
- 0003:00001a28       ??_R0?AVGraphicLine@@@8    1003ba28     whiteboard.obj
- 0003:00001a48       ?TAPalette@@3PAUtagPALETTEENTRY@@A 1003ba48     PCX.obj
- 0003:00002648       ?Global_PX86CurrentThreadStackBufferFixRtnAddr@@3P6GPAUtagInlineX86StackBuffer@@PAPAU1@@ZA 1003c648     InlineHook.obj
- 0003:0000264c       ?Global_PX86CurrentThreadStackBuffer@@3P6GPAUtagInlineX86StackBuffer@@PAPAU1@@ZA 1003c64c     InlineHook.obj
- 0003:00002650       ??_R0?AVInlineSingleHook@@@8 1003c650     InlineHook.obj
- 0003:00002670       ??_R0?AVCElementHandler@@@8 1003c670     ElementHandler.obj
- 0003:00002690       ??_R0?AVlogic_error@std@@@8 1003c690     xthrow.obj
- 0003:000026b0       ??_R0?AVlength_error@std@@@8 1003c6b0     xthrow.obj
- 0003:000026d0       ___security_cookie         1003c6d0     LIBCMT:gs_cookie.obj
- 0003:000026d4       ___security_cookie_complement 1003c6d4     LIBCMT:gs_cookie.obj
- 0003:000026e0       __fltused                  1003c6e0     LIBCMT:_fpinit_.obj
- 0003:000026e4       __ldused                   1003c6e4     LIBCMT:_fpinit_.obj
- 0003:000026f0       ??_R0?AVtype_info@@@8      1003c6f0     LIBCMT:typinfo.obj
- 0003:00002728       ??_R0?AVbad_exception@std@@@8 1003c728     LIBCMT:frame.obj
- 0003:00002748       ___flsindex                1003c748     LIBCMT:tidtable.obj
- 0003:0000274c       ___getvalueindex           1003c74c     LIBCMT:tidtable.obj
- 0003:00002750       ?_RTC_ErrorLevels@@3PAHA   1003c750     LIBCMT:_error_.obj
- 0003:00002770       __cfltcvt_tab              1003c770     LIBCMT:cmiscdat.obj
- 0003:00002798       ___nullstring              1003c798     LIBCMT:output.obj
- 0003:0000279c       ___wnullstring             1003c79c     LIBCMT:output.obj
- 0003:00002910       ___initialmbcinfo          1003c910     LIBCMT:mbctype.obj
- 0003:00002b30       __mbctype                  1003cb30     LIBCMT:mbctype.obj
- 0003:00002c38       __mbcasemap                1003cc38     LIBCMT:mbctype.obj
- 0003:00002d38       ___ptmbcinfo               1003cd38     LIBCMT:mbctype.obj
- 0003:00002e30       ___globallocalestatus      1003ce30     LIBCMT:glstatus.obj
- 0003:00002e34       ___clocalestr              1003ce34     LIBCMT:nlsdata2.obj
- 0003:00002e38       ___lc_time_c               1003ce38     LIBCMT:nlsdata2.obj
- 0003:00002fa0       ___initiallocinfo          1003cfa0     LIBCMT:nlsdata2.obj
- 0003:00003078       ___ptlocinfo               1003d078     LIBCMT:nlsdata2.obj
- 0003:0000307c       ___initiallocalestructinfo 1003d07c     LIBCMT:nlsdata2.obj
- 0003:00003088       __timezone                 1003d088     LIBCMT:timeset.obj
- 0003:0000308c       __daylight                 1003d08c     LIBCMT:timeset.obj
- 0003:00003090       __dstbias                  1003d090     LIBCMT:timeset.obj
- 0003:00003118       __tzname                   1003d118     LIBCMT:timeset.obj
- 0003:00003150       ___badioinfo               1003d150     LIBCMT:ioinit.obj
- 0003:000032b0       ___abort_behavior          1003d2b0     LIBCMT:abort.obj
- 0003:000032c0       __NLG_Destination          1003d2c0     LIBCMT:exsup.obj
- 0003:000032d0       __iob                      1003d2d0     LIBCMT:_file.obj
- 0003:00003550       ___lconv_static_decimal    1003d550     LIBCMT:lconv.obj
- 0003:00003554       ___lconv_static_W_decimal  1003d554     LIBCMT:lconv.obj
- 0003:00003558       ___lconv_c                 1003d558     LIBCMT:lconv.obj
- 0003:000035a8       ___lconv                   1003d5a8     LIBCMT:lconv.obj
- 0003:000035ac       __pctype                   1003d5ac     LIBCMT:ctype.obj
- 0003:000035b0       __pwctype                  1003d5b0     LIBCMT:ctype.obj
- 0003:000035b4       __lpdays                   1003d5b4     LIBCMT:days.obj
- 0003:000035e8       __days                     1003d5e8     LIBCMT:days.obj
- 0003:00003620       ___mb_cur_max              1003d620     LIBCMT:nlsdata1.obj
- 0003:00003624       ___decimal_point           1003d624     LIBCMT:nlsdata1.obj
- 0003:00003628       ___decimal_point_length    1003d628     LIBCMT:nlsdata1.obj
- 0003:00003748       __matherr_flag             1003d748     LIBCMT:_matherr_.obj
- 0003:00003768       __pow10pos                 1003d768     LIBCMT:_constpow_.obj
- 0003:000038c8       __pow10neg                 1003d8c8     LIBCMT:_constpow_.obj
- 0003:00003a24       __confh                    1003da24     LIBCMT:initcon.obj
- 0003:00003a30       __d_inf                    1003da30     LIBCMT:_util_.obj
- 0003:00003a38       __d_ind                    1003da38     LIBCMT:_util_.obj
- 0003:00003a40       __d_max                    1003da40     LIBCMT:_util_.obj
- 0003:00003a48       __d_min                    1003da48     LIBCMT:_util_.obj
- 0003:00003a50       __d_mzero                  1003da50     LIBCMT:_util_.obj
- 0003:00003a60       ?hMemMap@@3PAXA            1003da60     ddraw.obj
- 0003:00003a64       ?pMapView@@3PAXA           1003da64     ddraw.obj
- 0003:00003a68       ?DataShare@@3PAUDataShare_@@A 1003da68     ddraw.obj
- 0003:00003a6c       ?LocalpMapView@@3PAXA      1003da6c     ddraw.obj
- 0003:00003a70       ?MyConfig@@3PAVTADRConfig@@A 1003da70     ddraw.obj
- 0003:00003a74       ?TAHookpMapView@@3PAXA     1003da74     ddraw.obj
- 0003:00003a78       ?TAHookhMemMap@@3PAXA      1003da78     ddraw.obj
- 0003:00003a7c       ?LocalhMemMap@@3PAXA       1003da7c     ddraw.obj
- 0003:00003a80       ?TAHPI@@3PAV_TAHPI@@A      1003da80     ddraw.obj
- 0003:00003a84       ?AddtionInitHook@@3PAVInlineSingleHook@@A 1003da84     ddraw.obj
- 0003:00003a88       ?SystemDDraw@@3PADA        1003da88     ddraw.obj
- 0003:00003b8c       ?LocalShare@@3PAULocalShare_@@A 1003db8c     ddraw.obj
- 0003:00003b90       ?HInstance@@3PAUHINSTANCE__@@A 1003db90     ddraw.obj
- 0003:00003b94       ?Windowed@@3_NA            1003db94     ddraw.obj
- 0003:00003b98       ?NowCrackLimit@@3PAVLimitCrack@@A 1003db98     ddraw.obj
- 0003:00003b9c       ?SDDraw@@3PAUHINSTANCE__@@A 1003db9c     ddraw.obj
- 0003:00003ba0       ?HookInCircleSelect@@3PAVInlineSingleHook@@A 1003dba0     ExternQuickKey.obj
- 0003:00003ba4       ?Draw@@3HA                 1003dba4     iddrawsurface.obj
- 0003:00003ba8       ?StartedInRect@@3_NA       1003dba8     iddrawsurface.obj
- 0003:00003bac       ?MouseY@@3FA               1003dbac     iddrawsurface.obj
- 0003:00003bb0       ?MouseX@@3FA               1003dbb0     iddrawsurface.obj
- 0003:00003bb4       ?gTAdynmem@@3PAUTAdynmemStruct@@A 1003dbb4     dddta.obj
- 0003:00003bb8       ?gDDDSharedMem@@3PAUSharedMem@@A 1003dbb8     dddta.obj
- 0003:00003bbc       ?gSmoke@@3PAUParticleBase@@A 1003dbbc     dddta.obj
- 0003:00003bc0       ?offset@@3HA               1003dbc0     dddta.obj
- 0003:00003bc4       ?display@@3_NA             1003dbc4     dddta.obj
- 0003:00003bc8       ?TAdynmem@@3PAUTAdynmemStruct@@A 1003dbc8     changequeue.obj
- 0003:00003bcc       ?GWinProchWnd@@3PAUHWND__@@A 1003dbcc     changequeue.obj
- 0003:00003bd0       ?pressed@@3_NA             1003dbd0     changequeue.obj
- 0003:00003bd4       ?X@@3HA                    1003dbd4     cinomce.obj
- 0003:00003bd8       ?Y@@3HA                    1003dbd8     cinomce.obj
- 0003:00003be0       ?TAHook@@3PAVCTAHook@@A    1003dbe0     tahook.obj
- 0003:00003be8       ?NewMem@@3PADA             1003dbe8     unitrotate.obj
- 0003:00003c04       ___fastflag                1003dc04     LIBCMT:_fpinit_.obj
- 0003:00003c0c       __aenvptr                  1003dc0c     LIBCMT:dllcrt0.obj
- 0003:00003c10       __wenvptr                  1003dc10     LIBCMT:dllcrt0.obj
- 0003:00003c14       ___error_mode              1003dc14     LIBCMT:dllcrt0.obj
- 0003:00003c18       ___app_type                1003dc18     LIBCMT:dllcrt0.obj
- 0003:00003c1c       ?_pnhHeap@@3P6AHI@ZA       1003dc1c     LIBCMT:handler.obj
- 0003:00003c20       _gpFlsAlloc                1003dc20     LIBCMT:tidtable.obj
- 0003:00003c24       _gpFlsGetValue             1003dc24     LIBCMT:tidtable.obj
- 0003:00003c28       _gpFlsSetValue             1003dc28     LIBCMT:tidtable.obj
- 0003:00003c2c       _gpFlsFree                 1003dc2c     LIBCMT:tidtable.obj
- 0003:00003c30       ?__pInconsistency@@3P6AXXZA 1003dc30     LIBCMT:hooks.obj
- 0003:00003f64       ?wsprintffp@@3P6AHPADPBDZZA 1003df64     LIBCMT:_error_.obj
- 0003:00003f68       ___pInvalidArgHandler      1003df68     LIBCMT:invarg.obj
- 0003:00003f78       ___mbulinfo                1003df78     LIBCMT:mbctype.obj
- 0003:00003f84       ___mbcodepage              1003df84     LIBCMT:mbctype.obj
- 0003:00003f88       ___ismbcodepage            1003df88     LIBCMT:mbctype.obj
- 0003:00003f8c       ___mblcid                  1003df8c     LIBCMT:mbctype.obj
- 0003:00003f90       __maxwait                  1003df90     LIBCMT:crtheap.obj
- 0003:00004050       ___locale_changed          1003e050     LIBCMT:setlocal.obj
- 0003:00004054       __crtheap                  1003e054     LIBCMT:heapinit.obj
- 0003:00004058       __umaskval                 1003e058     LIBCMT:crt0dat.obj
- 0003:0000405c       ___argc                    1003e05c     LIBCMT:crt0dat.obj
- 0003:00004060       ___argv                    1003e060     LIBCMT:crt0dat.obj
- 0003:00004064       ___wargv                   1003e064     LIBCMT:crt0dat.obj
- 0003:00004068       __environ                  1003e068     LIBCMT:crt0dat.obj
- 0003:0000406c       ___initenv                 1003e06c     LIBCMT:crt0dat.obj
- 0003:00004070       __wenviron                 1003e070     LIBCMT:crt0dat.obj
- 0003:00004074       ___winitenv                1003e074     LIBCMT:crt0dat.obj
- 0003:00004078       __pgmptr                   1003e078     LIBCMT:crt0dat.obj
- 0003:0000407c       __wpgmptr                  1003e07c     LIBCMT:crt0dat.obj
- 0003:00004080       __exitflag                 1003e080     LIBCMT:crt0dat.obj
- 0003:00004084       __C_Termination_Done       1003e084     LIBCMT:crt0dat.obj
- 0003:00004088       __C_Exit_Done              1003e088     LIBCMT:crt0dat.obj
- 0003:000046b8       __newmode                  1003e6b8     LIBCMT:_newmode.obj
- 0003:00004920       __outputformat             1003e920     LIBCMT:outputformat.obj
- 0003:00004924       __cflush                   1003e924     LIBCMT:_file.obj
- 0003:00004940       ?pArgList@UnDecorator@@0PAVReplicator@@A 1003e940     LIBCMT:undname.obj
- 0003:00004944       ?pZNameList@UnDecorator@@0PAVReplicator@@A 1003e944     LIBCMT:undname.obj
- 0003:00004948       ?pTemplateArgList@UnDecorator@@0PAVReplicator@@A 1003e948     LIBCMT:undname.obj
- 0003:0000494c       ?gName@UnDecorator@@0PBDB  1003e94c     LIBCMT:undname.obj
- 0003:00004950       ?name@UnDecorator@@0PBDB   1003e950     LIBCMT:undname.obj
- 0003:00004954       ?outputString@UnDecorator@@0PADA 1003e954     LIBCMT:undname.obj
- 0003:00004958       ?maxStringLength@UnDecorator@@0HA 1003e958     LIBCMT:undname.obj
- 0003:0000495c       ?disableFlags@UnDecorator@@0KA 1003e95c     LIBCMT:undname.obj
- 0003:00004960       ?m_pGetParameter@UnDecorator@@0P6APADJ@ZA 1003e960     LIBCMT:undname.obj
- 0003:00004964       ?fExplicitTemplateParams@UnDecorator@@0_NA 1003e964     LIBCMT:undname.obj
- 0003:00004965       ?fGetTemplateArgumentList@UnDecorator@@0_NA 1003e965     LIBCMT:undname.obj
- 0003:00004968       ___lconv_static_null       1003e968     LIBCMT:lconv.obj
- 0003:0000496c       ___lconv_static_W_null     1003e96c     LIBCMT:lconv.obj
- 0003:00004988       ___pPurecall               1003e988     LIBCMT:inithelp.obj
- 0003:000049a0       __stdbuf                   1003e9a0     LIBCMT:_sftbuf.obj
- 0003:000049a8       ___piob                    1003e9a8     <common>
- 0003:000049c0       __bufin                    1003e9c0     <common>
- 0003:000059c0       __nstream                  1003f9c0     <common>
- 0003:000059c4       __debugger_hook_dummy      1003f9c4     <common>
- 0003:000059c8       __nhandle                  1003f9c8     <common>
- 0003:000059e0       ___pioinfo                 1003f9e0     <common>
- 0003:00005ae0       ___use_sse2_mathfcns       1003fae0     <common>
- 0003:00005ae4       ___env_initialized         1003fae4     <common>
- 0003:00005ae8       ___onexitend               1003fae8     <common>
- 0003:00005aec       ___onexitbegin             1003faec     <common>
- 0003:00005af0       ___mbctype_initialized     1003faf0     <common>
- 0003:00005af4       ___dyn_tls_init_callback   1003faf4     <common>
- 0003:00005af8       ___sse2_available          1003faf8     <common>
- 0003:00005afc       __acmdln                   1003fafc     <common>
+ 0003:00001834       ?IDlimit6_bits@@3PAEA      1003b834     LimitCrack.obj
+ 0003:00001840       ?IDlimitAddrAry@@3PAKA     1003b840     LimitCrack.obj
+ 0003:00001898       ?IDlimit0_bits@@3PAEA      1003b898     LimitCrack.obj
+ 0003:000018a0       ?IDlimit1_bits@@3PAEA      1003b8a0     LimitCrack.obj
+ 0003:000018a8       ?IDlimit3_bits@@3PAEA      1003b8a8     LimitCrack.obj
+ 0003:000018b0       ?IDlimit4_bits@@3PAEA      1003b8b0     LimitCrack.obj
+ 0003:000018b8       ?IDlimit5_bits@@3PAEA      1003b8b8     LimitCrack.obj
+ 0003:000018c8       ?IDlimit7_bits@@3PAEA      1003b8c8     LimitCrack.obj
+ 0003:000018d0       ?IDlimit8_bits@@3PAEA      1003b8d0     LimitCrack.obj
+ 0003:000018d8       ?IDlimit11_bits@@3PAEA     1003b8d8     LimitCrack.obj
+ 0003:000018e0       ?IDlimit12_bits@@3PAEA     1003b8e0     LimitCrack.obj
+ 0003:000018ec       ?IDlimit13_bits@@3PAEA     1003b8ec     LimitCrack.obj
+ 0003:000018f8       ?IDlimit14_bits@@3PAEA     1003b8f8     LimitCrack.obj
+ 0003:00001900       ?IDlimit15_bits@@3PAEA     1003b900     LimitCrack.obj
+ 0003:00001908       ?IDlimitBitsAry@@3PAPAEA   1003b908     LimitCrack.obj
+ 0003:00001960       ?IDlimitLenAry@@3PAKA      1003b960     LimitCrack.obj
+ 0003:000019b8       ?SfxVectorLimitAry@@3PAIA  1003b9b8     LimitCrack.obj
+ 0003:00001a00       ??_R0?AVGraphicElement@@@8 1003ba00     whiteboard.obj
+ 0003:00001a20       ??_R0?AVGraphicMoveText@@@8 1003ba20     whiteboard.obj
+ 0003:00001a40       ??_R0?AVGraphicText@@@8    1003ba40     whiteboard.obj
+ 0003:00001a5c       ??_R0?AVGraphicTextEdited@@@8 1003ba5c     whiteboard.obj
+ 0003:00001a7c       ??_R0?AVDeleteGraphic@@@8  1003ba7c     whiteboard.obj
+ 0003:00001a98       ??_R0?AVGraphicLine@@@8    1003ba98     whiteboard.obj
+ 0003:00001ab8       ?TAPalette@@3PAUtagPALETTEENTRY@@A 1003bab8     PCX.obj
+ 0003:000026b8       ?Global_PX86CurrentThreadStackBufferFixRtnAddr@@3P6GPAUtagInlineX86StackBuffer@@PAPAU1@@ZA 1003c6b8     InlineHook.obj
+ 0003:000026bc       ?Global_PX86CurrentThreadStackBuffer@@3P6GPAUtagInlineX86StackBuffer@@PAPAU1@@ZA 1003c6bc     InlineHook.obj
+ 0003:000026c0       ??_R0?AVInlineSingleHook@@@8 1003c6c0     InlineHook.obj
+ 0003:000026e0       ??_R0?AVCElementHandler@@@8 1003c6e0     ElementHandler.obj
+ 0003:00002700       ??_R0?AVlogic_error@std@@@8 1003c700     xthrow.obj
+ 0003:00002720       ??_R0?AVlength_error@std@@@8 1003c720     xthrow.obj
+ 0003:00002740       ___security_cookie         1003c740     LIBCMT:gs_cookie.obj
+ 0003:00002744       ___security_cookie_complement 1003c744     LIBCMT:gs_cookie.obj
+ 0003:00002750       __fltused                  1003c750     LIBCMT:_fpinit_.obj
+ 0003:00002754       __ldused                   1003c754     LIBCMT:_fpinit_.obj
+ 0003:00002760       ??_R0?AVtype_info@@@8      1003c760     LIBCMT:typinfo.obj
+ 0003:00002798       ??_R0?AVbad_exception@std@@@8 1003c798     LIBCMT:frame.obj
+ 0003:000027b8       ___flsindex                1003c7b8     LIBCMT:tidtable.obj
+ 0003:000027bc       ___getvalueindex           1003c7bc     LIBCMT:tidtable.obj
+ 0003:000027c0       ?_RTC_ErrorLevels@@3PAHA   1003c7c0     LIBCMT:_error_.obj
+ 0003:000027e0       __cfltcvt_tab              1003c7e0     LIBCMT:cmiscdat.obj
+ 0003:00002808       ___nullstring              1003c808     LIBCMT:output.obj
+ 0003:0000280c       ___wnullstring             1003c80c     LIBCMT:output.obj
+ 0003:00002980       ___initialmbcinfo          1003c980     LIBCMT:mbctype.obj
+ 0003:00002ba0       __mbctype                  1003cba0     LIBCMT:mbctype.obj
+ 0003:00002ca8       __mbcasemap                1003cca8     LIBCMT:mbctype.obj
+ 0003:00002da8       ___ptmbcinfo               1003cda8     LIBCMT:mbctype.obj
+ 0003:00002ea0       ___globallocalestatus      1003cea0     LIBCMT:glstatus.obj
+ 0003:00002ea4       ___clocalestr              1003cea4     LIBCMT:nlsdata2.obj
+ 0003:00002ea8       ___lc_time_c               1003cea8     LIBCMT:nlsdata2.obj
+ 0003:00003010       ___initiallocinfo          1003d010     LIBCMT:nlsdata2.obj
+ 0003:000030e8       ___ptlocinfo               1003d0e8     LIBCMT:nlsdata2.obj
+ 0003:000030ec       ___initiallocalestructinfo 1003d0ec     LIBCMT:nlsdata2.obj
+ 0003:000030f8       __timezone                 1003d0f8     LIBCMT:timeset.obj
+ 0003:000030fc       __daylight                 1003d0fc     LIBCMT:timeset.obj
+ 0003:00003100       __dstbias                  1003d100     LIBCMT:timeset.obj
+ 0003:00003188       __tzname                   1003d188     LIBCMT:timeset.obj
+ 0003:000031c0       ___badioinfo               1003d1c0     LIBCMT:ioinit.obj
+ 0003:00003320       ___abort_behavior          1003d320     LIBCMT:abort.obj
+ 0003:00003330       __NLG_Destination          1003d330     LIBCMT:exsup.obj
+ 0003:00003340       __iob                      1003d340     LIBCMT:_file.obj
+ 0003:000035c0       ___lconv_static_decimal    1003d5c0     LIBCMT:lconv.obj
+ 0003:000035c4       ___lconv_static_W_decimal  1003d5c4     LIBCMT:lconv.obj
+ 0003:000035c8       ___lconv_c                 1003d5c8     LIBCMT:lconv.obj
+ 0003:00003618       ___lconv                   1003d618     LIBCMT:lconv.obj
+ 0003:0000361c       __pctype                   1003d61c     LIBCMT:ctype.obj
+ 0003:00003620       __pwctype                  1003d620     LIBCMT:ctype.obj
+ 0003:00003624       __lpdays                   1003d624     LIBCMT:days.obj
+ 0003:00003658       __days                     1003d658     LIBCMT:days.obj
+ 0003:00003690       ___mb_cur_max              1003d690     LIBCMT:nlsdata1.obj
+ 0003:00003694       ___decimal_point           1003d694     LIBCMT:nlsdata1.obj
+ 0003:00003698       ___decimal_point_length    1003d698     LIBCMT:nlsdata1.obj
+ 0003:000037b8       __matherr_flag             1003d7b8     LIBCMT:_matherr_.obj
+ 0003:000037d8       __pow10pos                 1003d7d8     LIBCMT:_constpow_.obj
+ 0003:00003938       __pow10neg                 1003d938     LIBCMT:_constpow_.obj
+ 0003:00003a94       __confh                    1003da94     LIBCMT:initcon.obj
+ 0003:00003aa0       __d_inf                    1003daa0     LIBCMT:_util_.obj
+ 0003:00003aa8       __d_ind                    1003daa8     LIBCMT:_util_.obj
+ 0003:00003ab0       __d_max                    1003dab0     LIBCMT:_util_.obj
+ 0003:00003ab8       __d_min                    1003dab8     LIBCMT:_util_.obj
+ 0003:00003ac0       __d_mzero                  1003dac0     LIBCMT:_util_.obj
+ 0003:00003ae0       ?hMemMap@@3PAXA            1003dae0     ddraw.obj
+ 0003:00003ae4       ?pMapView@@3PAXA           1003dae4     ddraw.obj
+ 0003:00003ae8       ?DataShare@@3PAUDataShare_@@A 1003dae8     ddraw.obj
+ 0003:00003aec       ?LocalpMapView@@3PAXA      1003daec     ddraw.obj
+ 0003:00003af0       ?MyConfig@@3PAVTADRConfig@@A 1003daf0     ddraw.obj
+ 0003:00003af4       ?TAHookpMapView@@3PAXA     1003daf4     ddraw.obj
+ 0003:00003af8       ?TAHookhMemMap@@3PAXA      1003daf8     ddraw.obj
+ 0003:00003afc       ?LocalhMemMap@@3PAXA       1003dafc     ddraw.obj
+ 0003:00003b00       ?TAHPI@@3PAV_TAHPI@@A      1003db00     ddraw.obj
+ 0003:00003b04       ?AddtionInitHook@@3PAVInlineSingleHook@@A 1003db04     ddraw.obj
+ 0003:00003b08       ?SystemDDraw@@3PADA        1003db08     ddraw.obj
+ 0003:00003c0c       ?LocalShare@@3PAULocalShare_@@A 1003dc0c     ddraw.obj
+ 0003:00003c10       ?HInstance@@3PAUHINSTANCE__@@A 1003dc10     ddraw.obj
+ 0003:00003c14       ?Windowed@@3_NA            1003dc14     ddraw.obj
+ 0003:00003c18       ?NowCrackLimit@@3PAVLimitCrack@@A 1003dc18     ddraw.obj
+ 0003:00003c1c       ?SDDraw@@3PAUHINSTANCE__@@A 1003dc1c     ddraw.obj
+ 0003:00003c20       ?HookInCircleSelect@@3PAVInlineSingleHook@@A 1003dc20     ExternQuickKey.obj
+ 0003:00003c24       ?Draw@@3HA                 1003dc24     iddrawsurface.obj
+ 0003:00003c28       ?StartedInRect@@3_NA       1003dc28     iddrawsurface.obj
+ 0003:00003c2c       ?MouseY@@3FA               1003dc2c     iddrawsurface.obj
+ 0003:00003c30       ?MouseX@@3FA               1003dc30     iddrawsurface.obj
+ 0003:00003c34       ?gTAdynmem@@3PAUTAdynmemStruct@@A 1003dc34     dddta.obj
+ 0003:00003c38       ?gDDDSharedMem@@3PAUSharedMem@@A 1003dc38     dddta.obj
+ 0003:00003c3c       ?gSmoke@@3PAUParticleBase@@A 1003dc3c     dddta.obj
+ 0003:00003c40       ?offset@@3HA               1003dc40     dddta.obj
+ 0003:00003c44       ?display@@3_NA             1003dc44     dddta.obj
+ 0003:00003c48       ?TAdynmem@@3PAUTAdynmemStruct@@A 1003dc48     changequeue.obj
+ 0003:00003c4c       ?GWinProchWnd@@3PAUHWND__@@A 1003dc4c     changequeue.obj
+ 0003:00003c50       ?pressed@@3_NA             1003dc50     changequeue.obj
+ 0003:00003c54       ?X@@3HA                    1003dc54     cinomce.obj
+ 0003:00003c58       ?Y@@3HA                    1003dc58     cinomce.obj
+ 0003:00003c60       ?TAHook@@3PAVCTAHook@@A    1003dc60     tahook.obj
+ 0003:00003c68       ?NewMem@@3PADA             1003dc68     unitrotate.obj
+ 0003:00003c84       ___fastflag                1003dc84     LIBCMT:_fpinit_.obj
+ 0003:00003c8c       __aenvptr                  1003dc8c     LIBCMT:dllcrt0.obj
+ 0003:00003c90       __wenvptr                  1003dc90     LIBCMT:dllcrt0.obj
+ 0003:00003c94       ___error_mode              1003dc94     LIBCMT:dllcrt0.obj
+ 0003:00003c98       ___app_type                1003dc98     LIBCMT:dllcrt0.obj
+ 0003:00003c9c       ?_pnhHeap@@3P6AHI@ZA       1003dc9c     LIBCMT:handler.obj
+ 0003:00003ca0       _gpFlsAlloc                1003dca0     LIBCMT:tidtable.obj
+ 0003:00003ca4       _gpFlsGetValue             1003dca4     LIBCMT:tidtable.obj
+ 0003:00003ca8       _gpFlsSetValue             1003dca8     LIBCMT:tidtable.obj
+ 0003:00003cac       _gpFlsFree                 1003dcac     LIBCMT:tidtable.obj
+ 0003:00003cb0       ?__pInconsistency@@3P6AXXZA 1003dcb0     LIBCMT:hooks.obj
+ 0003:00003fe4       ?wsprintffp@@3P6AHPADPBDZZA 1003dfe4     LIBCMT:_error_.obj
+ 0003:00003fe8       ___pInvalidArgHandler      1003dfe8     LIBCMT:invarg.obj
+ 0003:00003ff8       ___mbulinfo                1003dff8     LIBCMT:mbctype.obj
+ 0003:00004004       ___mbcodepage              1003e004     LIBCMT:mbctype.obj
+ 0003:00004008       ___ismbcodepage            1003e008     LIBCMT:mbctype.obj
+ 0003:0000400c       ___mblcid                  1003e00c     LIBCMT:mbctype.obj
+ 0003:00004010       __maxwait                  1003e010     LIBCMT:crtheap.obj
+ 0003:000040d0       ___locale_changed          1003e0d0     LIBCMT:setlocal.obj
+ 0003:000040d4       __crtheap                  1003e0d4     LIBCMT:heapinit.obj
+ 0003:000040d8       __umaskval                 1003e0d8     LIBCMT:crt0dat.obj
+ 0003:000040dc       ___argc                    1003e0dc     LIBCMT:crt0dat.obj
+ 0003:000040e0       ___argv                    1003e0e0     LIBCMT:crt0dat.obj
+ 0003:000040e4       ___wargv                   1003e0e4     LIBCMT:crt0dat.obj
+ 0003:000040e8       __environ                  1003e0e8     LIBCMT:crt0dat.obj
+ 0003:000040ec       ___initenv                 1003e0ec     LIBCMT:crt0dat.obj
+ 0003:000040f0       __wenviron                 1003e0f0     LIBCMT:crt0dat.obj
+ 0003:000040f4       ___winitenv                1003e0f4     LIBCMT:crt0dat.obj
+ 0003:000040f8       __pgmptr                   1003e0f8     LIBCMT:crt0dat.obj
+ 0003:000040fc       __wpgmptr                  1003e0fc     LIBCMT:crt0dat.obj
+ 0003:00004100       __exitflag                 1003e100     LIBCMT:crt0dat.obj
+ 0003:00004104       __C_Termination_Done       1003e104     LIBCMT:crt0dat.obj
+ 0003:00004108       __C_Exit_Done              1003e108     LIBCMT:crt0dat.obj
+ 0003:00004738       __newmode                  1003e738     LIBCMT:_newmode.obj
+ 0003:000049a0       __outputformat             1003e9a0     LIBCMT:outputformat.obj
+ 0003:000049a4       __cflush                   1003e9a4     LIBCMT:_file.obj
+ 0003:000049c0       ?pArgList@UnDecorator@@0PAVReplicator@@A 1003e9c0     LIBCMT:undname.obj
+ 0003:000049c4       ?pZNameList@UnDecorator@@0PAVReplicator@@A 1003e9c4     LIBCMT:undname.obj
+ 0003:000049c8       ?pTemplateArgList@UnDecorator@@0PAVReplicator@@A 1003e9c8     LIBCMT:undname.obj
+ 0003:000049cc       ?gName@UnDecorator@@0PBDB  1003e9cc     LIBCMT:undname.obj
+ 0003:000049d0       ?name@UnDecorator@@0PBDB   1003e9d0     LIBCMT:undname.obj
+ 0003:000049d4       ?outputString@UnDecorator@@0PADA 1003e9d4     LIBCMT:undname.obj
+ 0003:000049d8       ?maxStringLength@UnDecorator@@0HA 1003e9d8     LIBCMT:undname.obj
+ 0003:000049dc       ?disableFlags@UnDecorator@@0KA 1003e9dc     LIBCMT:undname.obj
+ 0003:000049e0       ?m_pGetParameter@UnDecorator@@0P6APADJ@ZA 1003e9e0     LIBCMT:undname.obj
+ 0003:000049e4       ?fExplicitTemplateParams@UnDecorator@@0_NA 1003e9e4     LIBCMT:undname.obj
+ 0003:000049e5       ?fGetTemplateArgumentList@UnDecorator@@0_NA 1003e9e5     LIBCMT:undname.obj
+ 0003:000049e8       ___lconv_static_null       1003e9e8     LIBCMT:lconv.obj
+ 0003:000049ec       ___lconv_static_W_null     1003e9ec     LIBCMT:lconv.obj
+ 0003:00004a08       ___pPurecall               1003ea08     LIBCMT:inithelp.obj
+ 0003:00004a20       __stdbuf                   1003ea20     LIBCMT:_sftbuf.obj
+ 0003:00004a28       ___piob                    1003ea28     <common>
+ 0003:00004a40       __bufin                    1003ea40     <common>
+ 0003:00005a40       __nstream                  1003fa40     <common>
+ 0003:00005a44       __debugger_hook_dummy      1003fa44     <common>
+ 0003:00005a48       __nhandle                  1003fa48     <common>
+ 0003:00005a60       ___pioinfo                 1003fa60     <common>
+ 0003:00005b60       ___use_sse2_mathfcns       1003fb60     <common>
+ 0003:00005b64       ___env_initialized         1003fb64     <common>
+ 0003:00005b68       ___onexitend               1003fb68     <common>
+ 0003:00005b6c       ___onexitbegin             1003fb6c     <common>
+ 0003:00005b70       ___mbctype_initialized     1003fb70     <common>
+ 0003:00005b74       ___dyn_tls_init_callback   1003fb74     <common>
+ 0003:00005b78       ___sse2_available          1003fb78     <common>
+ 0003:00005b7c       __acmdln                   1003fb7c     <common>
 
  entry point at        0001:00022a69
 
@@ -2046,12 +2048,12 @@
 
  0001:0000498e       __catch$?EnsureDplayx@ModifyWeaponPacket@@AAEXH@Z$0 1000598e f   MultiGameWeaponID.obj
  0001:00005430       __catch$?InitDDDTA@CDDDTA@@AAEXXZ$0 10006430 f   dddta.obj
- 0001:0000df78       __catch$?LoadIniRegSetting@TADRConfig@@AAEXPAE@Z$4 1000ef78 f   TAConfig.obj
- 0001:0001aada       __catch$?reserve@?$vector@PADV?$allocator@PAD@std@@@std@@QAEXI@Z$0 1001bada f i whiteboard.obj
- 0001:0001aada       __catch$?reserve@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEXI@Z$0 1001bada f i whiteboard.obj
- 0001:0001aada       __catch$?reserve@?$vector@PAVRegDword@@V?$allocator@PAVRegDword@@@std@@@std@@QAEXI@Z$0 1001bada f i whiteboard.obj
- 0001:0001aada       __catch$?reserve@?$vector@PAVRegString@@V?$allocator@PAVRegString@@@std@@@std@@QAEXI@Z$0 1001bada f i whiteboard.obj
- 0001:0001d9d8       __catch$?MoveTextElement@CElementHandler@@QAEPAVGraphicElement@@PAV2@HH@Z$0 1001e9d8 f   ElementHandler.obj
+ 0001:0000e0f8       __catch$?LoadIniRegSetting@TADRConfig@@AAEXPAE@Z$4 1000f0f8 f   TAConfig.obj
+ 0001:0001ab3a       __catch$?reserve@?$vector@PADV?$allocator@PAD@std@@@std@@QAEXI@Z$0 1001bb3a f i whiteboard.obj
+ 0001:0001ab3a       __catch$?reserve@?$vector@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEXI@Z$0 1001bb3a f i whiteboard.obj
+ 0001:0001ab3a       __catch$?reserve@?$vector@PAVRegDword@@V?$allocator@PAVRegDword@@@std@@@std@@QAEXI@Z$0 1001bb3a f i whiteboard.obj
+ 0001:0001ab3a       __catch$?reserve@?$vector@PAVRegString@@V?$allocator@PAVRegString@@@std@@@std@@QAEXI@Z$0 1001bb3a f i whiteboard.obj
+ 0001:0001da28       __catch$?MoveTextElement@CElementHandler@@QAEPAVGraphicElement@@PAV2@HH@Z$0 1001ea28 f   ElementHandler.obj
  0001:0001df3c       __catch$?_Buynode@?$_List_val@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@std@@QAEPAU_Node@?$_List_nod@PAVGraphicElement@@V?$allocator@PAVGraphicElement@@@std@@@2@PAU342@0ABQAVGraphicElement@@@Z$0 1001ef3c f i ElementHandler.obj
  0001:0001e29b       ?CatchGuardHandler@@YA?AW4_EXCEPTION_DISPOSITION@@PAUEHExceptionRecord@@PAUCatchGuardRN@@PAX2@Z 1001f29b f   LIBCMT:_trnsctrl_.obj
  0001:0001e3a5       ?TranslatorGuardHandler@@YA?AW4_EXCEPTION_DISPOSITION@@PAUEHExceptionRecord@@PAUTranslatorGuardRN@@PAX2@Z 1001f3a5 f   LIBCMT:_trnsctrl_.obj
