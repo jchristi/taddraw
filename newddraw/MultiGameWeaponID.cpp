@@ -120,6 +120,7 @@ unsigned int WeaponPacketAddressAry[WEAPONPACKETARYLEN]=
 	
 };
 
+
 DWORD WeaponPacketLenAry[WEAPONPACKETARYLEN]=
 {
 	sizeof( Receive_Weapon_bits),
@@ -214,7 +215,7 @@ void ModifyWeaponPacket::EnsureDplayx (BOOL DoIt)
 		1E09C   C745 F0 24000000 MOV DWORD PTR SS:[EBP-10],24
 		1E0D8   C745 F0 0E000000 MOV DWORD PTR SS:[EBP-10],0E
 		1E0B4   C745 F0 06000000 MOV DWORD PTR SS:[EBP-10],6
-
+		
 		99b
 		1BCE8   BB 24000000      MOV EBX,24
 		1BD1A   BB 0E000000      MOV EBX,0E

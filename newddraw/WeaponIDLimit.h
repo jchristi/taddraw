@@ -3,7 +3,7 @@
 #define PTRARYNUM (14)
 #define LENARYNUM (3)
 
-#define IDLIMITARYNUMBER (14)
+#define IDLIMITARYNUMBER (22)
 
 extern BYTE IDlimit0_bits[];
 extern BYTE IDlimit1_bits[];
@@ -13,8 +13,7 @@ extern BYTE IDlimit5_bits[];
 extern BYTE IDlimit6_bits[];
 extern BYTE IDlimit7_bits[];
 extern BYTE IDlimit8_bits[];
-;
-;
+
 extern BYTE IDlimit11_bits[];
 extern BYTE IDlimit12_bits[];
 extern BYTE IDlimit13_bits[];
