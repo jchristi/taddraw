@@ -12,6 +12,7 @@ class UnicodeSupport;
 class MenuResolution;
 class UnitLimit;
 class ExternQuickKey;
+class CIdleUnits;
 
 class LimitCrack
 {
@@ -31,6 +32,7 @@ public:
 	UnitLimit * SetUnitLimit;
 
 	ExternQuickKey * myExternQuickKey;
+	CIdleUnits* IdleUnits;
 public:
 
 	LimitCrack (void);

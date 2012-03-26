@@ -29,6 +29,8 @@ extern "C"
 	int GetMinValidLenWithMatchOpcode ( LPBYTE OrgOpcode_Pb, int AtLeastLen_I);
 	char * duplicate_str (char * Org);
 	int getDBCSlen (char * DBCSstr);
+
+	LPSTR vkToStr(int vk, LPSTR Rtn, int Len);
 };//extern "C"
 
 #endif //ETC_H56NFRDA

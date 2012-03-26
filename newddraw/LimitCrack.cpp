@@ -22,7 +22,7 @@ using namespace std;
 #include "MenuResolution.h"
 #include "UnitLimit.h"
 #include "ExternQuickKey.h"
-
+#include "idlevillager.h"
 
 #include "LimitCrack.h"
 
@@ -95,6 +95,8 @@ LimitCrack::LimitCrack ( void)
 	SetUnitLimit= new UnitLimit (  MyConfig->GetIniInt ( "UnitLimit", 1500));
 
 	myExternQuickKey= new ExternQuickKey ;
+
+	IdleUnits= new CIdleUnits ();
 }
 
 LimitCrack::~LimitCrack ( void)
@@ -111,6 +113,7 @@ LimitCrack::~LimitCrack ( void)
 	delete SyncMenuResolution;
 
 	delete myExternQuickKey;
+	delete IdleUnits;
 }
 
 IncreaseAISearchMapEntriesLimit::IncreaseAISearchMapEntriesLimit ()

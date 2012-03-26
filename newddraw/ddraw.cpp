@@ -79,6 +79,7 @@ void GetSysDir();
 void SetupTAHookFileMap();
 void ShutDownTAHookFileMap();
 void EnableSound();
+//void ReplaceTAProc();
 
 char SystemDDraw[MAX_PATH];
 
@@ -96,6 +97,7 @@ TADRConfig * MyConfig;
 LimitCrack * NowCrackLimit;
 MenuResolution* SyncMenuResolution;
 InlineSingleHook * AddtionInitHook;
+SingleHook * WndProc_SH;
 
 int __stdcall AddtionInit (PInlineX86StackBuffer X86StrackBuffer)
 {
@@ -113,7 +115,11 @@ int __stdcall AddtionInit (PInlineX86StackBuffer X86StrackBuffer)
 
 	IDDrawSurface::OutptTxt ("Installing AddtionRoutine_CircleSelect");
 
-
+	
+	LocalShare->TAWndProc= TAWndProc_Addr;
+	DWORD WinProcAddrBuf= (DWORD)WinProc;
+	WndProc_SH= new SingleHook ( TAWndProcSH_Addr, 4, INLINE_UNPROTECTEVINMENT, (LPBYTE)&WinProcAddrBuf );
+	//ReplaceTAProc();
 	return 0;
 }
 
@@ -380,6 +386,14 @@ void EnableSound()
 	//WriteProcessMemory(GetCurrentProcess(), (void*)0x4CF3CF, &adress, 4, NULL);
 }
 
+/*
+void ReplaceTAProc()
+{
+	HWND TopWindow= *(HWND *)(0x051F320+ 0x40) ;
+
+	LocalShare->TAWndProc = (WNDPROC)SetWindowLong ( TopWindow, GWL_WNDPROC, (long)WinProc);
+}
+*/
 
 /*
 int WINAPI VidMemLargestFree(LPVOID arg1)

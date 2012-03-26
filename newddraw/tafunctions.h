@@ -118,5 +118,7 @@ extern unsigned int UnitLimit1Addr;
 extern unsigned int UnitLimit2Addr;
 
 extern BOOL * IsCheating;                        
+extern WNDPROC TAWndProc_Addr;
+extern unsigned int TAWndProcSH_Addr;
 
 #endif
