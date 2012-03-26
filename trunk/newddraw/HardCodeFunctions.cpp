@@ -4,7 +4,7 @@
 #include "tafunctions.h"
 #include "stdio.h"
 
-int ViewPlayerLos_Replay (int PlayerAryIndex)
+int ViewPlayerLos_Replay (int PlayerAryIndex, BOOL HaveControl)
 {
 	TAdynmemStruct * PTR1 = *(TAdynmemStruct * *)0x511de8;
 
@@ -12,9 +12,9 @@ int ViewPlayerLos_Replay (int PlayerAryIndex)
 	//PTR1->LOS_Sight_PlayerID= 0;
 	char Curt_LOS_Sight_PlayerID= PTR1->LOS_Sight_PlayerID;
 
-	if (10>PlayerAryIndex
+	if (PlayerAryIndex<10
 		&&(0!=PTR1->Players[PlayerAryIndex].PlayerActive)
-		&& (0xa!=PTR1->Players[PlayerAryIndex].PlayerAryIndex))
+		&& (10!=PTR1->Players[PlayerAryIndex].PlayerAryIndex))
 	{//valid player ID
 		unsigned char CurtPlayerType= PTR1->Players[PlayerAryIndex].My_PlayerType;
 
@@ -23,11 +23,17 @@ int ViewPlayerLos_Replay (int PlayerAryIndex)
 			|| (Player_RemoteHuman==CurtPlayerType)
 			|| (Player_RemoteAI==CurtPlayerType))
 		{
-			if (0<PlayerAryIndex)
+			if (0==PlayerAryIndex)
 			{//back to my view
+				
+				PlayerAryIndex= LocalShare->OrgLocalPlayerID;
+				PTR1->LocalHumanPlayer_PlayerID= PlayerAryIndex;
+			}
+			else
+			{
 				PTR1->EyeBallState|= FULLLOS;
 			}
-			
+
 			Curt_LOS_Sight_PlayerID= PlayerAryIndex;
 			//PTR1->LOS_Sight_PlayerID= Curt_LOS_Sight_PlayerID;
 			char ChatBuff[0x100];
@@ -39,8 +45,10 @@ int ViewPlayerLos_Replay (int PlayerAryIndex)
 			sprintf_s ( &ChatBuff[0x20], 0x100, "%d", Curt_LOS_Sight_PlayerID);
 			ChatBuff[0xd0]= 2;
 			ViewCommandProc ( ChatBuff);
-
-			PTR1->LocalHumanPlayer_PlayerID= Curt_LOS_Sight_PlayerID;
+			if (HaveControl)
+			{
+				PTR1->LocalHumanPlayer_PlayerID= Curt_LOS_Sight_PlayerID;
+			}
 		}
 	}
 

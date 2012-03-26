@@ -69,7 +69,7 @@ typedef void (__stdcall * _ApplySelectUnitGUI) (void);
 typedef void (__cdecl * _free_SafeWay) (LPVOID MemAddress);
 typedef LPDWORD (__stdcall * __GetUnitIDMaskAryByCategory) (LPSTR);
 
-int ViewPlayerLos_Replay (int PlayerAryIndex);
+int ViewPlayerLos_Replay (int PlayerAryIndex, BOOL HaveControl= FALSE);
 int UpdateTAProcess (void);
 BOOL AntiCheat (void);
 void DeselectUnits(void);

@@ -469,7 +469,14 @@ bool CIncome::Message(HWND WinProchWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 					{
 						DataShare->LockOn= 0;
 						DataShare->LosViewOn= 0xa;
-						ViewPlayerLos_Replay ( 0);
+						if (LocalShare->OrgLocalPlayerID!=Ptr->LocalHumanPlayer_PlayerID)
+						{
+							ViewPlayerLos_Replay ( 0, TRUE);
+						}
+						else
+						{
+							ViewPlayerLos_Replay ( 0);
+						}
 					}
 					else if (ClickedPlayerID==DataShare->LockOn)
 					{// now we deal about click in player res bar. first check if already lockon someone
@@ -482,7 +489,16 @@ bool CIncome::Message(HWND WinProchWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 					else
 					{// when watching not the one res bar, exchange this this one.
 						DataShare->LosViewOn= (CurtYPos- posY)/ PlayerHight+ 1;
-						ViewPlayerLos_Replay ( DataShare->LosViewOn);
+
+						if (DataShare->PlayingDemo)
+						{
+							ViewPlayerLos_Replay ( DataShare->LosViewOn, TRUE);
+						}
+						else
+						{
+							ViewPlayerLos_Replay ( DataShare->LosViewOn);
+						}
+						
 						//
 						if (LocalShare->OrgLocalPlayerID!=DataShare->LockOn)
 						{
