@@ -5,6 +5,9 @@
 #include <vector>
 using namespace std;
 
+#include "tamem.h"
+#include "tafunctions.h"
+
 #include "whiteboard.h"
 #include "MinimapHandler.h"
 #include "dddta.h"
@@ -29,7 +32,7 @@ using namespace std;
 #include "hook/etc.h"
 #include "hook/hook.h"
 #include "UnicodeSupport.h"
-#include "tafunctions.h"
+
 #include "LimitCrack.h"
 
 //---------------------------------------------------------------------------
@@ -52,7 +55,7 @@ IDDrawSurface::IDDrawSurface(LPDIRECTDRAWSURFACE lpTASurf, bool iWindowed, int i
 	SettingsDialog= new Dialog ;
 	ChangeQueue= new CChangeQueue ;
 	DDDTA= new CDDDTA ;
-	myExternQuickKey= new ExternQuickKey ;
+	
 
 	ValidIDrawSurface_i= 0xff7cd1a;
 
@@ -102,8 +105,7 @@ IDDrawSurface::IDDrawSurface(LPDIRECTDRAWSURFACE lpTASurf, bool iWindowed, int i
 	}
 	RegCloseKey(hKey);
 
-	//AddtionInit ( );
-	//DisableDeInterlace = true;
+	LocalShare->OrgLocalPlayerID= (*TAmainStruct_PtrPtr)->LocalHumanPlayer_PlayerID;
 }
 
 HRESULT __stdcall IDDrawSurface::QueryInterface(REFIID riid, LPVOID FAR * ppvObj)
@@ -134,7 +136,7 @@ ULONG __stdcall IDDrawSurface::Release()
 	delete SettingsDialog;
 	delete ChangeQueue;
 	delete DDDTA;
-	delete myExternQuickKey;
+	
 
 	ValidIDrawSurface_i= false;
 
@@ -163,6 +165,7 @@ ULONG __stdcall IDDrawSurface::Release()
 
 	delete this;
 
+	LocalShare->OrgLocalPlayerID= 0xa;
 	return result;
 }
 
@@ -777,7 +780,7 @@ LRESULT CALLBACK WinProc(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam
 		if(((CWarp*)LocalShare->CommanderWarp)->Message(WinProcWnd, Msg, wParam, lParam))
 			return 0;
 
-		if(((ExternQuickKey*)LocalShare->TAExternQuickKey)->Message(WinProcWnd, Msg, wParam, lParam))
+		if(((ExternQuickKey*)NowCrackLimit->myExternQuickKey)->Message(WinProcWnd, Msg, wParam, lParam))
 			return 0;
 
 		if(((CTAHook*)LocalShare->TAHook)->Message(WinProcWnd, Msg, wParam, lParam))

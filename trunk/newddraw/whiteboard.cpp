@@ -253,7 +253,7 @@ bool AlliesWhiteboard::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM 
 
 		if(wParam == VirtualKeyCode)
 		{
-			if ((0==(WATCH& (Ptr->Players[Ptr->LocalHumanPlayer_PlayerID].PlayerInfo->PropertyMask))))
+			if ((0==(WATCH& (Ptr->Players[LocalShare->OrgLocalPlayerID].PlayerInfo->PropertyMask))))
 			{//not work, when watching
 				WBKeyDown = true;
 			}

@@ -15,6 +15,11 @@ extern "C"
 	LONG RegWriteStr (HKEY RootKey, LPTSTR lpSubKey, LPTSTR lpValueName, LPCSTR Data, DWORD Strlen);
 	LONG RegWriteDword (HKEY RootKey, LPTSTR lpSubKey, LPTSTR lpValueName, DWORD Data);
 	LONG RegWriteData ( HKEY RootKey, LPTSTR lpSubKey, LPTSTR lpValueName, DWORD Type, LPVOID Data, DWORD TypeLen);
+
+	LONG RegReadData (HKEY RootKey, LPTSTR lpSubKey, LPTSTR lpValueName, DWORD Type, LPVOID Data, DWORD TypeLen);
+	LONG RegReadDword  (HKEY RootKey, LPTSTR lpSubKey, LPTSTR lpValueName,  DWORD * Data);
+	LONG RegReadStr  (HKEY RootKey, LPTSTR lpSubKey, LPTSTR lpValueName, LPCSTR Data, DWORD Strlen);
+
 	unsigned int __stdcall CalcCRC(char* data, int len);
 
 	int GetOpCodeSize (PBYTE Start);

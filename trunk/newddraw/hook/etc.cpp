@@ -1238,6 +1238,39 @@ char * trim_crlf_ (char * Str)
 	return Rtn;
 }
 
+LONG RegReadData (HKEY RootKey, LPTSTR lpSubKey, LPTSTR lpValueName, DWORD Type, LPVOID Data, DWORD TypeLen)
+{
+	HKEY hKey= RootKey;
+	DWORD dwDisposition;
+	DWORD Size = sizeof(int);
+	LONG Rtn= 0;
+	if (NULL!=lpSubKey)
+	{	
+		Rtn= RegCreateKeyEx ( RootKey, lpSubKey, NULL, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &dwDisposition);
+		if (ERROR_SUCCESS!=Rtn)
+		{
+			return Rtn;
+		}
+	}
+
+	Rtn= RegQueryValueEx(
+		hKey,	// handle of key to query 
+		lpValueName,	// address of name of value to query 
+		NULL,	// reserved 
+		&Type,	// address of buffer for value type 
+		static_cast<LPBYTE>(Data),	// address of data buffer 
+		&TypeLen 	// address of data buffer size 
+		);
+	//
+	if (ERROR_SUCCESS!=Rtn)
+	{
+		RegCloseKey(hKey);
+		return Rtn;
+	}
+	Rtn= RegCloseKey(hKey);
+
+	return Rtn;
+}
 
 LONG RegWriteData ( HKEY RootKey, LPTSTR lpSubKey, LPTSTR lpValueName, DWORD Type, LPVOID Data, DWORD TypeLen)
 {
@@ -1275,7 +1308,15 @@ LONG RegWriteStr (HKEY RootKey, LPTSTR lpSubKey, LPTSTR lpValueName, LPCSTR Data
 	return RegWriteData ( RootKey, lpSubKey, lpValueName, REG_SZ, (LPVOID)Data, Strlen);
 }
 
+LONG RegReadStr  (HKEY RootKey, LPTSTR lpSubKey, LPTSTR lpValueName, LPCSTR Data, DWORD Strlen)
+{
+	return RegReadData ( RootKey, lpSubKey, lpValueName, REG_SZ, (LPVOID)Data, Strlen);
+}
 
+LONG RegReadDword  (HKEY RootKey, LPTSTR lpSubKey, LPTSTR lpValueName, DWORD * Data)
+{
+	return RegReadData ( RootKey, lpSubKey, lpValueName, REG_DWORD, (BYTE *)Data, 4);
+}
 
 unsigned int __stdcall CalcCRC(char* data, int len)
 {

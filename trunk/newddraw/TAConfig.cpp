@@ -167,6 +167,23 @@ LONG TADRConfig::WriteTAReg_Str (LPTSTR lpValueName, LPCSTR Data, DWORD Strlen)
 	return rtn;
 }
 
+
+LONG TADRConfig::ReadTAReg_Str (LPTSTR lpValueName, LPCSTR Data, DWORD Strlen)
+{
+	HKEY TAhkey= TARegPath_HKEY ( );
+	LONG rtn=RegReadStr ( TAhkey, NULL, lpValueName, Data, Strlen);
+	RegCloseKey (TAhkey) ;
+	return rtn;
+}
+
+LONG TADRConfig::ReadTAReg_Dword (LPTSTR lpValueName, DWORD * Value_p)
+{
+	HKEY TAhkey= TARegPath_HKEY ( );
+	LONG rtn= RegReadDword ( TAhkey, NULL, lpValueName, Value_p);
+	RegCloseKey (TAhkey) ;
+	return rtn;
+}
+
 void TADRConfig::LoadIniRegSetting (/*__in __out */LPBYTE IniFileData)
 {
 	//load the [reg] part 
@@ -411,6 +428,59 @@ int TADRConfig::EnumIniRegInfo_End (PEnumRegInfo * iterator_arg)
 
 	int Rtn= RegStrings_vec.size ( )+ RegDwords_vec.size ( )- iterator_var->Count;
 	delete iterator_arg;
+	return Rtn;
+}
+
+DWORD TADRConfig::FindRegDword (LPSTR Name_cstrp, DWORD Default)
+{
+	DWORD Rtn= Default;
+	LPVOID Data;
+	LPCSTR Name_p;
+
+	PEnumRegInfo RegInfo_Enum;
+	int Type= MyConfig->EnumIniRegInfo_Begin ( &RegInfo_Enum, &Name_p, (LPCVOID *)&Data);
+
+	while (NULL!=Name_p)
+	{
+		if (0==Type)
+		{//DWORD
+			if (0==strncmp ( Name_cstrp, Name_p, 0x100))
+			{
+				Rtn= reinterpret_cast<DWORD>(Data);
+				break;
+			}
+		}
+
+		Type= MyConfig->EnumIniRegInfo_Next ( &RegInfo_Enum, &Name_p, (LPCVOID *)&Data);
+	}
+	MyConfig->EnumIniRegInfo_End ( &RegInfo_Enum);
+
+	return Rtn;
+}
+LPCSTR TADRConfig::FindRegStr (LPSTR Name_cstrp, LPCSTR Default)
+{
+	LPCSTR Rtn= Default;
+	LPVOID Data;
+	LPCSTR Name_p;
+
+	PEnumRegInfo RegInfo_Enum;
+	int Type= MyConfig->EnumIniRegInfo_Begin ( &RegInfo_Enum, &Name_p, (LPCVOID *)&Data);
+
+	while (NULL!=Name_p)
+	{
+		if (0!=Type)
+		{//DWORD
+			if (0==strncmp ( Name_cstrp, Name_p, 0x100))
+			{
+				Rtn= reinterpret_cast<LPCSTR>(Data);
+				break;
+			}
+		}
+
+		Type= MyConfig->EnumIniRegInfo_Next ( &RegInfo_Enum, &Name_p, (LPCVOID *)&Data);
+	}
+	MyConfig->EnumIniRegInfo_End ( &RegInfo_Enum);
+
 	return Rtn;
 }
 

@@ -168,6 +168,7 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="GameRedrawer.cpp" />
+    <ClCompile Include="MenuResolution.cpp" />
     <ClCompile Include="MiscHook.cpp" />
     <ClCompile Include="MultiGameWeaponID.cpp" />
     <ClCompile Include="rings.cpp">
@@ -269,6 +270,7 @@
     <ClInclude Include="IRenderer.h" />
     <ClInclude Include="LimitCrack.h" />
     <ClInclude Include="maprect.h" />
+    <ClInclude Include="MenuResolution.h" />
     <ClInclude Include="minimaphandler.h" />
     <ClInclude Include="MixingBuffers.h" />
     <ClInclude Include="MultiGameWeaponID.h" />
@@ -285,6 +287,7 @@
     <ClInclude Include="taunitdrawer.h" />
     <ClInclude Include="AiSeardchMapEntriesLimit.h" />
     <ClInclude Include="UnicodeSupport.h" />
+    <ClInclude Include="UnitLimit.h" />
     <ClInclude Include="unitrotate.h" />
     <ClInclude Include="UnitTypeLimit.h" />
     <ClInclude Include="WeaponIDLimit.h" />

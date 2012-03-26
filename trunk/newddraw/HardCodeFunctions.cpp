@@ -20,7 +20,8 @@ int ViewPlayerLos_Replay (int PlayerAryIndex)
 
 		if ((Player_LocalHuman==CurtPlayerType)
 			|| (Player_LocalAI==CurtPlayerType)
-			|| (Player_RemoteHuman==CurtPlayerType))
+			|| (Player_RemoteHuman==CurtPlayerType)
+			|| (Player_RemoteAI==CurtPlayerType))
 		{
 			if (0<PlayerAryIndex)
 			{//back to my view
@@ -39,6 +40,7 @@ int ViewPlayerLos_Replay (int PlayerAryIndex)
 			ChatBuff[0xd0]= 2;
 			ViewCommandProc ( ChatBuff);
 
+			PTR1->LocalHumanPlayer_PlayerID= Curt_LOS_Sight_PlayerID;
 		}
 	}
 
@@ -194,7 +196,8 @@ unsigned int EnterOption_Address = 0x0460160;
 
 unsigned int PressInOption_Address= 0x0045FC60;
 
-unsigned int AddtionInitAddr= 0x49E9A0;;
+unsigned int AddtionInitAddr= 0x0049E909;
+
 
 unsigned int Blt_BottomState0_TextRtn= 0x004C16D9 ;
 unsigned int Blt_BottomState0_TextAddr= 0x004C16D4 ;
@@ -205,3 +208,19 @@ unsigned int GetTextExtent_AssignCharLenAddr= 0x004C1480;
 unsigned int GetStrExtentAddr= 0x004A5030;
 
 unsigned int PopadStateAddr= 0x0468AC0;
+
+
+unsigned int Addr_0049E91C= 0x0049E91C;
+unsigned int Addr_0049E93B= 0x0049E93B;
+unsigned int Addr_00491A75= 0x00491A75;
+unsigned int Addr_00491B01= 0x00491B01;
+unsigned int Addr_0049802B= 0x0049802B;
+unsigned int Addr_004980AD= 0x004980AD;
+
+
+unsigned int TADontInit_Addr= 0x4B5AB6;
+
+unsigned int MPUnitLimitAddr= 0x0044CAFE;
+unsigned int UnitLimit0Addr= 0x491640;
+unsigned int UnitLimit1Addr=0x491659;
+unsigned int UnitLimit2Addr=0x491666;
