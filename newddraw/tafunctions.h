@@ -71,6 +71,7 @@ typedef LPDWORD (__stdcall * __GetUnitIDMaskAryByCategory) (LPSTR);
 
 int ViewPlayerLos_Replay (int PlayerAryIndex);
 int UpdateTAProcess (void);
+BOOL AntiCheat (void);
 void DeselectUnits(void);
 void UpdateSelectUnitEffect (void);
 void freeTAMem (LPVOID MemAddress);
@@ -116,6 +117,6 @@ extern unsigned int UnitLimit0Addr;
 extern unsigned int UnitLimit1Addr;
 extern unsigned int UnitLimit2Addr;
 
-
+extern BOOL * IsCheating;                        
 
 #endif

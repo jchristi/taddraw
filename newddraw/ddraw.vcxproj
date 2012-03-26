@@ -295,7 +295,6 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
     <None Include="ddraw.def" />
     <None Include="bitmaps\3stagedbutton.pcx" />
     <None Include="bitmaps\CheckBox.pcx" />

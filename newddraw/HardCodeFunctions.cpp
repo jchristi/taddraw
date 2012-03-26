@@ -61,6 +61,22 @@ int UpdateTAProcess (void)
 	return DataShare->TAProgress;
 }
 
+
+BOOL AntiCheat (void)
+{
+	// sync "+now Film Chris Include Reload Assert"  with cheating
+
+	if (TRUE==*IsCheating)
+	{
+		(*TAmainStruct_PtrPtr)->SoftwareDebugMode|= 2;
+	}
+	else
+	{
+		(*TAmainStruct_PtrPtr)->SoftwareDebugMode&= ! 2;
+	}
+
+	return TRUE;
+}
 LPDWORD GetUnitIDMaskAryByCategory (LPSTR CategoryName_cstrp)
 {
 	__try
@@ -224,3 +240,5 @@ unsigned int MPUnitLimitAddr= 0x0044CAFE;
 unsigned int UnitLimit0Addr= 0x491640;
 unsigned int UnitLimit1Addr=0x491659;
 unsigned int UnitLimit2Addr=0x491666;
+
+BOOL * IsCheating= reinterpret_cast<BOOL *>(0x5091CC);

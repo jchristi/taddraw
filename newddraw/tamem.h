@@ -265,7 +265,9 @@ struct TAdynmemStruct{
 	//char data9[0x6270];
 	ExplosionStruct Explosions[300]; //0x1491F
 	LPVOID Unk2; //0x1AB8F
-	char data10[0x1DEB4];
+	char data10[0x1D39C]; //0x38A47 0x037F2F  B18
+	unsigned short SoftwareDebugMode;// 0x37f2f
+	char data10_[0xB16];
 	int GameTime; //0x38A47
 	char ShotUrl;// 0x38a47+c= TA截图目录的字符串，即TA目录+当前用户名 
 	char data6[0x792];
@@ -698,7 +700,8 @@ typedef struct _OFFSCREEN
 enum PlayerPropertyMask
 {
 	WATCH= 0x40,
-	HUMANPLAYER= 0x80
+	HUMANPLAYER= 0x80,
+	PLAYERCHEATING= 0x2000
 };
 
 enum PlayerType

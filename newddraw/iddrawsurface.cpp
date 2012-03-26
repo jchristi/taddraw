@@ -722,7 +722,7 @@ LRESULT CALLBACK WinProc(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam
 	{
 		UpdateTAProcess ( );
 		//send message to unicode Support at first
-
+		AntiCheat ( );
 
 		//The thing in bottom need full-screen suuport
 		if(DataShare->ehaOff == 1 && !DataShare->PlayingDemo)
@@ -762,6 +762,9 @@ LRESULT CALLBACK WinProc(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam
 			}
 		}
 
+		if(((CIdleUnits*)LocalShare->IdleUnits)->Message(WinProcWnd, Msg, wParam, lParam))
+			return 0;
+
 		//////////////////////////////////////////////////////////////////////////
 
 		if(((AlliesWhiteboard*)LocalShare->Whiteboard)->Message(WinProcWnd, Msg, wParam, lParam))
@@ -785,9 +788,6 @@ LRESULT CALLBACK WinProc(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam
 
 		if(((CTAHook*)LocalShare->TAHook)->Message(WinProcWnd, Msg, wParam, lParam))
 			return 0;  //message handled by tahook class
-
-		if(((CIdleUnits*)LocalShare->IdleUnits)->Message(WinProcWnd, Msg, wParam, lParam))
-			return 0;
 
 
 		//   if(((CChangeQueue*)LocalShare->ChangeQueue)->Message(WinProcWnd, Msg, wParam, lParam))
