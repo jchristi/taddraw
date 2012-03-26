@@ -29,7 +29,10 @@ Dialog::Dialog()
 
 	VSyncPushed= false;
 
+
+
 	LocalShare->Dialog = this;
+	
 	
 	LPDIRECTDRAW TADD = (IDirectDraw*)LocalShare->TADirectDraw;
 
@@ -120,6 +123,7 @@ void Dialog::ShowDialog()
 {
 	WhiteboardKeyFocus= false;
 	KeyCodeFocus= false;
+	ShareBoxFocus= false;
 
 	posX= 640- DialogWidth;
 	posY= 30;

@@ -35,6 +35,14 @@ ExternQuickKey::ExternQuickKey ()
 		VirtualKeyCode = 88;
 	}
 
+	Add = (char*)0x41ac14;
+	Sub = (char*)0x41ac18;
+
+	OldAdd = *Add;
+	OldSub = *Sub;
+	NumAdd = 100;
+	NumSub = -100;
+
 	IDDrawSurface::OutptTxt ( "New ExternQuickKey");
 }
 
@@ -59,6 +67,8 @@ ExternQuickKey::~ExternQuickKey ()
 		delete HookInCircleSelect;
 	}
 	
+	WriteProcessMemory ( GetCurrentProcess(), (void*)Add, &OldAdd, 1, NULL);
+	WriteProcessMemory ( GetCurrentProcess(), (void*)Sub, &OldSub, 1, NULL);
 }
 
 bool ExternQuickKey::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
@@ -90,17 +100,34 @@ bool ExternQuickKey::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 				}
 			}
 		case WM_KEYDOWN:
-			if ((GetAsyncKeyState(VK_CONTROL)&0x8000)>0 && (GetAsyncKeyState(VK_SHIFT)&0x8000)==0)
+			if ((int)wParam==17)
 			{
-				if (0x53==(int)wParam)
-				{//ctrl+s
+
+				WriteProcessMemory(GetCurrentProcess(), (void*)Add, &NumAdd, 1, NULL);
+				WriteProcessMemory(GetCurrentProcess(), (void*)Sub, &NumSub, 1, NULL);
+				//break;
+			}
+
+			if (0x53==(int)wParam)
+			{//ctrl+s
+				if ((GetAsyncKeyState(VK_CONTROL)&0x8000)>0 && (GetAsyncKeyState(VK_SHIFT)&0x8000)==0)
+				{
+
 					SelectOnlyInScreenWeaponUnit ( MOVEUNITSELECTABLE);
 					UpdateSelectUnitEffect ( ) ;
 					ApplySelectUnitMenu_Wapper ( );
 					return true;
 				}
 			}
-
+			break;
+		case WM_KEYUP:
+			switch((int)wParam)
+			{
+			case 17:
+				WriteProcessMemory(GetCurrentProcess(), (void*)Add, &OldAdd, 1, NULL);
+				WriteProcessMemory(GetCurrentProcess(), (void*)Sub, &OldSub, 1, NULL);
+				break;
+			}
 		}
 	}
 	__except (EXCEPTION_EXECUTE_HANDLER)

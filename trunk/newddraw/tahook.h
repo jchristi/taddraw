@@ -81,10 +81,7 @@ class CTAHook
 	unsigned short (__stdcall *FindMouseUnit)(void);
 	int (__stdcall *SendText)(char *Text, int Type);
 
-    char *Add;
-    char *Sub;
-    char OldAdd;
-    char OldSub;
+
 
     //int StartMapX;
     //int StartMapY;

@@ -17,6 +17,12 @@ private:
 	InlineSingleHook * HookInCircleSelect;
 	int VirtualKeyCode;
 
+	char *Add;
+	char *Sub;
+	char OldAdd;
+	char OldSub;
+	char NumAdd;
+	char NumSub;
 public:
 	ExternQuickKey ();
 	~ExternQuickKey ();

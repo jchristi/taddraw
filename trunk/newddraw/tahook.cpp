@@ -18,8 +18,7 @@
 
 CTAHook *TAHook;
 
-char NumAdd = 100;
-char NumSub = -100;
+
 
 CTAHook::CTAHook()
 {
@@ -57,11 +56,7 @@ CTAHook::CTAHook()
 
 	lpRectSurf = CreateSurfPCXResource(50, true);
 
-	Add = (char*)0x41ac14;
-	Sub = (char*)0x41ac18;
 
-	OldAdd = *Add;
-	OldSub = *Sub;
 
 	ShowText = (void (__stdcall *)(PlayerStruct *Player, char *Text, int Unk1, int Unk2))0x463E50;
 	InterpretCommand = (void (__stdcall *)(char *Command, int Unk1))0x417B50;
@@ -89,8 +84,7 @@ CTAHook::~CTAHook()
 	if(DataShare->ehaOff == 1)
 		return;
 
-	WriteProcessMemory(GetCurrentProcess(), (void*)Add, &OldAdd, 1, NULL);
-	WriteProcessMemory(GetCurrentProcess(), (void*)Sub, &OldSub, 1, NULL);
+
 }
 
 bool CTAHook::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
@@ -126,14 +120,7 @@ bool CTAHook::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 					UpdateSpacing();
 					return true;
 				}
-			case 17: //ctrl
-				//TAhWnd = FindWindow("Total Annihilation Class", "Total Annihilation");
-				//GetWindowThreadProcessId(TAhWnd, &PID);
-				//TAProc = OpenProcess(PROCESS_ALL_ACCESS, false, PID);
-				WriteProcessMemory(GetCurrentProcess(), (void*)Add, &NumAdd, 1, NULL);
-				WriteProcessMemory(GetCurrentProcess(), (void*)Sub, &NumSub, 1, NULL);
-				//CloseHandle(TAProc);
-				break;
+
 			}
 			break;
 
@@ -143,16 +130,6 @@ bool CTAHook::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 				WriteLine = false;
 				RingWrite = false;
 				EnableTABuildRect();
-			}
-			else
-			{
-				switch((int)wParam)
-				{
-				case 17:
-					WriteProcessMemory(GetCurrentProcess(), (void*)Add, &OldAdd, 1, NULL);
-					WriteProcessMemory(GetCurrentProcess(), (void*)Sub, &OldSub, 1, NULL);
-					break;
-				}
 			}
 			break;
 
