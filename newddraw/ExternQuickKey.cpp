@@ -14,7 +14,6 @@
 
 ExternQuickKey::ExternQuickKey ()
 {
-	
 	TAMainStruct_Ptr= *(TAdynmemStruct * *) 0x00511de8;
 	//AddtionInit ( );
 	Semaphore_OnlyInScreenSameType= CreateSemaphore ( NULL, 1, 1, NULL);
