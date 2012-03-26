@@ -317,10 +317,10 @@ void TADRConfig::LoadIniRegSetting (/*__in __out */LPBYTE IniFileData)
 			tmp_cstrp= strstr ( RegType, "dword:");
 			if (NULL!=tmp_cstrp)
 			{//REG_DWORD
-				RegData [tmp_cstrp- RegType+ 4]= '0';
-				RegData [tmp_cstrp- RegType+ 5]= 'x';
+				//RegData [tmp_cstrp- RegType+ 4]= '0';
+				//RegData [tmp_cstrp- RegType+ 5]= 'x';
 
-				Value= _strtol_l ( &RegData[tmp_cstrp- RegType+ 4], NULL, 0x10, NULL);
+				Value= _strtol_l ( &RegData[tmp_cstrp- RegType+ 6], NULL, 0x10, NULL);
 				* strchr ( RegName , '\"')= 0;
 				RegDword_tmp= new RegDword ( RegName , strlen ( RegName ), Value);
 				RegDwords_vec.push_back ( RegDword_tmp);

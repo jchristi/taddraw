@@ -93,7 +93,7 @@ BOOL AntiCheat (void)
 	}
 	else
 	{
-		(*TAmainStruct_PtrPtr)->SoftwareDebugMode&= ! 2;
+		(*TAmainStruct_PtrPtr)->SoftwareDebugMode= ((*TAmainStruct_PtrPtr)->SoftwareDebugMode)& (~ 2);
 	}
 
 	return TRUE;
