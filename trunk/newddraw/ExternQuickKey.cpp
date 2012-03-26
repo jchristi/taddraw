@@ -24,6 +24,18 @@ ExternQuickKey::ExternQuickKey ()
 	HookInCircleSelect= new InlineSingleHook ( (unsigned int)AddrAboutCircleSelect, 5, 
 		INLINE_5BYTESLAGGERJMP, AddtionRoutine_CircleSelect);
 
+	HKEY hKey;
+	DWORD dwDisposition;
+	DWORD Size;
+
+	RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Yankspankers\\Eye", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &dwDisposition);
+
+	Size = sizeof(int);
+	if(RegQueryValueEx(hKey, "KeyCode", NULL, NULL, (unsigned char*)&VirtualKeyCode, &Size) != ERROR_SUCCESS)
+	{
+		VirtualKeyCode = 88;
+	}
+
 	IDDrawSurface::OutptTxt ( "New ExternQuickKey");
 }
 
@@ -61,23 +73,25 @@ bool ExternQuickKey::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 		switch (Msg)
 		{
 		case WM_LBUTTONDBLCLK:
-			int xPos;
-			xPos= LOWORD(lParam);
-			int yPos;
-			yPos = HIWORD(lParam);
-			if ((xPos>128)&&(xPos<LocalShare->ScreenWidth)&&(yPos>32)&&(yPos<(LocalShare->ScreenHeight- 0x30)))//TA的屏幕小地图是0x80的宽度.下方的状态栏约是0x30的宽度
-			{
-				if (0!=TAMainStruct_Ptr->MouseOverUnit)
+			if ((GetAsyncKeyState(VirtualKeyCode)&0x8000)==0)
+			{// don't catch the msg when whiteboard key down.
+				int xPos;
+				xPos= LOWORD(lParam);
+				int yPos;
+				yPos = HIWORD(lParam);
+				if ((xPos>128)&&(xPos<LocalShare->ScreenWidth)&&(yPos>32)&&(yPos<(LocalShare->ScreenHeight- 0x30)))//TA的屏幕小地图是0x80的宽度.下方的状态栏约是0x30的宽度
 				{
-					SelectOnlyInScreenSameTypeUnit ( FALSE);
-					UpdateSelectUnitEffect ( ) ;
-					ApplySelectUnitMenu_Wapper ( );
+					if (0!=TAMainStruct_Ptr->MouseOverUnit)
+					{
+						SelectOnlyInScreenSameTypeUnit ( FALSE);
+						UpdateSelectUnitEffect ( ) ;
+						ApplySelectUnitMenu_Wapper ( );
+						return true;
+					}
 				}
-
-				return true;
 			}
 		case WM_KEYDOWN:
-			if ((GetAsyncKeyState(VK_CONTROL)&0x8000)>0 && (GetAsyncKeyState(VK_SHIFT	)&0x8000)==0)
+			if ((GetAsyncKeyState(VK_CONTROL)&0x8000)>0 && (GetAsyncKeyState(VK_SHIFT)&0x8000)==0)
 			{
 				if (0x53==(int)wParam)
 				{//ctrl+s
@@ -352,6 +366,11 @@ int __stdcall AddtionRoutine_CircleSelect (PInlineX86StackBuffer X86StrackBuffer
 	//int Selected= X86StrackBuffer->Ebp;
 	__try	
 	{
+		if (DataShare->ehaOff == 1)
+		{
+			__leave;
+		}
+
 		if (TAInGame==DataShare->TAProgress)
 		{
 			if (0<(0x8000&GetKeyState ( 0x57)))

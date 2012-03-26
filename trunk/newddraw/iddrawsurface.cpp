@@ -74,8 +74,6 @@ IDDrawSurface::IDDrawSurface(LPDIRECTDRAWSURFACE lpTASurf, bool iWindowed, int i
 
 	DataShare->IsRunning = 10;
 
-	if(LocalShare->TAWndProc == NULL)
-		ReplaceTAProc();
 	VerticalSync = true;
 
 	//check if version is 3.1 standar
@@ -518,13 +516,6 @@ void IDDrawSurface::OutptInt(int Int_I)
 #endif //DEBUG
 }
 
-void IDDrawSurface::ReplaceTAProc()
-{
-	HWND TopWindow;
-	TopWindow = GetForegroundWindow();
-
-	LocalShare->TAWndProc = (WNDPROC)SetWindowLong(TopWindow, GWL_WNDPROC, (long)WinProc);
-}
 
 void IDDrawSurface::Set(bool EnableVSync)
 {
@@ -729,6 +720,20 @@ LRESULT CALLBACK WinProc(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam
 			return LocalShare->TAWndProc ( WinProcWnd, Msg, wParam, lParam);
 
 
+		//////////////////////////////////////////////////////////////////////////
+		if (NULL!=NowCrackLimit)
+		{
+			if(NowCrackLimit->myExternQuickKey->Message(WinProcWnd, Msg, wParam, lParam))
+				return 0;
+			if (NowCrackLimit->NowSupportUnicode->Message(WinProcWnd, Msg, wParam, lParam))
+			{
+				return 0;
+			}
+			if((NULL!=NowCrackLimit->IdleUnits)
+				&&((NowCrackLimit->IdleUnits)->Message(WinProcWnd, Msg, wParam, lParam)))
+				return 0;
+		}
+
 		if((Msg == WM_KEYUP)||(WM_KEYDOWN==Msg))
 		{
 			if(wParam == 120&&(GetAsyncKeyState ( 17) &0x8000)>0)
@@ -737,7 +742,7 @@ LRESULT CALLBACK WinProc(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam
 				{
 					((IDDrawSurface*)LocalShare->DDrawSurfClass)->ScreenShot();
 				}
-				
+
 				return 0;
 			}
 			if( wParam == VK_SNAPSHOT)
@@ -751,26 +756,17 @@ LRESULT CALLBACK WinProc(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam
 				return 0;
 			}
 		}
-		
-		//////////////////////////////////////////////////////////////////////////
-		//unicode
-		if (NULL!=NowCrackLimit)
-		{
-			if (NowCrackLimit->NowSupportUnicode->Message(WinProcWnd, Msg, wParam, lParam))
-			{
-				return 0;
-			}
-		}
 
-		if(((CIdleUnits*)LocalShare->IdleUnits)->Message(WinProcWnd, Msg, wParam, lParam))
-			return 0;
+
 
 		//////////////////////////////////////////////////////////////////////////
 
-		if(((AlliesWhiteboard*)LocalShare->Whiteboard)->Message(WinProcWnd, Msg, wParam, lParam))
+		if((NULL!=LocalShare->Whiteboard)
+			&&(((AlliesWhiteboard*)LocalShare->Whiteboard)->Message(WinProcWnd, Msg, wParam, lParam)))
 			return 0;
 
-		if(((CIncome*)LocalShare->Income)->Message(WinProcWnd, Msg, wParam, lParam))
+		if((NULL!=LocalShare->Income)
+			&&(((CIncome*)LocalShare->Income)->Message(WinProcWnd, Msg, wParam, lParam)))
 			return 0;  //message handled by the income class
 
 		if(NULL!=(LocalShare->Dialog))
@@ -780,20 +776,21 @@ LRESULT CALLBACK WinProc(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam
 		}
 
 
-		if(((CWarp*)LocalShare->CommanderWarp)->Message(WinProcWnd, Msg, wParam, lParam))
+		if((LocalShare->CommanderWarp)
+			&&(((CWarp*)LocalShare->CommanderWarp)->Message(WinProcWnd, Msg, wParam, lParam)))
 			return 0;
 
-		if(((ExternQuickKey*)NowCrackLimit->myExternQuickKey)->Message(WinProcWnd, Msg, wParam, lParam))
-			return 0;
 
-		if(((CTAHook*)LocalShare->TAHook)->Message(WinProcWnd, Msg, wParam, lParam))
+		if((NULL!=LocalShare->TAHook)
+			&&(((CTAHook*)LocalShare->TAHook)->Message(WinProcWnd, Msg, wParam, lParam)))
 			return 0;  //message handled by tahook class
 
 
 		//   if(((CChangeQueue*)LocalShare->ChangeQueue)->Message(WinProcWnd, Msg, wParam, lParam))
 		//     return 0;
 
-		if(((CDDDTA*)LocalShare->DDDTA)->Message(WinProcWnd, Msg, wParam, lParam))
+		if((NULL!=LocalShare->DDDTA)
+			&&(((CDDDTA*)LocalShare->DDDTA)->Message(WinProcWnd, Msg, wParam, lParam)))
 			return 0;
 
 		//   if(((CUnitRotate*)LocalShare->UnitRotate)->Message(WinProcWnd, Msg, wParam, lParam))

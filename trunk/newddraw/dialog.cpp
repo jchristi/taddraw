@@ -70,8 +70,6 @@ Dialog::Dialog()
 	ReadPos();
 	ReadSettings();
 	
-	
-
 	EnterOption_hook= new InlineSingleHook ( EnterOption_Address, 5, INLINE_5BYTESLAGGERJMP, EnterOption);
 	PressInOption_hook= new InlineSingleHook ( PressInOption_Address, 5, INLINE_5BYTESLAGGERJMP, PressInOption);
 	
@@ -113,7 +111,6 @@ Dialog::~Dialog()
 		delete PressInOption_hook;
 	}
 	
-
 	WritePos();
 	WriteSettings();
 	LocalShare->Dialog = NULL;
@@ -121,7 +118,7 @@ Dialog::~Dialog()
 
 void Dialog::ShowDialog()
 {
-	WhiteboardKeyFocus= true;
+	WhiteboardKeyFocus= false;
 	KeyCodeFocus= false;
 
 	posX= 640- DialogWidth;
@@ -964,7 +961,8 @@ void Dialog::DrawKeyCode()
 		FillRect(KeyCodePosX, KeyCodePosY, KeyCodePosX+KeyCodeWidth, KeyCodePosY+KeyCodeHeight, 0);
 
 		char String[20];
-		wsprintf(String, "%i", VirtualKeyCode);
+		vkToStr ( VirtualKeyCode, String, 20);
+		//wsprintf(String, "%i", VirtualKeyCode);
 		if(KeyCodeFocus)
 			DrawTinyText(String, KeyCodePosX + 2, KeyCodePosY + 3, 255U);
 		else
@@ -1159,7 +1157,8 @@ void Dialog::DrawWhiteboardKey()
 		FillRect(WhiteboardKeyPosX, WhiteboardKeyPosY, WhiteboardKeyPosX+WhiteboardKeyWidth, WhiteboardKeyPosY+WhiteboardKeyHeight, 0);
 
 		char String[20];
-		wsprintf(String, "%i", VirtualWhiteboardKey);
+		vkToStr ( VirtualWhiteboardKey, String, 20);
+		//wsprintf ( String, "%i", VirtualWhiteboardKey);
 		if(WhiteboardKeyFocus)
 			DrawTinyText(String, static_cast<int>(WhiteboardKeyPosX + 2), static_cast<int>(WhiteboardKeyPosY + 3), 255U);
 		else

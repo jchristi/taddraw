@@ -56,7 +56,20 @@ int UpdateTAProcess (void)
 {
 	TAdynmemStruct * PTR1 = *(TAdynmemStruct * *)0x511de8;
 
-	DataShare->TAProgress= PTR1->State_GUI_CallBack;
+
+	if (2==PTR1->State_GUI_CallBack)
+	{
+		DataShare->TAProgress= TALobby;
+	}
+	if (5==PTR1->State_GUI_CallBack)
+	{
+		DataShare->TAProgress= TALoading;
+	}
+	if (6==PTR1->State_GUI_CallBack)
+	{
+		DataShare->TAProgress= TAInGame;
+	}
+	
 
 	return DataShare->TAProgress;
 }
@@ -242,3 +255,7 @@ unsigned int UnitLimit1Addr=0x491659;
 unsigned int UnitLimit2Addr=0x491666;
 
 BOOL * IsCheating= reinterpret_cast<BOOL *>(0x5091CC);
+
+WNDPROC TAWndProc_Addr= (WNDPROC )0x4B5CC0;
+
+unsigned int TAWndProcSH_Addr=0x4B5B82;

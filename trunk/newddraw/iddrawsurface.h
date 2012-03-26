@@ -5,9 +5,10 @@
 // shall to reduce internation between class
 //class ExternQuickKey;
 //---------------------------------------------------------------------------
-#define TALobby 2
-#define TALoading 5
-#define TAInGame 6
+
+#define TALobby 1
+#define TALoading 2
+#define TAInGame 3
 
 //#define DEBUG_INFO
 
@@ -94,7 +95,6 @@ typedef struct LocalShare_
 	LPVOID TAHook;
 	LPVOID Whiteboard;
 	LPVOID CommanderWarp;
-	LPVOID IdleUnits;
 	LPVOID MapRect;
 	LPVOID UnitRotate;
 	LPVOID ChangeQueue;
@@ -118,7 +118,6 @@ private:
 
 	bool FrontSurf;
 	bool Windowed;
-	void ReplaceTAProc();
 	LPVOID SurfaceMemory;
 	int lPitch;
 	AlliesWhiteboard * WhiteBoard;

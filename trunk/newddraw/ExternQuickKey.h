@@ -15,6 +15,7 @@ private:
 	HANDLE Semaphore_FilterSelect;
 	HANDLE Semaphore_OnlyInScreenWeapon;
 	InlineSingleHook * HookInCircleSelect;
+	int VirtualKeyCode;
 
 public:
 	ExternQuickKey ();

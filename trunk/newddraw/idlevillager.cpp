@@ -8,7 +8,7 @@
 
 CIdleUnits::CIdleUnits()
 {
-	LocalShare->IdleUnits = this;
+	//LocalShare->IdleUnits = this;
 	Semaphore_IdleCons= CreateSemaphore ( NULL, 1, 1, NULL);
 	IDDrawSurface::OutptTxt ( "New CIdleUnits");
 }
@@ -291,13 +291,14 @@ void CIdleUnits::FindIdleConst()
 						if (0!=(0x20& Start->UnitSelected))
 						{
 							LastNum = i;
-							ScrollToCenter(*XPos, *YPos);
+							
 
 							DeselectUnits ( );
 							*UnitSelected=  *UnitSelected| UnitSelected_State;
 							UpdateSelectUnitEffect ( ) ;
 							ApplySelectUnitMenu_Wapper ( );
 
+							ScrollToCenter(*XPos, *YPos);
 							goto ReleaseIdleConsSemaphore;
 						}
 
@@ -339,8 +340,8 @@ void CIdleUnits::ScrollToCenter(int x, int y)
 	int *XPointer = (int*)(*PTR + 0x1431f);
 	int *YPointer = (int*)(*PTR + 0x14323);
 
-	x -= (LocalShare->ScreenWidth-128)/2;
-	y -= (LocalShare->ScreenHeight-64)/2;
+	x -= ((*(DWORD *)(0x051F320+ 0x0D4))-128)/2;
+	y -= ((*(DWORD *)(0x051F320+ 0x0D8))-64)/2;
 
 	if(x<0)
 		x = 0;

@@ -998,7 +998,6 @@ void CTAHook::VisualizeRing(LPDIRECTDRAWSURFACE DestSurf)
 			DestSurf->Blt(&Dest, lpRectSurf, NULL, DDBLT_WAIT | DDBLT_KEYSRCOVERRIDE, &ddbltfx);
 		}
 	}
-
 }
 
 void CTAHook::ClickBuilding(int Xpos, int Ypos)
@@ -1117,5 +1116,5 @@ void CTAHook::DisableTABuildRect()
 
 void CTAHook::PaintMinimapRect()
 {
-	TADrawRect(NULL, &TAdynmem->MinimapRect, 0xC2);	
+	TADrawRect ( NULL, &TAdynmem->MinimapRect, 0xC2);	
 }
