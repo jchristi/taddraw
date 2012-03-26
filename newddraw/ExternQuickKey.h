@@ -6,7 +6,6 @@ class InlineSingleHook;
 enum TAUnitType;
 
 int __stdcall AddtionRoutine_CircleSelect (PInlineX86StackBuffer X86StrackBuffer);
-extern InlineSingleHook* HookInCircleSelect;
 
 class ExternQuickKey
 {
@@ -15,7 +14,8 @@ private:
 	HANDLE Semaphore_OnlyInScreenSameType;
 	HANDLE Semaphore_FilterSelect;
 	HANDLE Semaphore_OnlyInScreenWeapon;
-		
+	InlineSingleHook * HookInCircleSelect;
+
 public:
 	ExternQuickKey ();
 	~ExternQuickKey ();

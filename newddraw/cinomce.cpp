@@ -66,7 +66,7 @@ void CIncome::BlitIncome(LPDIRECTDRAWSURFACE DestSurf)
 				SurfaceMemory = ddsd.lpSurface;
 				lPitch = ddsd.lPitch;
 
-				if((0!=(WATCH& (Ptr->Players[Ptr->LocalHumanPlayer_PlayerID].PlayerInfo->PropertyMask)))
+				if((0!=(WATCH& (Ptr->Players[LocalShare->OrgLocalPlayerID].PlayerInfo->PropertyMask)))
 					||DataShare->PlayingDemo)
 					PlayerDrawn = ShowAllIncome();
 				else
@@ -458,7 +458,7 @@ bool CIncome::Message(HWND WinProchWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 				TAdynmemStruct * Ptr;
 				Ptr	= *(TAdynmemStruct* *)0x00511de8;
 				if(DataShare->PlayingDemo
-					|| (0!=(WATCH& (Ptr->Players[Ptr->LocalHumanPlayer_PlayerID].PlayerInfo->PropertyMask))))
+					|| (0!=(WATCH& (Ptr->Players[LocalShare->OrgLocalPlayerID].PlayerInfo->PropertyMask))))
 				{
 					//((Dialog*)LocalShare->Dialog)->ShowDialog();
 					WORD CurtXPos= LOWORD(lParam);
@@ -468,7 +468,7 @@ bool CIncome::Message(HWND WinProchWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 					if (CurtYPos>(posY+ LocalShare->Height- PlayerHight))
 					{
 						DataShare->LockOn= 0;
-						DataShare->LosViewOn= 0xf;
+						DataShare->LosViewOn= 0xa;
 						ViewPlayerLos_Replay ( 0);
 					}
 					else if (ClickedPlayerID==DataShare->LockOn)
@@ -484,7 +484,7 @@ bool CIncome::Message(HWND WinProchWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 						DataShare->LosViewOn= (CurtYPos- posY)/ PlayerHight+ 1;
 						ViewPlayerLos_Replay ( DataShare->LosViewOn);
 						//
-						if (Ptr->LocalHumanPlayer_PlayerID!=DataShare->LockOn)
+						if (LocalShare->OrgLocalPlayerID!=DataShare->LockOn)
 						{
 							DataShare->LockOn= DataShare->LosViewOn;;
 						}

@@ -56,9 +56,13 @@ public:
 
 	LONG WriteTAReg_Str (LPTSTR lpValueName, LPCSTR Data, DWORD Strlen);
 	LONG WriteTAReg_Dword (LPTSTR lpValueName, DWORD Value);
-	
+	LONG ReadTAReg_Dword (LPTSTR lpValueName, DWORD * Value_p);
+	LONG ReadTAReg_Str (LPTSTR lpValueName, LPCSTR Data, DWORD Strlen);
+
 	unsigned int GetIniCrc (void);
 	
+	LPCSTR FindRegStr (LPSTR Name_cstrp, LPCSTR Default);
+	DWORD FindRegDword (LPSTR Name_cstrp, DWORD Default);
 private:
 	void LoadIniRegSetting ( LPBYTE IniFileData);
 	HKEY TARegPath_HKEY (void);

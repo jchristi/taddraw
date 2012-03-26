@@ -99,9 +99,6 @@
     <ClCompile Include="hook\InlineHook.cpp">
       <Filter>Source Files\Functions\misc\hook</Filter>
     </ClCompile>
-    <ClCompile Include="ExternQuickKey.cpp">
-      <Filter>Source Files\Functions\externFromChina</Filter>
-    </ClCompile>
     <ClCompile Include="HardCodeFunctions.cpp">
       <Filter>Source Files\HardCodeInTA3.1c</Filter>
     </ClCompile>
@@ -165,9 +162,6 @@
     <ClCompile Include="MiscHook.cpp">
       <Filter>Source Files\Functions\externFromChina\LimitCrack</Filter>
     </ClCompile>
-    <ClCompile Include="MultiGameWeaponID.cpp">
-      <Filter>Source Files\Functions\externFromChina\LimitCrack</Filter>
-    </ClCompile>
     <ClCompile Include="LimitCrack.cpp">
       <Filter>Source Files\Functions\externFromChina\LimitCrack</Filter>
     </ClCompile>
@@ -177,11 +171,20 @@
     <ClCompile Include="dialog.cpp">
       <Filter>Source Files\Functions\OrginalTadr</Filter>
     </ClCompile>
-    <ClCompile Include="UnicodeSupport.cpp">
-      <Filter>Source Files\Functions\externFromChina</Filter>
-    </ClCompile>
     <ClCompile Include="hook\etc.cpp">
       <Filter>Source Files\Functions\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuResolution.cpp">
+      <Filter>Source Files\Functions\externFromChina\LimitCrack</Filter>
+    </ClCompile>
+    <ClCompile Include="ExternQuickKey.cpp">
+      <Filter>Source Files\Functions\externFromChina\LimitCrack</Filter>
+    </ClCompile>
+    <ClCompile Include="UnicodeSupport.cpp">
+      <Filter>Source Files\Functions\externFromChina\LimitCrack</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiGameWeaponID.cpp">
+      <Filter>Source Files\Functions\externFromChina\LimitCrack</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -226,9 +229,6 @@
     </ClInclude>
     <ClInclude Include="hook\hook.h">
       <Filter>Header Files\others</Filter>
-    </ClInclude>
-    <ClInclude Include="ExternQuickKey.h">
-      <Filter>Header Files\Functions\externFromChina</Filter>
     </ClInclude>
     <ClInclude Include="bookmarks.h">
       <Filter>Header Files\Functions\OrginalTadr</Filter>
@@ -309,7 +309,16 @@
       <Filter>Header Files\Functions\externFromChina\LimitCrack</Filter>
     </ClInclude>
     <ClInclude Include="UnicodeSupport.h">
-      <Filter>Header Files\Functions\externFromChina</Filter>
+      <Filter>Header Files\Functions\externFromChina\LimitCrack</Filter>
+    </ClInclude>
+    <ClInclude Include="ExternQuickKey.h">
+      <Filter>Header Files\Functions\externFromChina\LimitCrack</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuResolution.h">
+      <Filter>Header Files\Functions\externFromChina\LimitCrack</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitLimit.h">
+      <Filter>Header Files\Functions\externFromChina\LimitCrack</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

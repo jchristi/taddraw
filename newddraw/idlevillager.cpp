@@ -256,6 +256,10 @@ void CIdleUnits::FindIdleConst()
 	int i= 0;
 	int MyMaxUnit= PTR->Players[PTR->LocalHumanPlayer_PlayerID].UnitsNumber;
 
+	if (LocalShare->OrgLocalPlayerID!=PTR->LocalHumanPlayer_PlayerID)
+	{// do not support this on 
+		return ;
+	}
 
 	while (i<=MyMaxUnit)
 	{
@@ -284,7 +288,6 @@ void CIdleUnits::FindIdleConst()
 
 					if((*UnitState==41 || *UnitState==64) && i>LastNum) //idle
 					{
-						
 						if (0!=(0x20& Start->UnitSelected))
 						{
 							LastNum = i;

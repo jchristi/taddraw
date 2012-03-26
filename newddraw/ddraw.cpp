@@ -11,13 +11,13 @@ using namespace std;
 #include "hook/etc.h"
 #include "hook/hook.h"
 #include "UnicodeSupport.h"
+#include "MenuResolution.h"
 
 #include "tamem.h"
 #include "tafunctions.h"
 #include "ExternQuickKey.h"
 #include "LimitCrack.h"
 #include "taHPI.h"
-
 
 
 #include "TAConfig.h"
@@ -89,30 +89,31 @@ HINSTANCE HInstance;
 bool Log = true;
 
 //here is code that in extern from china
-InlineSingleHook * AddtionInitHook;
+
 
 _TAHPI * TAHPI;
 TADRConfig * MyConfig;
 LimitCrack * NowCrackLimit;
-
+MenuResolution* SyncMenuResolution;
+InlineSingleHook * AddtionInitHook;
 
 int __stdcall AddtionInit (PInlineX86StackBuffer X86StrackBuffer)
 {
-
 	EnableSound();
 
 	IDDrawSurface::OutptTxt ("Init TAHPI");
-	TAHPI= new _TAHPI ( TRUE);
+	TAHPI= new _TAHPI ( FALSE);
+	//break limit
+
 	IDDrawSurface::OutptTxt ("Init TAConfig");
 	MyConfig = new TADRConfig ();
-	//break limit
+
 	IDDrawSurface::OutptTxt ("Install Limit Crack");
 	NowCrackLimit= new LimitCrack;
 
 	IDDrawSurface::OutptTxt ("Installing AddtionRoutine_CircleSelect");
 
-	HookInCircleSelect= new InlineSingleHook ( (unsigned int)AddrAboutCircleSelect, 5, 
-		INLINE_5BYTESLAGGERJMP, AddtionRoutine_CircleSelect);
+
 	return 0;
 }
 
@@ -120,12 +121,13 @@ void AddtionRelease (void)
 {
 	IDDrawSurface::OutptTxt ("Uninstall Limit Crack");
 	delete NowCrackLimit;
-	delete MyConfig;
+
 	delete TAHPI;
 
-	IDDrawSurface::OutptTxt ("Release AddtionRoutine_CircleSelect");
-	delete HookInCircleSelect;
+	delete MyConfig;
 
+	IDDrawSurface::OutptTxt ("Release AddtionRoutine_CircleSelect");
+	
 	//delete self :D
 	delete AddtionInitHook;
 }
@@ -154,12 +156,11 @@ bool APIENTRY DllMain(HINSTANCE hinst, unsigned long reason, void*)
 		SetupTAHookFileMap();
 
 		DataShare->IsRunning = 5;
- 		
-		
+
 		//hook the address that loaded HPI file.
+
 		AddtionInitHook= new InlineSingleHook ( AddtionInitAddr, 5, 
 			INLINE_5BYTESLAGGERJMP, AddtionInit);
-
 	}
 	if(reason==DLL_PROCESS_DETACH)
 	{

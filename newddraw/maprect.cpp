@@ -100,7 +100,7 @@ void CMapRect::LockBlit(char *VidBuf, int Pitch)
 		
 		for(int i=1; i<10; i++)
 		{
-			if((DataShare->allies[i] || DataShare->PlayingDemo|| (0!=(WATCH& (Ptr->Players[Ptr->LocalHumanPlayer_PlayerID].PlayerInfo->PropertyMask))))
+			if((DataShare->allies[i] || DataShare->PlayingDemo|| (0!=(WATCH& (Ptr->Players[LocalShare->OrgLocalPlayerID].PlayerInfo->PropertyMask))))
 				&& DataShare->OtherMapX[i]!=-1 && DataShare->PlayerNames[i][0]!='\0')
 			{
 				Dest.left = static_cast<LONG>(((((float)(DataShare->OtherMapX[i]) / (float)(*MapSizeX))*MiniMapWidth) + XOffset) - Width/2);
@@ -109,7 +109,7 @@ void CMapRect::LockBlit(char *VidBuf, int Pitch)
 				Dest.bottom = Dest.top + Height;
 
 				if(DataShare->PlayingDemo
-					|| (0!=(WATCH& (Ptr->Players[Ptr->LocalHumanPlayer_PlayerID].PlayerInfo->PropertyMask))))
+					|| (0!=(WATCH& (Ptr->Players[LocalShare->OrgLocalPlayerID].PlayerInfo->PropertyMask))))
 				{
 					if(DataShare->LockOn==i)
 						((AlliesWhiteboard*)LocalShare->Whiteboard)->ScrollToCenter(DataShare->OtherMapX[i], DataShare->OtherMapY[i]);

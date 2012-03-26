@@ -6,6 +6,10 @@ using namespace std;
 #include "hook/etc.h"
 #include "hook/hook.h"
 
+#include "tamem.h"
+#include "tafunctions.h"
+
+
 #include "AiSeardchMapEntriesLimit.h"
 #include "WeaponIDLimit.h"
 #include "UnitTypeLimit.h"
@@ -15,9 +19,11 @@ using namespace std;
 #include "SwitchAlt.h"
 #include "MultiGameWeaponID.h"
 #include "UnicodeSupport.h"
+#include "MenuResolution.h"
+#include "UnitLimit.h"
+#include "ExternQuickKey.h"
 
-#include "tamem.h"
-#include "tafunctions.h"
+
 #include "LimitCrack.h"
 
 #include "TAConfig.h"
@@ -82,6 +88,13 @@ LimitCrack::LimitCrack ( void)
 	FontName[0]= 0;
 	MyConfig->GetIniStr ( "UnicodeSupport", FontName, 0x100, NULL);
 	NowSupportUnicode= new UnicodeSupport ( FontName, MyConfig->GetIniInt ( "UnicodeSupport_Color", 0xffffff), MyConfig->GetIniInt ( "UnicodeSupport_Background", 0x000000));
+
+
+	SyncMenuResolution= new MenuResolution ( MyConfig->GetIniBool ( "MenuResolution", FALSE));
+
+	SetUnitLimit= new UnitLimit (  MyConfig->GetIniInt ( "UnitLimit", 1500));
+
+	myExternQuickKey= new ExternQuickKey ;
 }
 
 LimitCrack::~LimitCrack ( void)
@@ -95,6 +108,9 @@ LimitCrack::~LimitCrack ( void)
 	delete NowIncreaseSfxLimit;
 	delete NowModifyWeaponPacket;
 	
+	delete SyncMenuResolution;
+
+	delete myExternQuickKey;
 }
 
 IncreaseAISearchMapEntriesLimit::IncreaseAISearchMapEntriesLimit ()
@@ -666,3 +682,61 @@ void IncreaseSfxLimit::SetNewLimit ( DWORD SfxVectorNum, DWORD MaxLimit)
 	}
 	Sfx_mallocBufSize= new InlineSingleHook ( Sfx_mallocBufSizeAddr, 0x5, INLINE_5BYTESLAGGERJMP, Sfx_mallocBufSizeRouter);
 }
+
+
+
+UnitLimit::UnitLimit ()
+{
+
+	MPUnitLimit= NULL;
+	UnitLimit0= NULL;
+	UnitLimit1= NULL;
+	UnitLimit2= NULL;
+	//= 1500;
+}
+
+UnitLimit::UnitLimit (DWORD NewLimit)
+{
+
+	MPUnitLimit= NULL;
+	UnitLimit0= NULL;
+	UnitLimit1= NULL;
+	UnitLimit2= NULL;
+	//= 1500;
+	NewUnitLimit ( NewLimit);
+}
+UnitLimit::~UnitLimit ()
+{
+	if (NULL!=MPUnitLimit)
+	{
+		delete MPUnitLimit;
+		MPUnitLimit= NULL;
+	}
+	if (NULL!=UnitLimit0)
+	{
+		delete UnitLimit0;
+		UnitLimit0= NULL;
+	}
+	if (NULL!=UnitLimit1)
+	{
+		delete UnitLimit1;
+		UnitLimit1= NULL;
+	}
+	if (NULL!=UnitLimit2)
+	{
+		delete UnitLimit2;
+		UnitLimit2= NULL;
+	}
+}
+
+void UnitLimit::NewUnitLimit (DWORD NewLimit)
+{
+
+	MPUnitLimit= new SingleHook ( reinterpret_cast<LPBYTE>(MPUnitLimitAddr), 4, INLINE_UNPROTECTEVINMENT, reinterpret_cast<LPBYTE>( &NewLimit));
+
+	UnitLimit0= new SingleHook ( reinterpret_cast<LPBYTE>(UnitLimit0Addr), 4, INLINE_UNPROTECTEVINMENT, reinterpret_cast<LPBYTE>( &NewLimit));
+	UnitLimit1= new SingleHook ( reinterpret_cast<LPBYTE>(UnitLimit1Addr), 4, INLINE_UNPROTECTEVINMENT, reinterpret_cast<LPBYTE>( &NewLimit));
+	UnitLimit2= new SingleHook ( reinterpret_cast<LPBYTE>(UnitLimit2Addr), 4, INLINE_UNPROTECTEVINMENT, reinterpret_cast<LPBYTE>( &NewLimit));
+}
+
+

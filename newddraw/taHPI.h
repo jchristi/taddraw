@@ -1,4 +1,7 @@
 #pragma once
+class InlineSingleHook;
+struct tagInlineX86StackBuffer;
+typedef struct tagInlineX86StackBuffer * PInlineX86StackBuffer;
 
 typedef void (__stdcall * _InitTAHPIAry)(void);
 typedef char * (__stdcall * _readfile_HPI)(char *FilePath, unsigned int *ReadLen_Ptr);
@@ -19,6 +22,8 @@ extern _InitTAHPIAry InitTAHPIAry;
 
 class _TAHPI
 {
+private:
+	InlineSingleHook * TADontInit_ISH;
 public:
 	_TAHPI (BOOL Inited);
 	~_TAHPI ();
@@ -32,6 +37,7 @@ public:
 	void free_readfile ( char * mem_ptr);
 };
 
+int __stdcall TADontInit(PInlineX86StackBuffer X86StrackBuffer);
 
 extern _TAHPI * TAHPI;
 

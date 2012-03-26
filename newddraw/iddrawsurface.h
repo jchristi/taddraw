@@ -20,7 +20,7 @@ class CIdleUnits;
 class Dialog;
 class CChangeQueue;
 class CDDDTA;
-class ExternQuickKey;
+
 
 #define DDRAW_INIT_STRUCT(ddstruct) { memset(&ddstruct,0,sizeof(ddstruct)); ddstruct.dwSize=sizeof(ddstruct); }
 
@@ -100,9 +100,9 @@ typedef struct LocalShare_
 	LPVOID ChangeQueue;
 	LPVOID DDDTA;
 
+	UINT OrgLocalPlayerID;
 	//extern for unicode font;
 	//LPVOID TAUnicodeSupport;
-	LPVOID TAExternQuickKey;
 }*LocalSharePTR;
 extern LocalShare_* LocalShare;
 
@@ -130,7 +130,7 @@ private:
 	Dialog * SettingsDialog;
 	CChangeQueue * ChangeQueue;
 	CDDDTA * DDDTA;
-	ExternQuickKey * myExternQuickKey;
+	
 	bool VerticalSync;
 	bool PlayingMovie;
 	bool DisableDeInterlace;

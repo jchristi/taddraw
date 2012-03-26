@@ -9,6 +9,9 @@ class InlineSingleHook;
 class IncreaseSfxLimit;
 class ModifyWeaponPacket;
 class UnicodeSupport;
+class MenuResolution;
+class UnitLimit;
+class ExternQuickKey;
 
 class LimitCrack
 {
@@ -23,7 +26,11 @@ public:
 	IncreaseSfxLimit * NowIncreaseSfxLimit;
 	ModifyWeaponPacket * NowModifyWeaponPacket;
 	UnicodeSupport* NowSupportUnicode;
+	MenuResolution * SyncMenuResolution;
 
+	UnitLimit * SetUnitLimit;
+
+	ExternQuickKey * myExternQuickKey;
 public:
 
 	LimitCrack (void);

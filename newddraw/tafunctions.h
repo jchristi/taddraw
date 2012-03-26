@@ -102,4 +102,20 @@ extern InlineSingleHook * AddtionInitHook;
 extern unsigned int GetTextExtent_AssignCharLenAddr;
 extern unsigned int GetStrExtentAddr;
 
+extern unsigned int Addr_0049E91C;
+extern unsigned int Addr_0049E93B;
+extern unsigned int Addr_00491A75;
+extern unsigned int Addr_00491B01;
+extern unsigned int Addr_0049802B;
+extern unsigned int Addr_004980AD;
+
+extern unsigned int TADontInit_Addr;
+
+extern unsigned int MPUnitLimitAddr;
+extern unsigned int UnitLimit0Addr;
+extern unsigned int UnitLimit1Addr;
+extern unsigned int UnitLimit2Addr;
+
+
+
 #endif

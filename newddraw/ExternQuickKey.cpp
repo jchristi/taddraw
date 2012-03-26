@@ -9,17 +9,21 @@
 #include "hook\etc.h"
 #include "ExternQuickKey.h"
 #include "WeaponIDLimit.h"
+#include "LimitCrack.h"
 
-InlineSingleHook* HookInCircleSelect;
 
 ExternQuickKey::ExternQuickKey ()
 {
-	LocalShare->TAExternQuickKey= this;
+	
 	TAMainStruct_Ptr= *(TAdynmemStruct * *) 0x00511de8;
 	//AddtionInit ( );
 	Semaphore_OnlyInScreenSameType= CreateSemaphore ( NULL, 1, 1, NULL);
 	Semaphore_FilterSelect= CreateSemaphore ( NULL, 1, 1, NULL);
 	Semaphore_OnlyInScreenWeapon= CreateSemaphore ( NULL, 1, 1, NULL);
+
+	HookInCircleSelect= new InlineSingleHook ( (unsigned int)AddrAboutCircleSelect, 5, 
+		INLINE_5BYTESLAGGERJMP, AddtionRoutine_CircleSelect);
+
 	IDDrawSurface::OutptTxt ( "New ExternQuickKey");
 }
 
@@ -39,6 +43,11 @@ ExternQuickKey::~ExternQuickKey ()
 	{
 		CloseHandle ( Semaphore_OnlyInScreenWeapon);
 	}
+	if (NULL!=HookInCircleSelect)
+	{
+		delete HookInCircleSelect;
+	}
+	
 }
 
 bool ExternQuickKey::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
@@ -347,17 +356,17 @@ int __stdcall AddtionRoutine_CircleSelect (PInlineX86StackBuffer X86StrackBuffer
 		{
 			if (0<(0x8000&GetKeyState ( 0x57)))
 			{
-				X86StrackBuffer->Ebp= ((ExternQuickKey *)LocalShare->TAExternQuickKey)->FilterSelectedUnit ( WEAPONUNITS);
+				X86StrackBuffer->Ebp= ((ExternQuickKey *)NowCrackLimit->myExternQuickKey)->FilterSelectedUnit ( WEAPONUNITS);
 				return X86STRACKBUFFERCHANGE;
 			}
 			else if (0<(0x8000&GetKeyState ( 0x42)))
 			{
-				X86StrackBuffer->Ebp= ((ExternQuickKey *)LocalShare->TAExternQuickKey)->FilterSelectedUnit ( ENGINEER);
+				X86StrackBuffer->Ebp= ((ExternQuickKey *)NowCrackLimit->myExternQuickKey)->FilterSelectedUnit ( ENGINEER);
 				return X86STRACKBUFFERCHANGE;
 			}
 			else if (0<(0x8000&GetKeyState ( 0x59)))
 			{
-				X86StrackBuffer->Ebp= ((ExternQuickKey *)LocalShare->TAExternQuickKey)->FilterSelectedUnit ( FACTORYS);
+				X86StrackBuffer->Ebp= ((ExternQuickKey *)NowCrackLimit->myExternQuickKey)->FilterSelectedUnit ( FACTORYS);
 				return X86STRACKBUFFERCHANGE;
 			}
 		}
