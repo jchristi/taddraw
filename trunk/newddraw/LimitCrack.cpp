@@ -22,7 +22,7 @@ using namespace std;
 #include "MenuResolution.h"
 #include "UnitLimit.h"
 #include "ExternQuickKey.h"
-#include "idlevillager.h"
+
 
 #include "LimitCrack.h"
 

@@ -13,14 +13,25 @@
 .text:004866E8 078 75 04                                                           jnz     short loc_4866EE
 	.text:004866EA 078 33 F6                                                           xor     esi, esi
 	.text:004866EC 078 EB 18                                                           jmp     short loc_486706
+	-> if it's null, straight jmp to across the routine that used esi as unit ptr
 	*/
 
 unsigned int NullUnitDeathVictimAddr= 0x04866E8;
 BYTE NullUnitDeathVictimBits[]={0x0F, 0x84, 0x6B, 0x07, 0x00, 0x00};
 
+//.text:00438EDE 03C 0F 8C 69 01 00 00                                               jl      loc_43904D
+//->    jle      loc_43904D  Radius most bigger than 0
+unsigned int CircleRadiusAddr= 0x00438EDE;
+BYTE CircleRadiusBits[]= {0x0F, 0x8E, 0x69, 0x01, 0x00, 0x00};
+
+
+
+
 TABugFixing::TABugFixing ()
 {
 	NullUnitDeathVictim= new SingleHook ( NullUnitDeathVictimAddr, sizeof(NullUnitDeathVictimBits), INLINE_UNPROTECTEVINMENT, NullUnitDeathVictimBits);
+
+	CircleRadius=  new SingleHook ( CircleRadiusAddr, sizeof(CircleRadiusBits), INLINE_UNPROTECTEVINMENT, CircleRadiusBits);
 
 	BadModelHunter_ISH= new InlineSingleHook ( BadModelHunterAddr, 5, INLINE_5BYTESLAGGERJMP, BadModelHunter);
 }

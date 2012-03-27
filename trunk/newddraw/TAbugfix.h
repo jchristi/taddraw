@@ -6,6 +6,7 @@ class TABugFixing
 {
 private:
 	SingleHook * NullUnitDeathVictim;
+	SingleHook * CircleRadius;
 
 	InlineSingleHook * BadModelHunter_ISH;
 public:

@@ -526,7 +526,7 @@ int ExternQuickKey::FilterSelectedUnit (TAUnitType NeededType) //Ö»»áÔÚÒÑÑ¡ÖÐµÄµ
 
 	TAdynmemStruct *PTR = TAMainStruct_Ptr;
 
-	UnitStruct * Begin= PTR->OwnUnitBegin;
+	UnitStruct *  Begin= PTR->OwnUnitBegin;
 	UnitStruct *  Current= Begin;
 	int SelectedCounter= 0;
 
