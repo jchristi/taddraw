@@ -27,14 +27,17 @@ _TAHPI::_TAHPI (BOOL Inited)
 	TADontInit_ISH= NULL;
 	if (!Inited)
 	{
+
 		*reinterpret_cast<DWORD *>(0x051F320+ 0x618)= 0;
 		*reinterpret_cast<DWORD *>(0x051F320+ 0x61c)= 0;
 		*reinterpret_cast<DWORD *>(0x51FBD0)= 0x051F320;
 		*reinterpret_cast<DWORD *>(0x51F320)= 0x400000;
 
+		InitTAPath ( );
+		Init_srand ( 30);
 		InitTAHPIAry ( );
 
-		*reinterpret_cast<DWORD *>(0x50289C)= 1;
+		//*reinterpret_cast<DWORD *>(0x50289C)= 1;
 		
 		TADontInit_ISH= new InlineSingleHook ( TADontInit_Addr , 14, INLINE_5BYTESLAGGERJMP, TADontInit);
 	}

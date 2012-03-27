@@ -69,6 +69,12 @@ typedef void (__stdcall * _ApplySelectUnitGUI) (void);
 typedef void (__cdecl * _free_SafeWay) (LPVOID MemAddress);
 typedef LPDWORD (__stdcall * __GetUnitIDMaskAryByCategory) (LPSTR);
 
+typedef int  (__cdecl * _InitTAPath) (void);
+extern _InitTAPath InitTAPath;
+
+typedef int (__stdcall * _Init_srand)(int seed);
+extern _Init_srand Init_srand;
+
 int ViewPlayerLos_Replay (int PlayerAryIndex, BOOL HaveControl= FALSE);
 int UpdateTAProcess (void);
 void DeselectUnits(void);
