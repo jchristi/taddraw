@@ -96,7 +96,6 @@ LimitCrack::LimitCrack ( void)
 
 	myExternQuickKey= new ExternQuickKey ;
 
-	IdleUnits= new CIdleUnits ();
 }
 
 LimitCrack::~LimitCrack ( void)
@@ -113,7 +112,7 @@ LimitCrack::~LimitCrack ( void)
 	delete SyncMenuResolution;
 
 	delete myExternQuickKey;
-	delete IdleUnits;
+
 }
 
 IncreaseAISearchMapEntriesLimit::IncreaseAISearchMapEntriesLimit ()
@@ -741,5 +740,3 @@ void UnitLimit::NewUnitLimit (DWORD NewLimit)
 	UnitLimit1= new SingleHook ( reinterpret_cast<LPBYTE>(UnitLimit1Addr), 4, INLINE_UNPROTECTEVINMENT, reinterpret_cast<LPBYTE>( &NewLimit));
 	UnitLimit2= new SingleHook ( reinterpret_cast<LPBYTE>(UnitLimit2Addr), 4, INLINE_UNPROTECTEVINMENT, reinterpret_cast<LPBYTE>( &NewLimit));
 }
-
-

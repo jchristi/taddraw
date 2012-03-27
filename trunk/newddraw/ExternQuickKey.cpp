@@ -10,15 +10,21 @@
 #include "ExternQuickKey.h"
 #include "WeaponIDLimit.h"
 #include "LimitCrack.h"
+#include "tahook.h"
 
 
 ExternQuickKey::ExternQuickKey ()
 {
-	TAMainStruct_Ptr= *(TAdynmemStruct * *) 0x00511de8;
+	TAMainStruct_Ptr= * TAmainStruct_PtrPtr;
+
 	//AddtionInit ( );
 	Semaphore_OnlyInScreenSameType= CreateSemaphore ( NULL, 1, 1, NULL);
 	Semaphore_FilterSelect= CreateSemaphore ( NULL, 1, 1, NULL);
 	Semaphore_OnlyInScreenWeapon= CreateSemaphore ( NULL, 1, 1, NULL);
+	Semaphore_IdleCons= CreateSemaphore ( NULL, 1, 1, NULL);
+	Semaphore_IdleFac=  CreateSemaphore ( NULL, 1, 1, NULL);
+	IDDrawSurface::OutptTxt ( "New CIdleUnits");
+
 
 	HookInCircleSelect= new InlineSingleHook ( (unsigned int)AddrAboutCircleSelect, 5, 
 		INLINE_5BYTESLAGGERJMP, AddtionRoutine_CircleSelect);
@@ -44,6 +50,8 @@ ExternQuickKey::ExternQuickKey ()
 	NumSub = -100;
 
 	IDDrawSurface::OutptTxt ( "New ExternQuickKey");
+
+
 }
 
 
@@ -62,6 +70,17 @@ ExternQuickKey::~ExternQuickKey ()
 	{
 		CloseHandle ( Semaphore_OnlyInScreenWeapon);
 	}
+
+	if (NULL!=Semaphore_IdleCons)
+	{
+		CloseHandle ( Semaphore_IdleCons);
+	}
+	if (NULL!=Semaphore_IdleFac)
+	{
+		CloseHandle ( Semaphore_IdleFac);
+	}
+
+	
 	if (NULL!=HookInCircleSelect)
 	{
 		delete HookInCircleSelect;
@@ -88,7 +107,7 @@ bool ExternQuickKey::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 				xPos= LOWORD(lParam);
 				int yPos;
 				yPos = HIWORD(lParam);
-				if ((xPos>128)&&(xPos<LocalShare->ScreenWidth)&&(yPos>32)&&(yPos<(LocalShare->ScreenHeight- 0x30)))//TAµÄÆÁÄ»Ð¡µØÍ¼ÊÇ0x80µÄ¿í¶È.ÏÂ·½µÄ×´Ì¬À¸Ô¼ÊÇ0x30µÄ¿í¶È
+				if ((xPos>128)&&(xPos<(*TAProgramStruct_PtrPtr)->ScreenWidth)&&(yPos>32)&&(yPos<((*TAProgramStruct_PtrPtr)->ScreenHeight- 0x30)))//TAµÄÆÁÄ»Ð¡µØÍ¼ÊÇ0x80µÄ¿í¶È.ÏÂ·½µÄ×´Ì¬À¸Ô¼ÊÇ0x30µÄ¿í¶È
 				{
 					if (0!=TAMainStruct_Ptr->MouseOverUnit)
 					{
@@ -119,6 +138,23 @@ bool ExternQuickKey::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 					return true;
 				}
 			}
+			if(wParam == 66 && (GetAsyncKeyState(17)&0x8000)>0 && (GetAsyncKeyState(16)&0x8000)==0) 
+			{// ctrl + b
+				DeselectUnits ();
+				FindIdleConst();
+				UpdateSelectUnitEffect ( ) ;
+				ApplySelectUnitMenu_Wapper ( );
+				return true;
+			}
+			if(wParam == 70  && (GetAsyncKeyState(17)&0x8000)>0 && (GetAsyncKeyState(16)&0x8000)==0) 
+			{// ctrl + f
+				DeselectUnits ();
+				FindIdelFactory ();
+				UpdateSelectUnitEffect ( ) ;
+				ApplySelectUnitMenu_Wapper ( );
+				return true;
+			}
+			
 			break;
 		case WM_KEYUP:
 			switch((int)wParam)
@@ -126,7 +162,7 @@ bool ExternQuickKey::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 			case 17:
 				WriteProcessMemory(GetCurrentProcess(), (void*)Add, &OldAdd, 1, NULL);
 				WriteProcessMemory(GetCurrentProcess(), (void*)Sub, &OldSub, 1, NULL);
-				break;
+				//break;
 			}
 		}
 	}
@@ -136,6 +172,214 @@ bool ExternQuickKey::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 	}
 
 	return false;
+}
+
+void ExternQuickKey::FindIdelFactory ()
+{
+	DWORD Wait_rtn= WaitForSingleObject ( Semaphore_IdleFac, INFINITE);
+	if (WAIT_FAILED==Wait_rtn)
+	{
+		return ;
+	}
+
+	if (WAIT_TIMEOUT==Wait_rtn)
+	{
+		ReleaseSemaphore ( Semaphore_IdleFac, 1, NULL);
+		return ;
+	}
+
+	static int LastNum = 0;
+reTry:
+	TAdynmemStruct *PTR = TAMainStruct_Ptr;
+
+	UnitStruct * Begin= PTR->OwnUnitBegin;
+	UnitStruct * Current= Begin;
+
+	LPDWORD FactoryAry= NULL;
+	int i= 0;
+
+	FactoryAry= GetUnitIDMaskAryByCategory ( "CTRL_F");
+
+	while (Current<=PTR->OwnUnitEnd)
+	{
+		if ((0!=((UnitValid2_State)& Current->UnitSelected)))
+		{
+			if (0.0F==(Current->Nanoframe))
+			{
+				//ID= ;
+				if ((NULL!=Current->ValidOwner_PlayerPtr)&&(Player_LocalHuman==Current->ValidOwner_PlayerPtr->My_PlayerType))
+				{
+					if (MatchInTypeAry ( Current->UnitCategoryMask, FactoryAry))
+					{
+						if (NULL!=Current->UnitOrders)
+						{
+							char UnitState= Current->UnitOrders->COBHandler_index;
+							if((UnitState!=41) 
+								&& (UnitState!=64)) //not idle
+							{
+								Current= &Current[1];
+								continue;
+							}
+						}
+						i= i+ 1;
+						if (LastNum<i)
+						{
+							LastNum = i;
+							break;
+						}
+					}
+				}
+			}
+		}
+		Current= &Current[1];
+	}
+
+	if (Current<=PTR->OwnUnitEnd)
+	{
+		//founded!
+		Current->UnitSelected|=  UnitSelected_State;
+
+		ScrollToCenter( Current->XPos,  Current->YPos);
+	}
+	else
+	{
+		// not found once
+		if (0!=LastNum)
+		{
+			LastNum= 0;
+			goto reTry;
+		}
+	}
+	//really not found 
+
+
+	ReleaseSemaphore ( Semaphore_IdleFac, 1, NULL);
+	return ;
+}
+
+void ExternQuickKey::FindIdleConst()
+{
+	//FixAck();
+	//
+
+	IDDrawSurface::OutptTxt ( "Search Idle Const");
+
+	DWORD Wait_rtn= WaitForSingleObject ( Semaphore_IdleCons, INFINITE);
+	if (WAIT_FAILED==Wait_rtn)
+	{
+		return ;
+	}
+		
+	if (WAIT_TIMEOUT==Wait_rtn)
+	{
+		goto ReleaseIdleConsSemaphore;
+	}
+
+	static int LastNum = 0;
+
+	TAdynmemStruct *PTR = TAMainStruct_Ptr;
+	UnitStruct * Start;// = PTR->OwnUnitBegin;//*(UnitStruct * *)((*PTR)+0x14357); 
+	//UnitStruct * End= (UnitStruct *)((*PTR)+0x1435B);
+	int i= 0;
+	int MyMaxUnit= PTR->Players[PTR->LocalHumanPlayer_PlayerID].UnitsNumber;
+
+	if (LocalShare->OrgLocalPlayerID!=PTR->LocalHumanPlayer_PlayerID)
+	{// do not support this on 
+		return ;
+	}
+
+	while (i<=MyMaxUnit)
+	{
+		Start= &(PTR->Players[PTR->LocalHumanPlayer_PlayerID].Units[i]);
+
+		char *UnitDead = (char*)(&Start->HealthPerB);
+		char *Builder = (char*)(&Start->Builder);  //16 == no weapon
+		short *XPos = (short*)(&Start->XPos);
+		short *YPos = (short*)(&Start->YPos);
+		int *IsUnit = (int*)(&Start->IsUnit);
+		char *UnitSelected = (char*)(&Start->UnitSelected);
+
+		int *UnitOrderPTR = (int*)(&Start->UnitOrders);
+
+		if(*UnitDead!=0 && *UnitDead!=1)
+		{
+			if(*IsUnit)
+			{
+				//check if workertime > 0
+				UnitDefStruct *DefiPTR = (Start->UnitType);
+				unsigned short *WorkerTime = &(DefiPTR->nWorkerTime);
+
+				if(*WorkerTime>0)//ÓÐÉú²úÄÜÁ¦
+				{
+					char *UnitState = (char*)(*UnitOrderPTR + 4);
+
+					if((*UnitState==41 || *UnitState==64) && i>LastNum) //idle
+					{
+						if (0!=(0x20& Start->UnitSelected))
+						{
+							LastNum = i;
+
+							*UnitSelected=  *UnitSelected| UnitSelected_State;
+
+							ScrollToCenter(*XPos, *YPos);
+							goto ReleaseIdleConsSemaphore;
+						}
+
+						//
+						IDDrawSurface::OutptTxt ( "Select One");
+						IDDrawSurface::OutptInt ( LastNum);
+					}
+				}
+			}
+		}
+		++i;
+
+		if(i>= MyMaxUnit)
+		{
+			if(LastNum == 0) //no units found and all units searched. this is 2rd time enter FindIdleConst;
+			{
+				goto ReleaseIdleConsSemaphore;
+			}
+			break;
+		}
+		//Start= &Start[1];
+	}
+
+	//search from the beginning, cause last num be reset at this case
+	LastNum = 0;
+
+
+
+	ReleaseSemaphore ( Semaphore_IdleCons, 1, NULL);
+	FindIdleConst();
+	return;
+ReleaseIdleConsSemaphore:
+	ReleaseSemaphore ( Semaphore_IdleCons, 1, NULL);
+	return;
+}
+
+void ExternQuickKey::ScrollToCenter(int x, int y)
+{
+	int *PTR = (int*)TAmainStruct_PtrPtr;
+	int *XPointer = (int*)(*PTR + 0x1431f);
+	int *YPointer = (int*)(*PTR + 0x14323);
+
+	x -= (((*TAProgramStruct_PtrPtr)->ScreenWidth)-128)/2;
+	y -= (((*TAProgramStruct_PtrPtr)->ScreenHeight)-64)/2;
+
+	if(x<0)
+		x = 0;
+	if(y<0)
+		y = 0;
+	if(x>CTAHook::GetMaxScrollX())
+		x = CTAHook::GetMaxScrollX();
+	if(y>CTAHook::GetMaxScrollY())
+		y = CTAHook::GetMaxScrollY();
+
+	//*XPointer = x;
+	*(XPointer + 2) = x;
+	//*YPointer = y;
+	*(YPointer + 2)= y;
 }
 
 int ExternQuickKey::SelectOnlyInScreenSameTypeUnit (BOOL FirstSelect_Flag)
@@ -287,7 +531,6 @@ int ExternQuickKey::FilterSelectedUnit (TAUnitType NeededType) //Ö»»áÔÚÒÑÑ¡ÖÐµÄµ
 	int SelectedCounter= 0;
 
 	bool DoSelect_b;
-
 
 	unsigned long NoWeaponPtr;
 

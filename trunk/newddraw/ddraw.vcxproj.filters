@@ -120,9 +120,6 @@
     <ClCompile Include="commanderwarp.cpp">
       <Filter>Source Files\Functions\OrginalTadr</Filter>
     </ClCompile>
-    <ClCompile Include="idlevillager.cpp">
-      <Filter>Source Files\Functions\OrginalTadr</Filter>
-    </ClCompile>
     <ClCompile Include="maprect.cpp">
       <Filter>Source Files\Functions\OrginalTadr</Filter>
     </ClCompile>
@@ -185,6 +182,9 @@
     </ClCompile>
     <ClCompile Include="MultiGameWeaponID.cpp">
       <Filter>Source Files\Functions\externFromChina\LimitCrack</Filter>
+    </ClCompile>
+    <ClCompile Include="TABugFix.cpp">
+      <Filter>Source Files\Functions\externFromChina</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -249,9 +249,6 @@
       <Filter>Header Files\Functions\OrginalTadr</Filter>
     </ClInclude>
     <ClInclude Include="font.h">
-      <Filter>Header Files\Functions\OrginalTadr</Filter>
-    </ClInclude>
-    <ClInclude Include="idlevillager.h">
       <Filter>Header Files\Functions\OrginalTadr</Filter>
     </ClInclude>
     <ClInclude Include="maprect.h">
@@ -319,6 +316,9 @@
     </ClInclude>
     <ClInclude Include="UnitLimit.h">
       <Filter>Header Files\Functions\externFromChina\LimitCrack</Filter>
+    </ClInclude>
+    <ClInclude Include="TAbugfix.h">
+      <Filter>Header Files\Functions\externFromChina</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

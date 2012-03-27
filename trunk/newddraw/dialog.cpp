@@ -29,7 +29,7 @@ Dialog::Dialog()
 
 	VSyncPushed= false;
 
-
+	ShareText[0]= 0;
 
 	LocalShare->Dialog = this;
 	

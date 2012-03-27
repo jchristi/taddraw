@@ -18,7 +18,7 @@ using namespace std;
 #include "ExternQuickKey.h"
 #include "LimitCrack.h"
 #include "taHPI.h"
-
+#include "TAbugfix.h"
 
 #include "TAConfig.h"
 //---------------------------------------------------------------------------
@@ -96,8 +96,13 @@ _TAHPI * TAHPI;
 TADRConfig * MyConfig;
 LimitCrack * NowCrackLimit;
 MenuResolution* SyncMenuResolution;
+TABugFixing * FixTABug;
+
 InlineSingleHook * AddtionInitHook;
+
+
 SingleHook * WndProc_SH;
+
 
 int __stdcall AddtionInit (PInlineX86StackBuffer X86StrackBuffer)
 {
@@ -113,9 +118,12 @@ int __stdcall AddtionInit (PInlineX86StackBuffer X86StrackBuffer)
 	IDDrawSurface::OutptTxt ("Install Limit Crack");
 	NowCrackLimit= new LimitCrack;
 
-	IDDrawSurface::OutptTxt ("Installing AddtionRoutine_CircleSelect");
 
+	FixTABug= new TABugFixing;
+
+	IDDrawSurface::OutptTxt ("Installing AddtionRoutine_CircleSelect");
 	
+
 	LocalShare->TAWndProc= TAWndProc_Addr;
 	DWORD WinProcAddrBuf= (DWORD)WinProc;
 	WndProc_SH= new SingleHook ( TAWndProcSH_Addr, 4, INLINE_UNPROTECTEVINMENT, (LPBYTE)&WinProcAddrBuf );
@@ -128,10 +136,13 @@ void AddtionRelease (void)
 	IDDrawSurface::OutptTxt ("Uninstall Limit Crack");
 	delete NowCrackLimit;
 
+	delete FixTABug;
+
 	delete TAHPI;
 
 	delete MyConfig;
 
+	
 	IDDrawSurface::OutptTxt ("Release AddtionRoutine_CircleSelect");
 	
 	//delete self :D
