@@ -212,6 +212,11 @@ LPBYTE AddrAboutCircleSelect= (LPBYTE)0x48C599;
 //
 _ApplySelectUnitGUI ApplySelectUnitGUI= (_ApplySelectUnitGUI)0x00495860;
 
+
+
+_Init_srand Init_srand= (_Init_srand)0x4B62D0;
+_InitTAPath InitTAPath= (_InitTAPath)0x4BCE10;
+
 LPCSTR TAIniStr=  reinterpret_cast<LPCSTR> (0x5098A3);
 
 LPCSTR CompanyName_CCSTR= (LPCSTR)0x50DDF4;

@@ -118,11 +118,9 @@ int __stdcall AddtionInit (PInlineX86StackBuffer X86StrackBuffer)
 	IDDrawSurface::OutptTxt ("Install Limit Crack");
 	NowCrackLimit= new LimitCrack;
 
-
 	FixTABug= new TABugFixing;
 
 	IDDrawSurface::OutptTxt ("Installing AddtionRoutine_CircleSelect");
-	
 
 	LocalShare->TAWndProc= TAWndProc_Addr;
 	DWORD WinProcAddrBuf= (DWORD)WinProc;
