@@ -16,7 +16,7 @@ using namespace std;
 #include "tahook.h"
 #include "commanderwarp.h"
 #include "maprect.h"
-#include "idlevillager.h"
+
 #include "unitrotate.h"
 #include "changequeue.h"
 #include "ExternQuickKey.h"
