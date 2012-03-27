@@ -71,19 +71,23 @@ typedef LPDWORD (__stdcall * __GetUnitIDMaskAryByCategory) (LPSTR);
 
 int ViewPlayerLos_Replay (int PlayerAryIndex, BOOL HaveControl= FALSE);
 int UpdateTAProcess (void);
-BOOL AntiCheat (void);
 void DeselectUnits(void);
 void UpdateSelectUnitEffect (void);
 void freeTAMem (LPVOID MemAddress);
 LPDWORD GetUnitIDMaskAryByCategory (LPSTR CategoryName_cstrp);
 void UpdateSelectUnitEffect (void);
 void ApplySelectUnitMenu_Wapper (void);
+
+
+extern TAProgramStruct * * TAProgramStruct_PtrPtr;
+
+extern TAdynmemStruct * * TAmainStruct_PtrPtr;
+
 extern LPBYTE AddrAboutCircleSelect;
 
 extern LPDWORD AISearchMapEntriesLimit;
 extern DWORD Sfx_mallocBufSizeAddr;
 
-extern TAdynmemStruct * * TAmainStruct_PtrPtr;
 extern LPCSTR CompanyName_CCSTR;
 extern LPCSTR GameName_CCSTR;
 
@@ -116,6 +120,10 @@ extern unsigned int MPUnitLimitAddr;
 extern unsigned int UnitLimit0Addr;
 extern unsigned int UnitLimit1Addr;
 extern unsigned int UnitLimit2Addr;
+
+extern unsigned int BadModelHunterAddr;
+extern unsigned int SafeModelAddr;
+
 
 extern BOOL * IsCheating;                        
 extern WNDPROC TAWndProc_Addr;

@@ -14,8 +14,14 @@ private:
 	HANDLE Semaphore_OnlyInScreenSameType;
 	HANDLE Semaphore_FilterSelect;
 	HANDLE Semaphore_OnlyInScreenWeapon;
+	HANDLE Semaphore_IdleCons;
+	HANDLE Semaphore_IdleFac;
+
 	InlineSingleHook * HookInCircleSelect;
+
+
 	int VirtualKeyCode;
+
 
 	char *Add;
 	char *Sub;
@@ -38,6 +44,11 @@ private:
 	int SelectOnlyInScreenWeaponUnit (unsigned int SelectWay_Mask);
 	bool SetIDMaskInTypeAry (WORD ID, DWORD SelectedUnitTypeIDAry_Dw[]);
 	bool MatchInTypeAry (WORD ID, DWORD SelectedUnitTypeIDAry_Dw[]);
+
+	void FindIdelFactory ();
+	void FindIdleConst();
+	void ScrollToCenter(int x, int y);
+
 };
 
 #endif //EXTERNQUICKEY_H_316SDHSD

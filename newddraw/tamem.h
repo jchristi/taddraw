@@ -43,6 +43,7 @@ struct PlayerResourcesStruct;
 struct _RaceSideData;
 struct _Vertices;
 struct _Shatte;
+struct _TAProgramStruct;
 
 struct Point3{
 	int x;
@@ -176,7 +177,8 @@ struct DSoundStruct{
 //settimer 4fb368
 
 struct TAdynmemStruct{
-	char data21[0x10];
+	char data21[12];
+	_TAProgramStruct * TAProgramStruct_Ptr;
 	DSoundStruct *DSound;
 	char data1[0x1B4F];
 
@@ -549,7 +551,16 @@ struct PrimitiveStruct{
 
 
 struct UnitOrdersStruct {
-  char data1[30];
+  UnitOrdersStruct* PriorOrder_uosp;
+  unsigned char COBHandler_index;
+  unsigned char State;
+  unsigned short unknow_1;
+  unsigned short field_8;
+  unsigned int unknow_0;
+  UnitStruct * Unit_ptr;
+  unsigned int unknow_3;
+  UnitStruct* UnitTargat_p;
+  unsigned int field_1A;
   UnitOrdersStruct *ThisPTR;
   //char data2[2];
   int PosX;
@@ -696,6 +707,98 @@ typedef struct _OFFSCREEN
 	RECT ScreenRect;
 	unsigned int field_2C ;
 }OFFSCREEN;
+typedef struct _TAProgramStruct 
+{
+	int HInstance;
+	int CmdShow;
+	int WindowsClassName;
+	int WindowsName;
+	int field_10;
+	__int16 MenuResID;
+	char field_16[2];
+	WNDCLASS WndClass;
+	int TAClass_Hwnd;
+	int Screen_DIBSECTION;
+	int WndMemHDC;
+	int Palette_H;
+	int DIB_OFFSCREEN;
+	int BackMemHDC;
+	char field_58[40];
+	int field_80;
+	int lpDD_DDraw;
+	int lpDD_BackSurface;
+	int lpDD_AttachedSurface;
+	int field_90;
+	int field_94;
+	int field_98;
+	int field_9C;
+	RECT DDrawSurfaceRect;
+	int field_B0;
+	int lpDD_BackSurface_1;
+	int field_B8;
+	int CurrentOFFSCREEN;
+	int ALPHA_TABLE;
+	int SHADE_TABLE;
+	int LIGHT_TABLE;
+	int GRAY_TABLE;
+	int BLUE_TABLE;
+	int ScreenWidth;
+	int ScreenHeight;
+	int NewOFFSCREEN_Notify;
+	int minimized_b;
+	int field_E4;
+	int srandTick;
+	int OrgMOUSETRAILS;
+	char IsFullScreen_mask;
+	char field_F1;
+	int Max_InputBuffer;
+	int InputBuffer[30];
+	int Total_InputBuffer;
+	int ReadCount_InputBuffer;
+	char field_176[20];
+	int MOUSE_EVENTS;
+	int field_18E;
+	int field_192;
+	POINT CursorPos_Buf[3];
+	char field_1AE;
+	char field_1AF[3];
+	int Cursor;
+	int CursorX;
+	int CursorY;
+	int SAVEMOUSE_1;
+	int SAVEMOUSE_2;
+	int SAVEMOUSE_3;
+	int field_1CA;
+	int field_1CE;
+	int field_1D2;
+	int MouseThreadRunning;
+	int field_1DA;
+	int field_1DE;
+	int field_1E2;
+	int field_1E6;
+	int field_1EA;
+	int field_1EE;
+	int field_1F2;
+	int field_1F6;
+	int MainMenuWidth;
+	int MainMenuHeight;
+	__int16 IsFullScreen;
+	int Font_Length;
+	int field_208;
+	int field_20C;
+	int field_210;
+	char field_214;
+	char field_215[111];
+	int field_284;
+	char field_288[908];
+	int field_614;
+	int HAPIFILE_array;
+	int HAPIFILECount;
+	int dwTotalPhys;
+	int field_624;
+	char TAPath[256];
+	char field_728;
+}TAProgramStruct;
 
 enum PlayerPropertyMask
 {

@@ -20,6 +20,7 @@ using namespace std;
 #include "unitrotate.h"
 #include "changequeue.h"
 #include "ExternQuickKey.h"
+#include "TAbugfix.h"
 
 #include "iddrawsurface.h"
 
@@ -51,11 +52,9 @@ IDDrawSurface::IDDrawSurface(LPDIRECTDRAWSURFACE lpTASurf, bool iWindowed, int i
 	TAHook= new CTAHook;
 	CommanderWarp= new CWarp;
 	SharedRect= new CMapRect ;
-	IdleUnits= new CIdleUnits ;
 	SettingsDialog= new Dialog ;
 	ChangeQueue= new CChangeQueue ;
 	DDDTA= new CDDDTA ;
-	
 
 	ValidIDrawSurface_i= 0xff7cd1a;
 
@@ -130,7 +129,6 @@ ULONG __stdcall IDDrawSurface::Release()
 	delete TAHook;
 	delete CommanderWarp;
 	delete SharedRect;
-	delete IdleUnits;
 	delete SettingsDialog;
 	delete ChangeQueue;
 	delete DDDTA;
@@ -713,7 +711,10 @@ LRESULT CALLBACK WinProc(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam
 	{
 		UpdateTAProcess ( );
 		//send message to unicode Support at first
-		AntiCheat ( );
+		if (NULL!=FixTABug)
+		{
+			FixTABug->AntiCheat ( );
+		}
 
 		//The thing in bottom need full-screen suuport
 		if(DataShare->ehaOff == 1 && !DataShare->PlayingDemo)
@@ -729,9 +730,10 @@ LRESULT CALLBACK WinProc(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam
 			{
 				return 0;
 			}
+/*
 			if((NULL!=NowCrackLimit->IdleUnits)
 				&&((NowCrackLimit->IdleUnits)->Message(WinProcWnd, Msg, wParam, lParam)))
-				return 0;
+				return 0;*/
 		}
 
 		if((Msg == WM_KEYUP)||(WM_KEYDOWN==Msg))

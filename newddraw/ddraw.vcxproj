@@ -200,10 +200,6 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="idlevillager.cpp">
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
     <ClCompile Include="maprect.cpp">
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -212,6 +208,7 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ClCompile Include="TABugFix.cpp" />
     <ClCompile Include="TAConfig.cpp" />
     <ClCompile Include="tahook.cpp">
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -264,7 +261,6 @@
     <ClInclude Include="hook\hook.h" />
     <ClInclude Include="iddraw.h" />
     <ClInclude Include="iddrawsurface.h" />
-    <ClInclude Include="idlevillager.h" />
     <ClInclude Include="IncreaseCompositeSize.h" />
     <ClInclude Include="IncreaseSfxLimit.h" />
     <ClInclude Include="IRenderer.h" />
@@ -279,6 +275,7 @@
     <ClInclude Include="pcxread.h" />
     <ClInclude Include="rings.h" />
     <ClInclude Include="SwitchAlt.h" />
+    <ClInclude Include="TAbugfix.h" />
     <ClInclude Include="TAConfig.h" />
     <ClInclude Include="tafunctions.h" />
     <ClInclude Include="tahook.h" />

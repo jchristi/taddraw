@@ -83,21 +83,8 @@ int UpdateTAProcess (void)
 }
 
 
-BOOL AntiCheat (void)
-{
-	// sync "+now Film Chris Include Reload Assert"  with cheating
 
-	if (TRUE==*IsCheating)
-	{
-		(*TAmainStruct_PtrPtr)->SoftwareDebugMode|= 2;
-	}
-	else
-	{
-		(*TAmainStruct_PtrPtr)->SoftwareDebugMode= ((*TAmainStruct_PtrPtr)->SoftwareDebugMode)& (~ 2);
-	}
 
-	return TRUE;
-}
 LPDWORD GetUnitIDMaskAryByCategory (LPSTR CategoryName_cstrp)
 {
 	__try
@@ -212,6 +199,7 @@ _TestGridSpot TestGridSpot = (_TestGridSpot)0x47D2E0;
 
 ///--------------------TAMainStruct
 TAdynmemStruct * * TAmainStruct_PtrPtr= (TAdynmemStruct * *)0x0511DE8;
+TAProgramStruct * * TAProgramStruct_PtrPtr= (TAProgramStruct * *)0x051FBD0;
 
 DWORD Sfx_mallocBufSizeAddr= 0x00471C87;
 
@@ -261,6 +249,9 @@ unsigned int MPUnitLimitAddr= 0x0044CAFE;
 unsigned int UnitLimit0Addr= 0x491640;
 unsigned int UnitLimit1Addr=0x491659;
 unsigned int UnitLimit2Addr=0x491666;
+
+unsigned int BadModelHunterAddr= 0x00458C5A;
+unsigned int SafeModelAddr= 0x458D13;
 
 BOOL * IsCheating= reinterpret_cast<BOOL *>(0x5091CC);
 

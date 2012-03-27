@@ -125,7 +125,6 @@ private:
 	CTAHook * TAHook;
 	CWarp * CommanderWarp;
 	CMapRect * SharedRect;
-	CIdleUnits * IdleUnits;
 	Dialog * SettingsDialog;
 	CChangeQueue * ChangeQueue;
 	CDDDTA * DDDTA;

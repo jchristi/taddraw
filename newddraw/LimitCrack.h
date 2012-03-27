@@ -32,7 +32,6 @@ public:
 	UnitLimit * SetUnitLimit;
 
 	ExternQuickKey * myExternQuickKey;
-	CIdleUnits* IdleUnits;
 public:
 
 	LimitCrack (void);
