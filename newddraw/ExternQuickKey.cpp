@@ -192,22 +192,29 @@ void ExternQuickKey::FindIdelFactory ()
 reTry:
 	TAdynmemStruct *PTR = TAMainStruct_Ptr;
 
-	UnitStruct * Begin= PTR->OwnUnitBegin;
-	UnitStruct * Current= Begin;
+	UnitStruct *  Begin=  PTR->OwnUnitBegin;
+/*	UnitStruct *  End= PTR->Players[PTR->LocalHumanPlayer_PlayerID].UnitsAry_End;*/
+	UnitStruct *  Current= Begin;
+
+
+	int j= LastNum;
+	int MyMaxUnit= PTR->Players[PTR->LocalHumanPlayer_PlayerID].UnitsNumber;
 
 	LPDWORD FactoryAry= NULL;
-	int i= 0;
 
 	FactoryAry= GetUnitIDMaskAryByCategory ( "CTRL_F");
 
-	while (Current<=PTR->OwnUnitEnd)
+	while (j<=MyMaxUnit)
 	{
+
+		Current= &(PTR->Players[PTR->LocalHumanPlayer_PlayerID].Units[j]);
+
 		if ((0!=((UnitValid2_State)& Current->UnitSelected)))
 		{
 			if (0.0F==(Current->Nanoframe))
 			{
 				//ID= ;
-				if ((NULL!=Current->ValidOwner_PlayerPtr)&&(Player_LocalHuman==Current->ValidOwner_PlayerPtr->My_PlayerType))
+				if ((NULL!=Current->ValidOwner_PlayerPtr))//&&(Player_LocalHuman==Current->ValidOwner_PlayerPtr->My_PlayerType))
 				{
 					if (MatchInTypeAry ( Current->UnitCategoryMask, FactoryAry))
 					{
@@ -217,24 +224,24 @@ reTry:
 							if((UnitState!=41) 
 								&& (UnitState!=64)) //not idle
 							{
-								Current= &Current[1];
+								++j;
 								continue;
 							}
 						}
-						i= i+ 1;
-						if (LastNum<i)
+						//i= i+ 1;
+						if (LastNum<j)
 						{
-							LastNum = i;
+							LastNum = j;
 							break;
 						}
 					}
 				}
 			}
 		}
-		Current= &Current[1];
+		//Current= &Current[1];
+		++j;
 	}
-
-	if (Current<=PTR->OwnUnitEnd)
+	if (j<=MyMaxUnit)
 	{
 		//founded!
 		Current->UnitSelected|=  UnitSelected_State;
@@ -280,13 +287,24 @@ void ExternQuickKey::FindIdleConst()
 	TAdynmemStruct *PTR = TAMainStruct_Ptr;
 	UnitStruct * Start;// = PTR->OwnUnitBegin;//*(UnitStruct * *)((*PTR)+0x14357); 
 	//UnitStruct * End= (UnitStruct *)((*PTR)+0x1435B);
-	int i= 0;
+	int i;
 	int MyMaxUnit= PTR->Players[PTR->LocalHumanPlayer_PlayerID].UnitsNumber;
+	LPDWORD CommandMaskAry= NULL;
 
+	CommandMaskAry= GetUnitIDMaskAryByCategory ( "Commander");
+/*
 	if (LocalShare->OrgLocalPlayerID!=PTR->LocalHumanPlayer_PlayerID)
 	{// do not support this on 
+
 		return ;
 	}
+	*/
+
+	if (MyMaxUnit<LastNum)
+	{
+		LastNum= 0;
+	}
+	i= LastNum;
 
 	while (i<=MyMaxUnit)
 	{
@@ -309,32 +327,34 @@ void ExternQuickKey::FindIdleConst()
 				UnitDefStruct *DefiPTR = (Start->UnitType);
 				unsigned short *WorkerTime = &(DefiPTR->nWorkerTime);
 
-				if(*WorkerTime>0)//ÓÐÉú²úÄÜÁ¦
-				{
-					char *UnitState = (char*)(*UnitOrderPTR + 4);
-
-					if((*UnitState==41 || *UnitState==64) && i>LastNum) //idle
+				if ((NULL!=CommandMaskAry)
+					&&(!(MatchInTypeAry ( Start->UnitCategoryMask, CommandMaskAry))))
+				{// not comm
+					if(*WorkerTime>0)//ÓÐÉú²úÄÜÁ¦
 					{
-						if (0!=(0x20& Start->UnitSelected))
+						char *UnitState = (char*)(*UnitOrderPTR + 4);
+					
+						if((NULL==*UnitOrderPTR)
+							||(*UnitState==41 || *UnitState==64)) //idle
 						{
-							LastNum = i;
+							if  (LastNum<i)
+							{
+								LastNum = i;
 
-							*UnitSelected=  *UnitSelected| UnitSelected_State;
+								*UnitSelected=  *UnitSelected| UnitSelected_State;
 
-							ScrollToCenter(*XPos, *YPos);
-							goto ReleaseIdleConsSemaphore;
+								ScrollToCenter(*XPos, *YPos);
+								goto ReleaseIdleConsSemaphore;
+							}
+
 						}
-
-						//
-						IDDrawSurface::OutptTxt ( "Select One");
-						IDDrawSurface::OutptInt ( LastNum);
 					}
 				}
 			}
 		}
 		++i;
 
-		if(i>= MyMaxUnit)
+		if(MyMaxUnit<i)
 		{
 			if(LastNum == 0) //no units found and all units searched. this is 2rd time enter FindIdleConst;
 			{
@@ -347,8 +367,6 @@ void ExternQuickKey::FindIdleConst()
 
 	//search from the beginning, cause last num be reset at this case
 	LastNum = 0;
-
-
 
 	ReleaseSemaphore ( Semaphore_IdleCons, 1, NULL);
 	FindIdleConst();
@@ -421,7 +439,7 @@ int ExternQuickKey::SelectOnlyInScreenSameTypeUnit (BOOL FirstSelect_Flag)
 				//ID= ;
 				if (MatchInTypeAry ( Current->UnitCategoryMask, SelectedUnitTypeIDAry_Dw))
 				{
-					if ((NULL!=Current->ValidOwner_PlayerPtr)&&(Player_LocalHuman==Current->ValidOwner_PlayerPtr->My_PlayerType))
+					if ((NULL!=Current->ValidOwner_PlayerPtr))
 					{
 						Current->UnitSelected= (Current->UnitSelected)| (0x10);
 						++SelectedUnits;
@@ -457,7 +475,6 @@ int ExternQuickKey::SelectOnlyInScreenWeaponUnit (unsigned int SelectWay_Mask)
 		unsigned long NoWeaponPtr= reinterpret_cast<unsigned long> (&(PTR->Weapons[0]));
 		//LPDWORD WeaponUnitAry= GetUnitIDMaskAryByCategory ( "CTRL_S");
 		
-
 		UnitStruct * Begin= PTR->OwnUnitBegin;
 		UnitStruct *  Current;
 		int MaxHotUnitCount_I= PTR->NumHotUnits;
@@ -472,7 +489,7 @@ int ExternQuickKey::SelectOnlyInScreenWeaponUnit (unsigned int SelectWay_Mask)
 			{
 				if (0.0F==(Current->Nanoframe))
 				{
-					if ((NULL!=Current->ValidOwner_PlayerPtr)&&(Player_LocalHuman==Current->ValidOwner_PlayerPtr->My_PlayerType))
+					if ((NULL!=Current->ValidOwner_PlayerPtr))
 					{
 
 							Current->UnitSelected= (Current->UnitSelected)| (0x10);
@@ -525,8 +542,9 @@ int ExternQuickKey::FilterSelectedUnit (TAUnitType NeededType) //Ö»»áÔÚÒÑÑ¡ÖÐµÄµ
 	//WeaponUnitsMaskAry= GetUnitIDMaskAryByCategory ( "CTRL_W");
 
 	TAdynmemStruct *PTR = TAMainStruct_Ptr;
-
+	
 	UnitStruct *  Begin= PTR->OwnUnitBegin;
+	UnitStruct *  End= PTR->OwnUnitEnd;
 	UnitStruct *  Current= Begin;
 	int SelectedCounter= 0;
 
@@ -539,14 +557,14 @@ int ExternQuickKey::FilterSelectedUnit (TAUnitType NeededType) //Ö»»áÔÚÒÑÑ¡ÖÐµÄµ
 	NoWeaponPtr= reinterpret_cast<unsigned long> (&(PTR->Weapons[0]));
 	
 	PTR = TAMainStruct_Ptr;
-	while (Current<=PTR->OwnUnitEnd)
+	while (Current<=End)
 	{
 		if ((0!=((UnitSelected_State)& Current->UnitSelected))&&(0!=((UnitValid2_State)& Current->UnitSelected)))
 		{
 			if (0.0F==(Current->Nanoframe))
 			{
 				//ID= ;
-				if ((NULL!=Current->ValidOwner_PlayerPtr)&&(Player_LocalHuman==Current->ValidOwner_PlayerPtr->My_PlayerType))
+				if ((NULL!=Current->ValidOwner_PlayerPtr))//&&(Player_LocalHuman==Current->ValidOwner_PlayerPtr->My_PlayerType))
 				{
 					//Õâ¶ùÊÇ¹ýÂË  filter:
 					DoSelect_b= false;
@@ -635,7 +653,7 @@ int __stdcall AddtionRoutine_CircleSelect (PInlineX86StackBuffer X86StrackBuffer
 	//int Selected= X86StrackBuffer->Ebp;
 	__try	
 	{
-		if (DataShare->ehaOff == 1)
+		if(DataShare->ehaOff == 1 && !DataShare->PlayingDemo)
 		{
 			__leave;
 		}

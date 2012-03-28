@@ -84,13 +84,18 @@ LimitCrack::LimitCrack ( void)
 	DataShare->IniCRC= MyConfig->GetIniCrc ( );
 
 	//
-	char FontName[0x100];
-	FontName[0]= 0;
-	MyConfig->GetIniStr ( "UnicodeSupport", FontName, 0x100, NULL);
-	NowSupportUnicode= new UnicodeSupport ( FontName, MyConfig->GetIniInt ( "UnicodeSupport_Color", 0xffffff), MyConfig->GetIniInt ( "UnicodeSupport_Background", 0x000000));
 
+	tmp_i= MyConfig->GetIniInt ( "MenuWidth", 0);
 
-	SyncMenuResolution= new MenuResolution ( MyConfig->GetIniBool ( "MenuResolution", FALSE));
+	if (0!=tmp_i)
+	{
+		SyncMenuResolution= new MenuResolution ( MyConfig->GetIniInt ( "MenuWidth", 0), MyConfig->GetIniInt ( "MenuHeight", 0));
+	}
+	else
+	{
+		SyncMenuResolution= new MenuResolution ( MyConfig->GetIniBool ( "MenuResolution", FALSE));
+	}
+	
 
 	SetUnitLimit= new UnitLimit (  MyConfig->GetIniInt ( "UnitLimit", 1500));
 

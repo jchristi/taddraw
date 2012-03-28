@@ -3,6 +3,7 @@
 using namespace std;
 #include "TAConfig.h"
 #include "MenuResolution.h"
+#include "LimitCrack.h"
 #include "tamem.h"
 #include "tafunctions.h"
 #include "hook\etc.h"
@@ -19,12 +20,16 @@ MenuResolution::MenuResolution (BOOL EqualIt_b)
 	Hook_0049802B= NULL;
 	Hook_004980AD= NULL;
 
+	Width= 0;
+	Height= 0;
+
 	if (EqualIt_b)
 	{
 		InstallHook ( );
 	}
 }
-MenuResolution::MenuResolution ()
+
+MenuResolution::MenuResolution (int Width_arg, int Height_arg)
 {
 	Hook_0049E91C= NULL;
 	Hook_0049E93B= NULL;
@@ -32,7 +37,20 @@ MenuResolution::MenuResolution ()
 	Hook_00491B01= NULL;
 	Hook_0049802B= NULL;
 	Hook_004980AD= NULL;
+
+	Width= 0;
+	Height= 0;
+
+	if ((0!=Width_arg)
+		&&(0!=Height_arg))
+	{
+		Width= Width_arg;
+		Height= Height_arg;
+
+		InstallHook ( );
+	}
 }
+
 MenuResolution::~MenuResolution ()
 {
 	UninstallHook ();
@@ -90,7 +108,17 @@ void MenuResolution::UninstallHook (void)
 	*/
 int  __stdcall  sub_0049E91C (PInlineX86StackBuffer X86StrackBuffer)
 {
-	DWORD Width= MyConfig->FindRegDword ( "DisplayModeWidth",0);
+	DWORD Width;
+	
+	if (0!=NowCrackLimit->SyncMenuResolution->Width)
+	{
+		Width= NowCrackLimit->SyncMenuResolution->Width;
+	}
+	else
+	{
+		Width= MyConfig->FindRegDword ( "DisplayModeWidth",0);
+	}
+	
 	if (0==Width)
 	{
 		MyConfig->ReadTAReg_Dword ( "DisplayModeWidth", &Width);
@@ -108,7 +136,17 @@ int  __stdcall  sub_0049E91C (PInlineX86StackBuffer X86StrackBuffer)
 
 int  __stdcall  sub_0049E93B (PInlineX86StackBuffer X86StrackBuffer)
 {
-	DWORD Height= MyConfig->FindRegDword ( "DisplayModeHeight",0);
+	DWORD Height;
+
+	if (0!=NowCrackLimit->SyncMenuResolution->Height)
+	{
+		Height= NowCrackLimit->SyncMenuResolution->Height;
+	}
+	else
+	{
+		Height= MyConfig->FindRegDword ( "DisplayModeHeight",0);
+	}
+
 	if (0==Height)
 	{
 		MyConfig->ReadTAReg_Dword ( "DisplayModeHeight", &Height);
@@ -135,8 +173,18 @@ int  __stdcall  sub_00491A75 (PInlineX86StackBuffer X86StrackBuffer)
 	DWORD Height= 0;
 	DWORD Width= 0;
 
-	MyConfig->ReadTAReg_Dword ( "DisplayModeWidth", &Width);
-	MyConfig->ReadTAReg_Dword ( "DisplayModeHeight", &Height);
+	if ((0!=NowCrackLimit->SyncMenuResolution->Width)
+		&&(0!=NowCrackLimit->SyncMenuResolution->Height))
+	{
+		Width= NowCrackLimit->SyncMenuResolution->Width;
+		Height= NowCrackLimit->SyncMenuResolution->Height;
+	}
+	else
+	{
+		MyConfig->ReadTAReg_Dword ( "DisplayModeWidth", &Width);
+		MyConfig->ReadTAReg_Dword ( "DisplayModeHeight", &Height);
+	}
+
 	
 	if (0==Width)
 	{
@@ -164,8 +212,17 @@ int __stdcall sub_00491B01 (PInlineX86StackBuffer X86StrackBuffer)
 	DWORD Height= 0;
 	DWORD Width= 0;
 
-	MyConfig->ReadTAReg_Dword ( "DisplayModeWidth", &Width);
-	MyConfig->ReadTAReg_Dword ( "DisplayModeHeight", &Height);
+	if ((0!=NowCrackLimit->SyncMenuResolution->Width)
+		&&(0!=NowCrackLimit->SyncMenuResolution->Height))
+	{
+		Width= NowCrackLimit->SyncMenuResolution->Width;
+		Height= NowCrackLimit->SyncMenuResolution->Height;
+	}
+	else
+	{
+		MyConfig->ReadTAReg_Dword ( "DisplayModeWidth", &Width);
+		MyConfig->ReadTAReg_Dword ( "DisplayModeHeight", &Height);
+	}
 
 	if (0==Width)
 	{

@@ -10,6 +10,9 @@ int __stdcall sub_00491B01 (PInlineX86StackBuffer X86StrackBuffer);
 
 class MenuResolution
 {
+public:
+	int Width;
+	int Height;
 private:
 	InlineSingleHook * Hook_0049E91C;
 	InlineSingleHook * Hook_0049E93B;
@@ -18,7 +21,7 @@ private:
 	InlineSingleHook * Hook_0049802B;
 	InlineSingleHook * Hook_004980AD;
 public:
-	MenuResolution ();
+	MenuResolution (int Width_arg, int Height_arg);
 	MenuResolution (BOOL EqualIt_b);
 	~MenuResolution ();
 private:

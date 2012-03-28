@@ -130,6 +130,7 @@
 		void SendStr (char * InputStrBuf);
 		void SetHDCFont (HDC Hdc, HFONT font);
 		bool UpdateImeInput (void);
+		void freelpImeSurface (void);
 	};
 
 	void CopyToContextScreenMem (OFFSCREEN * OFFSCREEN_Ptr, PSpecScreenSurface SrcSpecScreenSurface);
@@ -154,4 +155,5 @@
 	extern unsigned int InnerCreateWindow;
 	int __stdcall CreateWindowExW_new (PInlineX86StackBuffer X86StrackBuffer);
 	*/
+	extern UnicodeSupport* NowSupportUnicode;
 #endif //UNICODESUPPORT_HAYU32Y

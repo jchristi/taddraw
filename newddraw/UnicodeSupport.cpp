@@ -72,10 +72,12 @@ UnicodeSupport::UnicodeSupport(LPCSTR FontName, DWORD Color, DWORD Background)
 		return ;
 	}
 
+
 	if (0==*reinterpret_cast<DWORD *>(0x51F320+ 0x84) )
-	{// lpDDraw==NULL
+	{// if lpDDraw==NULL
 		return ;
 	}
+
 	UnicodeYellowFont= CreateFontA ( 
 		12,                                                 //   nHeight 
 		0,                                                   //   nWidth 
@@ -203,6 +205,7 @@ UnicodeSupport::UnicodeSupport(void)
 	xPos= yPos= 0;
 	ImeSurfaceBackground= 0x01;
 	lpImeSurface= NULL;
+	UnicodeFontDrawCache= NULL;
 }
 
 UnicodeSupport::~UnicodeSupport(void)
@@ -258,11 +261,11 @@ UnicodeSupport::~UnicodeSupport(void)
 		
 		PSpecScreenSurface temp2_PSSS;
 
-		for (PSpecScreenSurface temp_PSSS= UnicodeFontDrawCache; NULL!=temp_PSSS; FreeSpecScreenSurface ( temp2_PSSS))
+		for (PSpecScreenSurface temp_PSSS= UnicodeFontDrawCache; NULL!=temp_PSSS;)
 		{
 			temp2_PSSS= temp_PSSS;
 			temp_PSSS= temp_PSSS->Next;
-			
+			FreeSpecScreenSurface ( temp2_PSSS);
 		}
 		//allow IME
 		if (NULL!=Orginal_hIMC)
@@ -271,13 +274,11 @@ UnicodeSupport::~UnicodeSupport(void)
 			hIMC= Orginal_hIMC;
 		}
 		//ReleaseAllVisibleWindow ( );
-		if (NULL!=lpImeSurface)
-		{
-			lpImeSurface->Release ( );
-		}
+		freelpImeSurface ();
+
 		if (NULL!=lpCandList)
 		{
-			delete	lpCandList;
+			delete lpCandList;
 		}
 		ReleaseCandidateList ( );
 		
@@ -527,7 +528,6 @@ BOOL UnicodeSupport::IsIDDrawLost (void)
 void UnicodeSupport::RestoreLocalSurf ( void)
 {
 	//= (LPDIRECTDRAW)LocalShare->TADirectDraw;
-
 
 	Width= 200;
 	Height= 300;
@@ -878,6 +878,23 @@ void UnicodeSupport::SendStr (char * InputStrBuf)
 	}
 }
 
+void UnicodeSupport::freelpImeSurface (void)
+{
+	if (NULL!=lpImeSurface)
+	{
+		__try	
+		{
+			lpImeSurface->Release ( );
+		}
+		__except (EXCEPTION_EXECUTE_HANDLER)
+		{
+			;
+		}
+
+	}
+
+}
+
 bool UnicodeSupport::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 	bool RTN_b= false;
@@ -959,8 +976,6 @@ bool UnicodeSupport::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 					}
 
 				}
-
-
 
 				LMouseDown= FALSE;
 				RTN_b= TRUE;
@@ -1192,7 +1207,7 @@ int __stdcall USDrawTextInScreen_HookRouter (PInlineX86StackBuffer X86StrackBuff
 {
 	__try
 	{
-		if(!NowCrackLimit->NowSupportUnicode->UnicodeValid)
+		if(!(NowSupportUnicode->UnicodeValid))
 		{
 			__leave;
 		}
@@ -1212,7 +1227,7 @@ int __stdcall USDrawTextInScreen_HookRouter (PInlineX86StackBuffer X86StrackBuff
 			__leave;
 		}
 
-		if (((NowCrackLimit->NowSupportUnicode))->UnicodeDrawTextA ( OFFSCREEN_Ptr, Str, temp_PDDraw, X_Off, Y_Off))
+		if (((NowSupportUnicode))->UnicodeDrawTextA ( OFFSCREEN_Ptr, Str, temp_PDDraw, X_Off, Y_Off))
 		{
 			X86StrackBuffer->Esp= X86StrackBuffer->Esp+ 0x4+ 0x18;// 先pop  addr,然后加上retn 0x18
 			X86StrackBuffer->rtnAddr_Pvoid= RtnAddr;
@@ -1236,7 +1251,7 @@ int __stdcall myValidChar  (PInlineX86StackBuffer X86StrackBuffer)
 {
 	__try	
 	{
-		if(!NowCrackLimit->NowSupportUnicode->UnicodeValid)
+		if(!NowSupportUnicode->UnicodeValid)
 		{
 			__leave;
 		}
@@ -1295,7 +1310,7 @@ int __stdcall DBSC2rdByte (PInlineX86StackBuffer X86StrackBuffer)
 {
 	__try	
 	{
-		if(!NowCrackLimit->NowSupportUnicode->UnicodeValid)
+		if(!NowSupportUnicode->UnicodeValid)
 		{
 			__leave;
 		}
@@ -1318,7 +1333,7 @@ int __stdcall myDeleteChar (PInlineX86StackBuffer X86StrackBuffer)
 {
 	__try	
 	{
-		if(!NowCrackLimit->NowSupportUnicode->UnicodeValid)
+		if(!NowSupportUnicode->UnicodeValid)
 		{
 			__leave;
 		}
@@ -1352,7 +1367,7 @@ int __stdcall Blt_BottomState0_Text (PInlineX86StackBuffer X86StrackBuffer)
 {
 	__try	
 	{
-		if(!NowCrackLimit->NowSupportUnicode->UnicodeValid)
+		if(!NowSupportUnicode->UnicodeValid)
 		{
 			__leave;
 		}
@@ -1375,7 +1390,7 @@ int __stdcall Blt_BottomState0_Text (PInlineX86StackBuffer X86StrackBuffer)
 			__leave;
 		}
 
-		if (((NowCrackLimit->NowSupportUnicode))->UnicodeDrawTextA ( OFFSCREEN_Ptr, Str, temp_PDDraw, X_Off, Y_Off))
+		if (((NowSupportUnicode))->UnicodeDrawTextA ( OFFSCREEN_Ptr, Str, temp_PDDraw, X_Off, Y_Off))
 		{
 			X86StrackBuffer->rtnAddr_Pvoid= RtnAddr;
 			return X86STRACKBUFFERCHANGE;
@@ -1394,7 +1409,7 @@ int __stdcall Blt_BottomState1_Text (PInlineX86StackBuffer X86StrackBuffer)
 {
 	__try	
 	{
-		if(!NowCrackLimit->NowSupportUnicode->UnicodeValid)
+		if(!NowSupportUnicode->UnicodeValid)
 		{
 			__leave;
 		}
@@ -1417,7 +1432,7 @@ int __stdcall Blt_BottomState1_Text (PInlineX86StackBuffer X86StrackBuffer)
 			__leave;
 		}
 
-		if (((NowCrackLimit->NowSupportUnicode))->UnicodeDrawTextA ( OFFSCREEN_Ptr, Str, temp_PDDraw, X_Off, Y_Off))
+		if (((NowSupportUnicode))->UnicodeDrawTextA ( OFFSCREEN_Ptr, Str, temp_PDDraw, X_Off, Y_Off))
 		{
 			X86StrackBuffer->rtnAddr_Pvoid= RtnAddr;
 			return X86STRACKBUFFERCHANGE;
@@ -1437,7 +1452,7 @@ int __stdcall PopadState (PInlineX86StackBuffer X86StrackBuffer)
 {
 	__try	
 	{
-		if(!NowCrackLimit->NowSupportUnicode->UnicodeValid)
+		if(!NowSupportUnicode->UnicodeValid)
 		{
 			__leave;
 		}
@@ -1465,7 +1480,7 @@ int __stdcall PopadState (PInlineX86StackBuffer X86StrackBuffer)
 		 return 0;
 	 }
 	 //GetTextExtentPoint32 ( ImeHdc, StrBuf, strnlen ( StrBuf, 0x100), &Size_buf);
-	 X86StrackBuffer->Eax= getDBCSlen ( Str)* 8; //(NowCrackLimit->NowSupportUnicode->FontExtent.cx);
+	 X86StrackBuffer->Eax= getDBCSlen ( Str)* 8; //(NowSupportUnicode->FontExtent.cx);
 	 X86StrackBuffer->rtnAddr_Pvoid=  *reinterpret_cast<LPVOID *>(X86StrackBuffer->Esp);
 	 X86StrackBuffer->Esp= X86StrackBuffer->Esp+ 8;
 
@@ -1484,7 +1499,7 @@ int __stdcall PopadState (PInlineX86StackBuffer X86StrackBuffer)
 		 return 0;
 	 }
 	 //GetTextExtentPoint32 ( ImeHdc, StrBuf, strnlen ( StrBuf, 0x100), &Size_buf);
-	 X86StrackBuffer->Eax= getDBCSlen ( Str)* (* *reinterpret_cast<BYTE * *>(X86StrackBuffer->Esp+ 0x4));//(NowCrackLimit->NowSupportUnicode->FontExtent.cx);
+	 X86StrackBuffer->Eax= getDBCSlen ( Str)* (* *reinterpret_cast<BYTE * *>(X86StrackBuffer->Esp+ 0x4));//(NowSupportUnicode->FontExtent.cx);
 	 X86StrackBuffer->rtnAddr_Pvoid=  *reinterpret_cast<LPVOID *>(X86StrackBuffer->Esp);
 	 X86StrackBuffer->Esp= X86StrackBuffer->Esp+ 0xc;
 

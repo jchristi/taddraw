@@ -227,7 +227,7 @@ unsigned int EnterOption_Address = 0x0460160;
 unsigned int PressInOption_Address= 0x0045FC60;
 
 unsigned int AddtionInitAddr= 0x0049E909;
-
+unsigned int AddtionInitAfterDDrawAddr= 0x049E9A0;
 
 unsigned int Blt_BottomState0_TextRtn= 0x004C16D9 ;
 unsigned int Blt_BottomState0_TextAddr= 0x004C16D4 ;
