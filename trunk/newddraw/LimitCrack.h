@@ -26,7 +26,7 @@ public:
 	InlineSingleHook* HookInCircleSelect;
 	IncreaseSfxLimit * NowIncreaseSfxLimit;
 	ModifyWeaponPacket * NowModifyWeaponPacket;
-	UnicodeSupport* NowSupportUnicode;
+	
 	MenuResolution * SyncMenuResolution;
 
 	UnitLimit * SetUnitLimit;

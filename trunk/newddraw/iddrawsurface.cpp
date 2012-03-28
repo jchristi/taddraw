@@ -435,7 +435,7 @@ HRESULT __stdcall IDDrawSurface::Unlock(LPVOID arg1)
 		//unicode
 		if (NULL!=NowCrackLimit)
 		{
-			NowCrackLimit->NowSupportUnicode->Blt ( lpBack);
+			NowSupportUnicode->Blt ( lpBack);
 		}
 		//////////////////////////////////////////////////////////////////////////
 		//ChangeQueue.Blit(lpBack);
@@ -724,16 +724,14 @@ LRESULT CALLBACK WinProc(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam
 		//////////////////////////////////////////////////////////////////////////
 		if (NULL!=NowCrackLimit)
 		{
-			if(NowCrackLimit->myExternQuickKey->Message(WinProcWnd, Msg, wParam, lParam))
+			if(NowCrackLimit->myExternQuickKey->Message ( WinProcWnd, Msg, wParam, lParam))
 				return 0;
-			if (NowCrackLimit->NowSupportUnicode->Message(WinProcWnd, Msg, wParam, lParam))
-			{
-				return 0;
-			}
-/*
-			if((NULL!=NowCrackLimit->IdleUnits)
-				&&((NowCrackLimit->IdleUnits)->Message(WinProcWnd, Msg, wParam, lParam)))
-				return 0;*/
+
+		}
+		if ((NULL!=NowSupportUnicode)
+			&&NowSupportUnicode->Message ( WinProcWnd, Msg, wParam, lParam))
+		{
+			return 0;
 		}
 
 		if((Msg == WM_KEYUP)||(WM_KEYDOWN==Msg))

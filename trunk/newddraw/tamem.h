@@ -717,7 +717,7 @@ typedef struct _TAProgramStruct
 	__int16 MenuResID;
 	char field_16[2];
 	WNDCLASS WndClass;
-	int TAClass_Hwnd;
+	HWND TAClass_Hwnd;
 	int Screen_DIBSECTION;
 	int WndMemHDC;
 	int Palette_H;

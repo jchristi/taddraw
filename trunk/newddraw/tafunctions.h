@@ -100,6 +100,7 @@ extern LPCSTR GameName_CCSTR;
 extern unsigned int EnterOption_Address;
 extern unsigned int PressInOption_Address;
 extern unsigned int AddtionInitAddr;
+extern unsigned int AddtionInitAfterDDrawAddr;
 
 extern unsigned int Blt_BottomState0_TextRtn;
 extern unsigned int Blt_BottomState0_TextAddr;

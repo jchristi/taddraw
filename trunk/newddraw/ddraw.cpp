@@ -94,15 +94,18 @@ bool Log = true;
 
 _TAHPI * TAHPI;
 TADRConfig * MyConfig;
-LimitCrack * NowCrackLimit;
 MenuResolution* SyncMenuResolution;
 TABugFixing * FixTABug;
 
-InlineSingleHook * AddtionInitHook;
+LimitCrack* NowCrackLimit;
+UnicodeSupport* NowSupportUnicode;
 
+
+
+InlineSingleHook * AddtionInitHook;
+InlineSingleHook * AddtionInitAfterDDrawHook;// 
 
 SingleHook * WndProc_SH;
-
 
 int __stdcall AddtionInit (PInlineX86StackBuffer X86StrackBuffer)
 {
@@ -122,9 +125,10 @@ int __stdcall AddtionInit (PInlineX86StackBuffer X86StrackBuffer)
 
 	IDDrawSurface::OutptTxt ("Installing AddtionRoutine_CircleSelect");
 
+/*
 	LocalShare->TAWndProc= TAWndProc_Addr;
 	DWORD WinProcAddrBuf= (DWORD)WinProc;
-	WndProc_SH= new SingleHook ( TAWndProcSH_Addr, 4, INLINE_UNPROTECTEVINMENT, (LPBYTE)&WinProcAddrBuf );
+	WndProc_SH= new SingleHook ( TAWndProcSH_Addr, 4, INLINE_UNPROTECTEVINMENT, (LPBYTE)&WinProcAddrBuf );*/
 	//ReplaceTAProc();
 	return 0;
 }
@@ -140,11 +144,35 @@ void AddtionRelease (void)
 
 	delete MyConfig;
 
-	
 	IDDrawSurface::OutptTxt ("Release AddtionRoutine_CircleSelect");
 	
 	//delete self :D
 	delete AddtionInitHook;
+}
+int __stdcall AddtionInitAfterDDraw (PInlineX86StackBuffer X86StrackBuffer)
+{
+	char FontName[0x100];
+	FontName[0]= 0;
+	MyConfig->GetIniStr ( "UnicodeSupport", FontName, 0x100, NULL);
+	if (0!=FontName[0])
+	{
+		NowSupportUnicode= new UnicodeSupport ( FontName, MyConfig->GetIniInt ( "UnicodeSupport_Color", 0xffffff), MyConfig->GetIniInt ( "UnicodeSupport_Background", 0x000000));
+	}
+	else
+	{
+		NowSupportUnicode= new UnicodeSupport ( );
+	}
+
+ 
+ 	LocalShare->TAWndProc = (WNDPROC)SetWindowLong ( (*TAProgramStruct_PtrPtr)->TAClass_Hwnd, GWL_WNDPROC, (long)WinProc);
+
+	return 0;
+}
+void AddtionReleaseAfterDDraw (void)
+{
+	SetWindowLong ( (*TAProgramStruct_PtrPtr)->TAClass_Hwnd, GWL_WNDPROC, (long)LocalShare->TAWndProc);
+	delete NowSupportUnicode;
+	delete AddtionInitAfterDDrawHook;
 }
 
 //---------------------------------------------------------------------------
@@ -176,17 +204,22 @@ bool APIENTRY DllMain(HINSTANCE hinst, unsigned long reason, void*)
 
 		AddtionInitHook= new InlineSingleHook ( AddtionInitAddr, 5, 
 			INLINE_5BYTESLAGGERJMP, AddtionInit);
+
+		AddtionInitAfterDDrawHook= new InlineSingleHook ( AddtionInitAfterDDrawAddr, 5, 
+			INLINE_5BYTESLAGGERJMP, AddtionInitAfterDDraw);
 	}
 	if(reason==DLL_PROCESS_DETACH)
 	{
 		/* KillTimer(NULL, Timer);
 		KillTimer(NULL, DetectTimer); */
+		AddtionReleaseAfterDDraw ( );
+		AddtionRelease ( );
 
 		FreeLibrary(SDDraw);
 		ShutdownLocalFileMap();
 		ShutDownTAHookFileMap();
 
-		AddtionRelease ( );
+
 	}
 
 	return 1;
