@@ -221,8 +221,7 @@ reTry:
 						if (NULL!=Current->UnitOrders)
 						{
 							char UnitState= Current->UnitOrders->COBHandler_index;
-							if((UnitState!=41) 
-								&& (UnitState!=64)) //not idle
+							if((UnitState==0xc)) //not idle
 							{
 								++j;
 								continue;
