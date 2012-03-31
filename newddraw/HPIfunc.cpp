@@ -35,9 +35,12 @@ _TAHPI::_TAHPI (BOOL Inited)
 
 		InitTAPath ( );
 		Init_srand ( 30);
+
+		*reinterpret_cast<DWORD *>(0x50289C)= 1;
+
 		InitTAHPIAry ( );
 
-		//*reinterpret_cast<DWORD *>(0x50289C)= 1;
+		//
 		
 		TADontInit_ISH= new InlineSingleHook ( TADontInit_Addr , 14, INLINE_5BYTESLAGGERJMP, TADontInit);
 	}
