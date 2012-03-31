@@ -7,7 +7,7 @@ class TABugFixing
 private:
 	SingleHook * NullUnitDeathVictim;
 	SingleHook * CircleRadius;
-
+	SingleHook * CrackCd;
 	InlineSingleHook * BadModelHunter_ISH;
 public:
 	TABugFixing ();

@@ -24,8 +24,9 @@ BYTE NullUnitDeathVictimBits[]={0x0F, 0x84, 0x6B, 0x07, 0x00, 0x00};
 unsigned int CircleRadiusAddr= 0x00438EDE;
 BYTE CircleRadiusBits[]= {0x0F, 0x8E, 0x69, 0x01, 0x00, 0x00};
 
+unsigned int CrackCdAddr= 0x0041D6B0;
 
-
+BYTE CrackCDBits[]= {0x74, 0x0E, 0xB0, 0x2E};
 
 TABugFixing::TABugFixing ()
 {
@@ -34,6 +35,11 @@ TABugFixing::TABugFixing ()
 	CircleRadius=  new SingleHook ( CircleRadiusAddr, sizeof(CircleRadiusBits), INLINE_UNPROTECTEVINMENT, CircleRadiusBits);
 
 	BadModelHunter_ISH= new InlineSingleHook ( BadModelHunterAddr, 5, INLINE_5BYTESLAGGERJMP, BadModelHunter);
+
+	CrackCd= new SingleHook ( CrackCdAddr, sizeof(CrackCDBits), INLINE_UNPROTECTEVINMENT, CrackCDBits);
+	
+		// 	0041D6B0   74 0E            JE SHORT totala.0041D6C0
+		// 		0041D6B2   B0 2E            MOV AL,2E
 }
 
 TABugFixing::~TABugFixing ()
@@ -42,9 +48,18 @@ TABugFixing::~TABugFixing ()
 	{
 		delete NullUnitDeathVictim;
 	}
-	if (NULL!=NullUnitDeathVictim)
+	if (NULL!=BadModelHunter_ISH)
 	{
 		delete BadModelHunter_ISH;
+	}
+	
+	if (NULL!=CrackCd)
+	{
+		delete CrackCd;
+	}
+	if (NULL!=CircleRadius)
+	{
+		delete CircleRadius;
 	}
 	
 }
@@ -64,6 +79,8 @@ BOOL TABugFixing::AntiCheat (void)
 
 	return TRUE;
 }
+
+
 
 void LogToErrorlog (LPSTR Str)
 {

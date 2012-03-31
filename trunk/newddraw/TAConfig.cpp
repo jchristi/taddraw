@@ -47,10 +47,12 @@ TADRConfig::TADRConfig ()
 		IniFileLen= GetFileSize ( File, NULL);
 		if (0<IniFileLen)
 		{
-			IniFileData= new BYTE[IniFileLen];
+			IniFileData= new BYTE[IniFileLen+ 1];
 				 
 			ReadFile ( File, IniFileData, IniFileLen, reinterpret_cast<DWORD *>(&IniFileLen), NULL);
-				 
+				
+			IniFileData[IniFileLen]= 0;
+
 			LoadIniRegSetting ( IniFileData);
 		}
 		if (NULL!=IniFileData)
@@ -63,6 +65,8 @@ TADRConfig::TADRConfig ()
 		IsDdrawIni= true;
 		strcpy_s ( IniFilePath_cstr, MAX_PATH, TAexeName);
 		IniFileData= reinterpret_cast<BYTE *>(IniFileBuf);
+
+		IniFileData[IniFileLen]= 0;
 
 		File= CreateFileA ( IniFilePath_cstr, FILE_WRITE_ACCESS, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 		if (INVALID_HANDLE_VALUE!=File)
@@ -271,6 +275,7 @@ void TADRConfig::LoadIniRegSetting (/*__in __out */LPBYTE IniFileData)
 				goto end;
 			}
 			
+			memset ( LineBuf, 0, sizeof(LineBuf));
 			memcpy ( LineBuf, tmp_cstrp+ 1, LineLen);//tmp_cstrp==\n
 			LineBuf [LineLen]= 0;
 			tmp_cstrp= trim_crlf_ ( LineBuf);
@@ -305,6 +310,7 @@ void TADRConfig::LoadIniRegSetting (/*__in __out */LPBYTE IniFileData)
 
 			*TagSign_cstrp= 0;
 			strcpy_s ( RegName, 0x100, tmp_cstrp+ 1);
+			memset ( RegData, 0, sizeof ( RegData));
 			memcpy ( RegData, TagSign_cstrp+ 1, LineBuf+ LineLen- TagSign_cstrp- 1- 1);
 
 			//now check RegType
