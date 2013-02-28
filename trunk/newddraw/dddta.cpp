@@ -51,13 +51,7 @@ CDDDTA::~CDDDTA()
 
 void CDDDTA::DeInitDDDTA()
 {
-	if(MapView!=NULL)
-		UnmapViewOfFile(MapView);
-	MapView = NULL;
 
-	if(MemMap != NULL)
-		CloseHandle ( MemMap);
-	MemMap = NULL;
 
 	RestoreAllSharedTAMem();
 
@@ -70,6 +64,14 @@ void CDDDTA::DeInitDDDTA()
 	//MinimapHandler.DeinitMinimap();
 
 	TA3dEnabled = false;
+
+	if(MapView!=NULL)
+		UnmapViewOfFile(MapView);
+	MapView = NULL;
+
+	if(MemMap != NULL)
+		CloseHandle ( MemMap);
+	MemMap = NULL;
 }
 
 void CDDDTA::Print(HDC hdc, PrimitiveStruct *Object)

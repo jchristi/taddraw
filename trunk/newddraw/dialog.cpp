@@ -141,6 +141,9 @@ void Dialog::HideDialog()
 	DialogVisible = false;
 	CursorPosX = -1;
 	CursorPosY = -1;
+
+	WritePos();
+	WriteSettings();
 }
 
 void Dialog::BlitDialog(LPDIRECTDRAWSURFACE DestSurf)
@@ -767,7 +770,7 @@ void Dialog::ReadPos()
 	DWORD dwDisposition;
 	DWORD Size = sizeof(int);
 
-	RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Yankspankers\\Eye", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &dwDisposition);
+	RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\TA Patch\\Eye", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &dwDisposition);
 
 	RegQueryValueEx(hKey, "DialogPosX", NULL, NULL, (unsigned char*)&posX, &Size);
 	RegQueryValueEx(hKey, "DialogPosY", NULL, NULL, (unsigned char*)&posY, &Size);
@@ -778,9 +781,12 @@ void Dialog::ReadPos()
 void Dialog::WriteSettings()
 {
 	HKEY hKey;
+	HKEY hKey1;
 	DWORD dwDisposition;
 
-	RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Yankspankers\\Eye", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &dwDisposition);
+	RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\TA Patch", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey1, &dwDisposition);
+
+	RegCreateKeyEx(hKey1, "Eye", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &dwDisposition);
 
 	RegSetValueEx(hKey, "BackGround", NULL, REG_DWORD, (unsigned char*)&StagedButton3State, sizeof(int));
 	RegSetValueEx(hKey, "VSync", NULL, REG_BINARY, (unsigned char*)&VSyncEnabled, sizeof(bool));
@@ -791,6 +797,7 @@ void Dialog::WriteSettings()
 	RegSetValueEx(hKey, "Delay", NULL, REG_SZ, (unsigned char*)cAutoClickDelay, strlen(cAutoClickDelay));
 	RegSetValueEx(hKey, "WhiteboardKey", NULL, REG_DWORD, (unsigned char*)&VirtualWhiteboardKey, sizeof(int));
 	RegCloseKey(hKey);
+	RegCloseKey(hKey1);
 }
 
 void Dialog::ReadSettings()
@@ -799,7 +806,7 @@ void Dialog::ReadSettings()
 	DWORD dwDisposition;
 	DWORD Size;
 
-	RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Yankspankers\\Eye", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &dwDisposition);
+	RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\TA Patch\\Eye", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &dwDisposition);
 
 	Size = sizeof(int);
 	if(RegQueryValueEx(hKey, "BackGround", NULL, NULL, (unsigned char*)&StagedButton3State, &Size) != ERROR_SUCCESS)
@@ -850,14 +857,18 @@ void Dialog::ReadSettings()
 void Dialog::WritePos()
 {
 	HKEY hKey;
+	HKEY hKey1;
 	DWORD dwDisposition;
 
-	RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Yankspankers\\Eye", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &dwDisposition);
+	RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\TA Patch", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey1, &dwDisposition);
+
+	RegCreateKeyEx(hKey1, "Eye", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &dwDisposition);
 
 	RegSetValueEx(hKey, "DialogPosX", NULL, REG_DWORD, (unsigned char*)&posX, sizeof(int));
 	RegSetValueEx(hKey, "DialogPosY", NULL, REG_DWORD, (unsigned char*)&posY, sizeof(int));
 
 	RegCloseKey(hKey);
+	RegCloseKey(hKey1);
 }
 
 void Dialog::CorrectPos()

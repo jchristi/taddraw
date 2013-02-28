@@ -74,6 +74,7 @@ void ModifyHook::InitHookClass (LPBYTE AddrToHook_Pvoid, int HookMode, DWORD Max
 	{
 	case INLINE_MODIFYCODE:
 		//FirstOpcodeLen= GetOpCodeSize ( AddrToHook ( ));
+/*
 		if (OffToRedirect>=OverWriteLen)
 		{
 			m_NewBytes_Pbyte= OverWriteOpcode;
@@ -85,7 +86,7 @@ void ModifyHook::InitHookClass (LPBYTE AddrToHook_Pvoid, int HookMode, DWORD Max
 			memcpy ( m_OrgBytes_Pbyte, AddrToHook ( ), MaxLen);
 
 			return ;
-		}
+		}*/
 
 		if ((MaxLen<OverWriteLen)
 			&&(MaxLen<5))

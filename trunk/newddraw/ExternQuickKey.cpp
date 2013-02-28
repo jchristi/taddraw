@@ -30,16 +30,22 @@ ExternQuickKey::ExternQuickKey ()
 		INLINE_5BYTESLAGGERJMP, AddtionRoutine_CircleSelect);
 
 	HKEY hKey;
+	HKEY hKey1;
 	DWORD dwDisposition;
 	DWORD Size;
 
-	RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Yankspankers\\Eye", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &dwDisposition);
+	RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\TA Patch", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &dwDisposition);
+
+	RegCreateKeyEx(hKey, "Eye", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey1, &dwDisposition);
 
 	Size = sizeof(int);
-	if(RegQueryValueEx(hKey, "KeyCode", NULL, NULL, (unsigned char*)&VirtualKeyCode, &Size) != ERROR_SUCCESS)
+	if(RegQueryValueEx(hKey1, "KeyCode", NULL, NULL, (unsigned char*)&VirtualKeyCode, &Size) != ERROR_SUCCESS)
 	{
 		VirtualKeyCode = 88;
 	}
+
+	RegCloseKey ( hKey);
+	RegCloseKey ( hKey1);
 
 	Add = (char*)0x41ac14;
 	Sub = (char*)0x41ac18;
@@ -50,8 +56,6 @@ ExternQuickKey::ExternQuickKey ()
 	NumSub = -100;
 
 	IDDrawSurface::OutptTxt ( "New ExternQuickKey");
-
-
 }
 
 

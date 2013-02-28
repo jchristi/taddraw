@@ -149,9 +149,11 @@ HKEY TADRConfig::TARegPath_HKEY (void)
 {
 	DWORD dwDisposition;
 	HKEY Rtn;
+	HKEY tmp;
 
-	RegCreateKeyEx ( HKEY_CURRENT_USER, CompanyName_CCSTR, NULL, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &Rtn, &dwDisposition);
-	RegCreateKeyEx ( Rtn, GameName_CCSTR, NULL, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &Rtn, &dwDisposition);
+	RegCreateKeyEx ( HKEY_CURRENT_USER, CompanyName_CCSTR, NULL, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &tmp, &dwDisposition);
+	RegCreateKeyEx ( tmp, GameName_CCSTR, NULL, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &Rtn, &dwDisposition);
+	RegCloseKey ( tmp);
 	return Rtn;
 }
 
@@ -367,28 +369,6 @@ int TADRConfig::EnumIniRegInfo_Begin (PEnumRegInfo * iterator_arg, LPCSTR * Name
 
 	*Name_pp= NULL;
 	*Data_p=  NULL;
-/*
-	if (RegStrings_vec.empty ( ))
-	{
-		if (!RegStrings_vec.empty ( ))
-		{
-			*Name_pp= (iterator_pvar->String_iter)->Name();
-			*Data_p=  reinterpret_cast<LPCVOID>((iterator_pvar->String_iter)->Str());	
-			(iterator_pvar)->Count+= 1;
-			Rtn= 1;
-			++((iterator_pvar->String_iter));
-		}
-
-	}
-	else
-	{
-		*Name_pp= (iterator_pvar->Dword_iter)->Name();
-		*Data_p=  reinterpret_cast<LPVOID>((iterator_pvar->Dword_iter)->Value());
-		iterator_pvar->Count+= 1;
-		
-		Rtn= 0;
-		++((*iterator_pvar->Dword_iter));
-	}*/
 
 	 *(iterator_arg)= iterator_pvar;
 	return EnumIniRegInfo_Next (  iterator_arg,  Name_pp, Data_p);

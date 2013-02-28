@@ -39,6 +39,7 @@ CIncome::~CIncome()
 	if(lpIncomeSurf)
 		lpIncomeSurf->Release();
 
+	lpIncomeSurf= NULL;
 	WritePos();
 }
 
@@ -377,10 +378,11 @@ void CIncome::ReadPos()
 	DWORD dwDisposition;
 	DWORD Size = sizeof(int);
 
-	RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Yankspankers\\Eye", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &dwDisposition);
+	RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\TA Patch\\Eye", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &dwDisposition);
 
 	if(RegQueryValueEx(hKey, "IncomePosX", NULL, NULL, (unsigned char*)&posX, &Size) == ERROR_SUCCESS)
 	{
+		;
 	}
 	else
 	{
@@ -402,14 +404,20 @@ void CIncome::ReadPos()
 void CIncome::WritePos()
 {
 	HKEY hKey;
+	HKEY hKey1;
 	DWORD dwDisposition;
 
-	RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Yankspankers\\Eye", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &dwDisposition);
+	RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\TA Patch", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey1, &dwDisposition);
+
+	RegCreateKeyEx(hKey1, "Eye", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &dwDisposition);
 
 	RegSetValueEx(hKey, "IncomePosX", NULL, REG_DWORD, (unsigned char*)&posX, sizeof(int));
 	RegSetValueEx(hKey, "IncomePosY", NULL, REG_DWORD, (unsigned char*)&posY, sizeof(int));
 
+	
 	RegCloseKey(hKey);
+
+	RegCloseKey(hKey1);
 }
 
 bool CIncome::Message(HWND WinProchWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
