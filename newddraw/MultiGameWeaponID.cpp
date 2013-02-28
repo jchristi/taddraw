@@ -222,7 +222,8 @@ void ModifyWeaponPacket::EnsureDplayx (BOOL DoIt)
 		1BCFC   BB 06000000      MOV EBX,6
 		*/
 
-		LPBYTE DplayHmodule= reinterpret_cast<LPBYTE>(GetModuleHandle ( "Dplayx.dll"));
+		LPSTR DplayxDllName= reinterpret_cast<LPSTR> (0x004FF9E4);
+		LPBYTE DplayHmodule= reinterpret_cast<LPBYTE>(GetModuleHandle ( DplayxDllName));
 		BYTE _546_0[]= {0xC7, 0x45, 0xF0, 0x24, 0x00, 0x00, 0x00};
 		BYTE _546_1[]= {0xC7, 0x45, 0xF0, 0x0E, 0x00, 0x00, 0x00};
 
@@ -230,7 +231,11 @@ void ModifyWeaponPacket::EnsureDplayx (BOOL DoIt)
 		BYTE _99b_1[]= {0xBB, 0x0E, 0x00, 0x00, 0x00};
 		
 
-		if (0==memcmp ( &DplayHmodule[0x27B8C], _546_0, sizeof(_546_0)))
+		if (NULL==DplayHmodule)
+		{
+			;
+		}
+		else if (0==memcmp ( &DplayHmodule[0x27B8C], _546_0, sizeof(_546_0)))
 		{//565 version dplayx.dll
 			*reinterpret_cast<DWORD *>(&_546_0[3])= 0x28;
 			*reinterpret_cast<DWORD *>(&_546_1[3])= 0x11;
@@ -266,6 +271,7 @@ void ModifyWeaponPacket::EnsureDplayx (BOOL DoIt)
 	}
 	catch (...)
 	{
+		//error happen in patch dplayx, stop!
 		;
 	}
 }

@@ -43,7 +43,19 @@ extern HINSTANCE HInstance;
 short MouseX,MouseY;
 bool StartedInRect;
 
-int Draw;
+
+/*
+IDDrawSurface::~IDDrawSurface()
+{
+	delete WhiteBoard;
+	delete Income;
+	delete TAHook;
+	delete CommanderWarp;
+	delete SharedRect;
+	delete SettingsDialog;
+	delete ChangeQueue;
+	delete DDDTA;
+}*/
 
 IDDrawSurface::IDDrawSurface(LPDIRECTDRAWSURFACE lpTASurf, bool iWindowed, int iScreenWidth, int iScreenHeight)
 {
@@ -55,8 +67,6 @@ IDDrawSurface::IDDrawSurface(LPDIRECTDRAWSURFACE lpTASurf, bool iWindowed, int i
 	SettingsDialog= new Dialog ;
 	ChangeQueue= new CChangeQueue ;
 	DDDTA= new CDDDTA ;
-
-	ValidIDrawSurface_i= 0xff7cd1a;
 
 	lpFront = lpTASurf;
 	OutptTxt("IDDrawSurface Created");
@@ -89,10 +99,11 @@ IDDrawSurface::IDDrawSurface(LPDIRECTDRAWSURFACE lpTASurf, bool iWindowed, int i
 	PlayingMovie = false;
 	DisableDeInterlace = false;
 
+
 	HKEY hKey;
 	DWORD dwDisposition;
 	DWORD Size;
-	RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Yankspankers\\Eye", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &dwDisposition);
+	RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\TA Patch\\Eye", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &dwDisposition);
 	Size = sizeof(bool);
 	if(RegQueryValueEx(hKey, "DisableDeInterlaceMovie", NULL, NULL, (unsigned char*)&DisableDeInterlace, &Size) != ERROR_SUCCESS)
 	{
@@ -119,23 +130,6 @@ ULONG __stdcall IDDrawSurface::AddRef()
 
 ULONG __stdcall IDDrawSurface::Release()
 {
-	if (0xff7cd1a==ValidIDrawSurface_i)
-	{
-		return 0;//ref count
-	}
-
-	delete WhiteBoard;
-	delete Income;
-	delete TAHook;
-	delete CommanderWarp;
-	delete SharedRect;
-	delete SettingsDialog;
-	delete ChangeQueue;
-	delete DDDTA;
-	
-
-	ValidIDrawSurface_i= false;
-
 	/* if(lpBattleFieldClipper)
 	{
 	lpBattleFieldClipper->Release();

@@ -109,7 +109,7 @@ int __stdcall BadModelHunter (PInlineX86StackBuffer X86StrackBuffer)
 		LogToErrorlog ( Obj_ptr->ThisUnit->UnitType->UnitName);
 		LogToErrorlog ( Obj_ptr->ThisUnit->UnitType->UnitDescription);
 		LogToErrorlog ( Obj_ptr->ThisUnit->UnitType->ObjectName);
-		SendText ( "Plz Send Errorlog.txt(In Your TA Path) And The Replay Tad To XPoy(In TAU Or In TAclub).\r\nMan, You Meet A Bad Crash About Unit. \r\nOr If You Are A Modder, You Can Know Which Unit Had Model Problem In End Of The Errorlog.txt", 1);
+		SendText ( "Plz Send Errorlog.txt(In Your TA Path) And The Replay Tad To XPoy(In TAU Or In TAclub).\r\nMan, You Meet A Bad Crash Cause By Unit. \r\nOr If You Are A Modder, You Can Know Which Unit Had Model Problem In End Of The Errorlog.txt", 1);
 
 		X86StrackBuffer->rtnAddr_Pvoid= (LPVOID)SafeModelAddr;
 

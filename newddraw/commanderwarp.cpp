@@ -28,6 +28,8 @@ CWarp::~CWarp()
 {
 	if(lpButton)
 		lpButton->Release();
+
+	lpButton= NULL;
 }
 
 void CWarp::SetPos(int x, int y)
@@ -117,7 +119,7 @@ void CWarp::Blit(LPDIRECTDRAWSURFACE DestSurf)
 		if(DataShare->CommanderWarp == CLIENTDONE)
 		{
 			Dialog *pDialog = (Dialog*)LocalShare->Dialog;
-			pDialog->DrawText(DestSurf, LocalShare->ScreenWidth-400, 100, "Waing for others to finish");
+			pDialog->DrawText(DestSurf, LocalShare->ScreenWidth-400, 100, "Waiting for others to finish");
 		}
 	}
 }

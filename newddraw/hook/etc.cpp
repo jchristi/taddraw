@@ -1288,13 +1288,11 @@ LONG RegWriteData ( HKEY RootKey, LPTSTR lpSubKey, LPTSTR lpValueName, DWORD Typ
 	}
 
 	Rtn= RegSetValueEx ( hKey, lpValueName, 0, Type, (CONST BYTE *)Data, TypeLen);
-	if (ERROR_SUCCESS!=Rtn)
-	{
-		RegCloseKey(hKey);
-		return Rtn;
-	}
-	Rtn= RegCloseKey(hKey);
 
+	if (NULL!=lpSubKey)
+	{	
+		RegCloseKey ( hKey);
+	}
 	return Rtn;
 }
 
