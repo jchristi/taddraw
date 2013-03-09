@@ -25,9 +25,6 @@
     <Filter Include="Source Files\Functions\externFromChina">
       <UniqueIdentifier>{7eaee814-32e5-4d09-8d47-5203fc630ffb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\HardCodeInTA3.1c">
-      <UniqueIdentifier>{1c118e51-3a7e-4d47-beed-7fb49c5bec4f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\HardCodeInTA3.1C">
       <UniqueIdentifier>{374e61b4-de13-41a4-a1ce-8ee56c1d8e41}</UniqueIdentifier>
     </Filter>
@@ -55,20 +52,29 @@
     <Filter Include="Source Files\Functions\misc\Pcx">
       <UniqueIdentifier>{79d2cdad-260d-43a4-a93c-e32c69f27495}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\HardCodeInTA3.1c\hpi">
-      <UniqueIdentifier>{e24ea4b8-5f6c-4912-8164-5a9d309d3a8d}</UniqueIdentifier>
+    <Filter Include="Source Files\Functions\externFromChina\GUI">
+      <UniqueIdentifier>{b89342c0-2617-49a4-a91d-a5e1a35076e5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Functions">
+    <Filter Include="Header Files\Functions">
       <UniqueIdentifier>{13f8453d-d867-41c4-be5c-bb834a0e8f3a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Functions\externFromChina">
+    <Filter Include="Header Files\Functions\externFromChina">
       <UniqueIdentifier>{223d3ae4-c9bc-40e2-98a6-c2a54b61dfbd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Functions\externFromChina\LimitCrack">
+    <Filter Include="Header Files\Functions\externFromChina\LimitCrack">
       <UniqueIdentifier>{86189545-a310-47f7-9dd6-9bbe235c206d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Functions\OrginalTadr">
+    <Filter Include="Header Files\Functions\externFromChina\GUI">
+      <UniqueIdentifier>{dc0cd7ac-9b67-4a6b-b997-dec1a4760977}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Functions\OrginalTadr">
       <UniqueIdentifier>{ec5a753b-e352-4a3c-890b-dfce8724f675}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Functions\externFromChina\HardCodeInTA3.1c">
+      <UniqueIdentifier>{1c118e51-3a7e-4d47-beed-7fb49c5bec4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Functions\externFromChina\hpi">
+      <UniqueIdentifier>{e24ea4b8-5f6c-4912-8164-5a9d309d3a8d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -100,7 +106,7 @@
       <Filter>Source Files\Functions\misc\hook</Filter>
     </ClCompile>
     <ClCompile Include="HardCodeFunctions.cpp">
-      <Filter>Source Files\HardCodeInTA3.1c</Filter>
+      <Filter>Source Files\Functions\externFromChina\HardCodeInTA3.1c</Filter>
     </ClCompile>
     <ClCompile Include="xthrow.cpp">
       <Filter>Source Files\STL</Filter>
@@ -147,20 +153,11 @@
     <ClCompile Include="gaf.cpp">
       <Filter>Source Files\Functions\gaf</Filter>
     </ClCompile>
-    <ClCompile Include="HardCodedValue.cpp">
-      <Filter>Source Files\HardCodeInTA3.1c</Filter>
-    </ClCompile>
     <ClCompile Include="TAConfig.cpp">
       <Filter>Source Files\Functions\externFromChina\Config</Filter>
     </ClCompile>
-    <ClCompile Include="MiscHook.cpp">
-      <Filter>Source Files\Functions\externFromChina\LimitCrack</Filter>
-    </ClCompile>
     <ClCompile Include="LimitCrack.cpp">
       <Filter>Source Files\Functions\externFromChina\LimitCrack</Filter>
-    </ClCompile>
-    <ClCompile Include="GameRedrawer.cpp">
-      <Filter>Source Files\Functions\externFromChina</Filter>
     </ClCompile>
     <ClCompile Include="dialog.cpp">
       <Filter>Source Files\Functions\OrginalTadr</Filter>
@@ -168,13 +165,7 @@
     <ClCompile Include="hook\etc.cpp">
       <Filter>Source Files\Functions\misc</Filter>
     </ClCompile>
-    <ClCompile Include="MenuResolution.cpp">
-      <Filter>Source Files\Functions\externFromChina\LimitCrack</Filter>
-    </ClCompile>
     <ClCompile Include="ExternQuickKey.cpp">
-      <Filter>Source Files\Functions\externFromChina\LimitCrack</Filter>
-    </ClCompile>
-    <ClCompile Include="UnicodeSupport.cpp">
       <Filter>Source Files\Functions\externFromChina\LimitCrack</Filter>
     </ClCompile>
     <ClCompile Include="MultiGameWeaponID.cpp">
@@ -184,10 +175,28 @@
       <Filter>Source Files\Functions\externFromChina</Filter>
     </ClCompile>
     <ClCompile Include="HPIfunc.cpp">
-      <Filter>Source Files\HardCodeInTA3.1c\hpi</Filter>
+      <Filter>Source Files\Functions\externFromChina\hpi</Filter>
     </ClCompile>
-    <ClCompile Include="tadrconfig.cpp">
-      <Filter>Source Files\Functions\externFromChina\Config</Filter>
+    <ClCompile Include="MenuResolution.cpp">
+      <Filter>Source Files\Functions\externFromChina\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="sharedialog.cpp">
+      <Filter>Source Files\Functions\externFromChina\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GameRedrawer.cpp">
+      <Filter>Source Files\Functions\externFromChina\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="MapParse.cpp">
+      <Filter>Source Files\Functions\externFromChina\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="fullscreenminimap.cpp">
+      <Filter>Source Files\Functions\externFromChina\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiExpand.cpp">
+      <Filter>Source Files\Functions\externFromChina\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="UnicodeSupport.cpp">
+      <Filter>Source Files\Functions\externFromChina</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -234,43 +243,43 @@
       <Filter>Header Files\others</Filter>
     </ClInclude>
     <ClInclude Include="bookmarks.h">
-      <Filter>Functions\OrginalTadr</Filter>
+      <Filter>Header Files\Functions\OrginalTadr</Filter>
     </ClInclude>
     <ClInclude Include="whiteboard.h">
-      <Filter>Functions\OrginalTadr</Filter>
+      <Filter>Header Files\Functions\OrginalTadr</Filter>
     </ClInclude>
     <ClInclude Include="changequeue.h">
-      <Filter>Functions\OrginalTadr</Filter>
+      <Filter>Header Files\Functions\OrginalTadr</Filter>
     </ClInclude>
     <ClInclude Include="cincome.h">
-      <Filter>Functions\OrginalTadr</Filter>
+      <Filter>Header Files\Functions\OrginalTadr</Filter>
     </ClInclude>
     <ClInclude Include="commanderwarp.h">
-      <Filter>Functions\OrginalTadr</Filter>
+      <Filter>Header Files\Functions\OrginalTadr</Filter>
     </ClInclude>
     <ClInclude Include="dialog.h">
-      <Filter>Functions\OrginalTadr</Filter>
+      <Filter>Header Files\Functions\OrginalTadr</Filter>
     </ClInclude>
     <ClInclude Include="font.h">
-      <Filter>Functions\OrginalTadr</Filter>
+      <Filter>Header Files\Functions\OrginalTadr</Filter>
     </ClInclude>
     <ClInclude Include="maprect.h">
-      <Filter>Functions\OrginalTadr</Filter>
+      <Filter>Header Files\Functions\OrginalTadr</Filter>
     </ClInclude>
     <ClInclude Include="tahook.h">
-      <Filter>Functions\OrginalTadr</Filter>
+      <Filter>Header Files\Functions\OrginalTadr</Filter>
     </ClInclude>
     <ClInclude Include="unitrotate.h">
-      <Filter>Functions\OrginalTadr</Filter>
+      <Filter>Header Files\Functions\OrginalTadr</Filter>
     </ClInclude>
     <ClInclude Include="taunitdrawer.h">
-      <Filter>Functions\externFromChina</Filter>
+      <Filter>Header Files\Functions\externFromChina</Filter>
     </ClInclude>
     <ClInclude Include="minimaphandler.h">
-      <Filter>Functions\OrginalTadr</Filter>
+      <Filter>Header Files\Functions\OrginalTadr</Filter>
     </ClInclude>
     <ClInclude Include="dddta.h">
-      <Filter>Functions\OrginalTadr</Filter>
+      <Filter>Header Files\Functions\OrginalTadr</Filter>
     </ClInclude>
     <ClInclude Include="taHPI.h">
       <Filter>Header Files\HardCodeInTA3.1C</Filter>
@@ -279,49 +288,67 @@
       <Filter>Header Files\others</Filter>
     </ClInclude>
     <ClInclude Include="TAConfig.h">
-      <Filter>Functions\externFromChina</Filter>
+      <Filter>Header Files\Functions\externFromChina</Filter>
     </ClInclude>
     <ClInclude Include="AiSeardchMapEntriesLimit.h">
-      <Filter>Functions\externFromChina\LimitCrack</Filter>
+      <Filter>Header Files\Functions\externFromChina\LimitCrack</Filter>
     </ClInclude>
     <ClInclude Include="IncreaseCompositeSize.h">
-      <Filter>Functions\externFromChina\LimitCrack</Filter>
+      <Filter>Header Files\Functions\externFromChina\LimitCrack</Filter>
     </ClInclude>
     <ClInclude Include="IncreaseSfxLimit.h">
-      <Filter>Functions\externFromChina\LimitCrack</Filter>
+      <Filter>Header Files\Functions\externFromChina\LimitCrack</Filter>
     </ClInclude>
     <ClInclude Include="MixingBuffers.h">
-      <Filter>Functions\externFromChina\LimitCrack</Filter>
+      <Filter>Header Files\Functions\externFromChina\LimitCrack</Filter>
     </ClInclude>
     <ClInclude Include="MultiGameWeaponID.h">
-      <Filter>Functions\externFromChina\LimitCrack</Filter>
+      <Filter>Header Files\Functions\externFromChina\LimitCrack</Filter>
     </ClInclude>
     <ClInclude Include="SwitchAlt.h">
-      <Filter>Functions\externFromChina\LimitCrack</Filter>
+      <Filter>Header Files\Functions\externFromChina\LimitCrack</Filter>
     </ClInclude>
     <ClInclude Include="UnitTypeLimit.h">
-      <Filter>Functions\externFromChina\LimitCrack</Filter>
+      <Filter>Header Files\Functions\externFromChina\LimitCrack</Filter>
     </ClInclude>
     <ClInclude Include="WeaponIDLimit.h">
-      <Filter>Functions\externFromChina\LimitCrack</Filter>
+      <Filter>Header Files\Functions\externFromChina\LimitCrack</Filter>
     </ClInclude>
     <ClInclude Include="LimitCrack.h">
-      <Filter>Functions\externFromChina\LimitCrack</Filter>
-    </ClInclude>
-    <ClInclude Include="UnicodeSupport.h">
-      <Filter>Functions\externFromChina\LimitCrack</Filter>
+      <Filter>Header Files\Functions\externFromChina\LimitCrack</Filter>
     </ClInclude>
     <ClInclude Include="ExternQuickKey.h">
-      <Filter>Functions\externFromChina\LimitCrack</Filter>
-    </ClInclude>
-    <ClInclude Include="MenuResolution.h">
-      <Filter>Functions\externFromChina\LimitCrack</Filter>
+      <Filter>Header Files\Functions\externFromChina\LimitCrack</Filter>
     </ClInclude>
     <ClInclude Include="UnitLimit.h">
-      <Filter>Functions\externFromChina\LimitCrack</Filter>
+      <Filter>Header Files\Functions\externFromChina\LimitCrack</Filter>
     </ClInclude>
     <ClInclude Include="TAbugfix.h">
-      <Filter>Functions\externFromChina</Filter>
+      <Filter>Header Files\Functions\externFromChina</Filter>
+    </ClInclude>
+    <ClInclude Include="UnicodeSupport.h">
+      <Filter>Header Files\Functions\externFromChina\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuResolution.h">
+      <Filter>Header Files\Functions\externFromChina\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="sharedialog.h">
+      <Filter>Header Files\Functions\externFromChina\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="mapParse.h">
+      <Filter>Header Files\Functions\externFromChina</Filter>
+    </ClInclude>
+    <ClInclude Include="gameredrawer.h">
+      <Filter>Header Files\Functions\externFromChina\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="fullscreenminimap.h">
+      <Filter>Header Files\Functions\externFromChina\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIExpand.h">
+      <Filter>Header Files\Functions\externFromChina\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitDrawer.h">
+      <Filter>Header Files\Functions\externFromChina\GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -370,6 +397,7 @@
     <None Include="bitmaps\standarbutton.pcx">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ddraw.rc">
