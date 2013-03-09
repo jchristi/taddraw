@@ -12,6 +12,11 @@ using namespace std;
 #include "hook\etc.h"
 
 
+
+TADRConfig * MyConfig;
+
+////------------------------
+
 TADRConfig::TADRConfig ()
 {
 	char TAexePath[MAX_PATH];
@@ -90,6 +95,28 @@ TADRConfig::TADRConfig ()
 	{
 		CloseHandle ( File);
 	}
+
+
+	LPVOID Data;
+	LPCSTR Name_p;
+
+	PEnumRegInfo RegInfo_Enum;
+	int Type= EnumIniRegInfo_Begin ( &RegInfo_Enum, &Name_p, (LPCVOID *)&Data);
+
+	while (NULL!=Name_p)
+	{
+		if (0==Type)
+		{//DWORD
+			WriteTAReg_Dword ( (LPSTR)Name_p, (DWORD)Data); 
+		}
+		else
+		{//REG_SZ
+			WriteTAReg_Str( (LPSTR)Name_p, (LPSTR)Data, strlen ( (LPSTR)Data)); 
+		}
+		Type= EnumIniRegInfo_Next ( &RegInfo_Enum, &Name_p, (LPCVOID *)&Data);
+	}
+	EnumIniRegInfo_End ( &RegInfo_Enum);
+
 }
 
 TADRConfig::~TADRConfig ()
@@ -424,7 +451,7 @@ DWORD TADRConfig::FindRegDword (LPSTR Name_cstrp, DWORD Default)
 	LPCSTR Name_p;
 
 	PEnumRegInfo RegInfo_Enum;
-	int Type= MyConfig->EnumIniRegInfo_Begin ( &RegInfo_Enum, &Name_p, (LPCVOID *)&Data);
+	int Type= EnumIniRegInfo_Begin ( &RegInfo_Enum, &Name_p, (LPCVOID *)&Data);
 
 	while (NULL!=Name_p)
 	{
@@ -437,9 +464,9 @@ DWORD TADRConfig::FindRegDword (LPSTR Name_cstrp, DWORD Default)
 			}
 		}
 
-		Type= MyConfig->EnumIniRegInfo_Next ( &RegInfo_Enum, &Name_p, (LPCVOID *)&Data);
+		Type= EnumIniRegInfo_Next ( &RegInfo_Enum, &Name_p, (LPCVOID *)&Data);
 	}
-	MyConfig->EnumIniRegInfo_End ( &RegInfo_Enum);
+	EnumIniRegInfo_End ( &RegInfo_Enum);
 
 	return Rtn;
 }
@@ -450,7 +477,7 @@ LPCSTR TADRConfig::FindRegStr (LPSTR Name_cstrp, LPCSTR Default)
 	LPCSTR Name_p;
 
 	PEnumRegInfo RegInfo_Enum;
-	int Type= MyConfig->EnumIniRegInfo_Begin ( &RegInfo_Enum, &Name_p, (LPCVOID *)&Data);
+	int Type= EnumIniRegInfo_Begin ( &RegInfo_Enum, &Name_p, (LPCVOID *)&Data);
 
 	while (NULL!=Name_p)
 	{
@@ -463,9 +490,9 @@ LPCSTR TADRConfig::FindRegStr (LPSTR Name_cstrp, LPCSTR Default)
 			}
 		}
 
-		Type= MyConfig->EnumIniRegInfo_Next ( &RegInfo_Enum, &Name_p, (LPCVOID *)&Data);
+		Type= EnumIniRegInfo_Next ( &RegInfo_Enum, &Name_p, (LPCVOID *)&Data);
 	}
-	MyConfig->EnumIniRegInfo_End ( &RegInfo_Enum);
+	EnumIniRegInfo_End ( &RegInfo_Enum);
 
 	return Rtn;
 }

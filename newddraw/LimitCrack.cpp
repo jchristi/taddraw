@@ -22,11 +22,19 @@ using namespace std;
 #include "MenuResolution.h"
 #include "UnitLimit.h"
 #include "ExternQuickKey.h"
-
+#include "sharedialog.h"
+#include "fullscreenminimap.h"
 
 #include "LimitCrack.h"
 
 #include "TAConfig.h"
+
+
+
+
+LimitCrack* NowCrackLimit;
+
+/// I had put nealy everythings in to this file, so, the file name isn't that improtant at now :\
 
 LimitCrack::LimitCrack ( void)
 {
@@ -59,47 +67,12 @@ LimitCrack::LimitCrack ( void)
 		DataShare->MultiWeaponID= 0;
 	}
 
-	//set the Reg things;
-	LPVOID Data;
-	LPCSTR Name_p;
-
-	PEnumRegInfo RegInfo_Enum;
-	int Type= MyConfig->EnumIniRegInfo_Begin ( &RegInfo_Enum, &Name_p, (LPCVOID *)&Data);
-
-	while (NULL!=Name_p)
-	{
-		if (0==Type)
-		{//DWORD
-			MyConfig->WriteTAReg_Dword ( (LPSTR)Name_p, (DWORD)Data); 
-		}
-		else
-		{//REG_SZ
-			MyConfig->WriteTAReg_Str( (LPSTR)Name_p, (LPSTR)Data, strlen ( (LPSTR)Data)); 
-		}
-		Type= MyConfig->EnumIniRegInfo_Next ( &RegInfo_Enum, &Name_p, (LPCVOID *)&Data);
-	}
-	MyConfig->EnumIniRegInfo_End ( &RegInfo_Enum);
-
-	DataShare->IniCRC= MyConfig->GetIniCrc ( );
-
-	//
-
-	tmp_i= MyConfig->GetIniInt ( "MenuWidth", 0);
-
-	if (0!=tmp_i)
-	{
-		SyncMenuResolution= new MenuResolution ( MyConfig->GetIniInt ( "MenuWidth", 0), MyConfig->GetIniInt ( "MenuHeight", 0));
-	}
-	else
-	{
-		SyncMenuResolution= new MenuResolution ( MyConfig->GetIniBool ( "MenuResolution", FALSE));
-	}
-	
 
 	SetUnitLimit= new UnitLimit (  MyConfig->GetIniInt ( "UnitLimit", 1500));
 
-	myExternQuickKey= new ExternQuickKey ;
+	//set the Reg things;
 
+	DataShare->IniCRC= MyConfig->GetIniCrc ( );
 }
 
 LimitCrack::~LimitCrack ( void)

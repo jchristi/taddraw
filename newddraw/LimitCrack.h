@@ -11,8 +11,6 @@ class ModifyWeaponPacket;
 class UnicodeSupport;
 class MenuResolution;
 class UnitLimit;
-class ExternQuickKey;
-class CIdleUnits;
 
 class LimitCrack
 {
@@ -26,12 +24,8 @@ public:
 	InlineSingleHook* HookInCircleSelect;
 	IncreaseSfxLimit * NowIncreaseSfxLimit;
 	ModifyWeaponPacket * NowModifyWeaponPacket;
-	
-	MenuResolution * SyncMenuResolution;
-
 	UnitLimit * SetUnitLimit;
 
-	ExternQuickKey * myExternQuickKey;
 public:
 
 	LimitCrack (void);

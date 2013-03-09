@@ -7,6 +7,10 @@
 #include "hook/hook.h"
 
 
+_TAHPI * TAHPI;
+
+//-----
+
 _fopen_HPI fopen_HPI= (_fopen_HPI)0x4BB2E0;
 
 _read_HPI read_HPI= (_read_HPI)0x04BB7C0;

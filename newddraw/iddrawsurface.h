@@ -10,6 +10,8 @@
 #define TALoading 2
 #define TAInGame 3
 
+
+
 //#define DEBUG_INFO
 
 class AlliesWhiteboard;

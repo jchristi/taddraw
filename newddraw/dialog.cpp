@@ -1061,7 +1061,7 @@ void Dialog::DrawOptimizeDT()
 	RECT Dest;
 	RECT Source;
 
-	DrawSmallText(lpDialogSurf, OptimizeDTPosX+20, OptimizeDTPosY+3, "Optmize DT rows");
+	DrawSmallText(lpDialogSurf, OptimizeDTPosX+20, OptimizeDTPosY+3, "Optimize DT Rows");
 	Dest.left = OptimizeDTPosX;
 	Dest.top = OptimizeDTPosY;
 	Dest.right = OptimizeDTPosX + OptimizeDTWidth;
