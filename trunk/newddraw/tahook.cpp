@@ -32,7 +32,7 @@ CTAHook::CTAHook()
 	DWORD dwDisposition;
 	RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\TA Patch", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey1, &dwDisposition);
 
-	RegCreateKeyEx(hKey1, "Software\\TA Patch\\TAHook", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &dwDisposition);
+	RegCreateKeyEx(hKey1, "TAHook", NULL, "Moo", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, &dwDisposition);
 	//write tahook ver string for the .hookreport function in recorder
 	char VerString [] = "Swedish Eye ver 0.8";
 	RegSetValueEx(hKey, "Ver", NULL, REG_SZ, (unsigned char*)VerString, strlen(VerString));

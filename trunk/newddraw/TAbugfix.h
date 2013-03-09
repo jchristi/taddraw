@@ -1,6 +1,7 @@
 #pragma once
 
 class SingleHook;
+#define GUIERRORCOUNT (4)
 
 class TABugFixing
 {
@@ -9,6 +10,8 @@ private:
 	SingleHook * CircleRadius;
 	SingleHook * CrackCd;
 	InlineSingleHook * BadModelHunter_ISH;
+
+	SingleHook * GUIErrorLengthHookAry[GUIERRORCOUNT];
 public:
 	TABugFixing ();
 	~TABugFixing ();

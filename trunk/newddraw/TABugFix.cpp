@@ -9,6 +9,12 @@
 #include "tafunctions.h"
 #include "TAbugfix.h"
 
+
+
+
+
+TABugFixing * FixTABug;
+///////---------------------
 /*
 .text:004866E8 078 75 04                                                           jnz     short loc_4866EE
 	.text:004866EA 078 33 F6                                                           xor     esi, esi
@@ -27,6 +33,16 @@ BYTE CircleRadiusBits[]= {0x0F, 0x8E, 0x69, 0x01, 0x00, 0x00};
 unsigned int CrackCdAddr= 0x0041D6B0;
 
 BYTE CrackCDBits[]= {0x74, 0x0E, 0xB0, 0x2E};
+unsigned int GUIErrorLengthAry[GUIERRORCOUNT]=
+{
+	0x04AEBBE,
+	0x04AEBCA,
+	0x04AEC2C,
+	0x04AEC87
+};
+BYTE GUIErrorLengthBits[]= {0x80};
+
+
 
 TABugFixing::TABugFixing ()
 {
@@ -38,6 +54,11 @@ TABugFixing::TABugFixing ()
 
 	CrackCd= new SingleHook ( CrackCdAddr, sizeof(CrackCDBits), INLINE_UNPROTECTEVINMENT, CrackCDBits);
 	
+
+	for (int i= 0; i<GUIERRORCOUNT; i++)
+	{
+		GUIErrorLengthHookAry[i]= new SingleHook ( GUIErrorLengthAry[i], sizeof(GUIErrorLengthBits), INLINE_UNPROTECTEVINMENT, GUIErrorLengthBits);
+	}
 		// 	0041D6B0   74 0E            JE SHORT totala.0041D6C0
 		// 		0041D6B2   B0 2E            MOV AL,2E
 }
@@ -61,6 +82,14 @@ TABugFixing::~TABugFixing ()
 	{
 		delete CircleRadius;
 	}
+	for (int i= 0; i<GUIERRORCOUNT; i++)
+	{
+		if (NULL!=GUIErrorLengthHookAry[i])
+		{
+			delete GUIErrorLengthHookAry[i];
+		}
+		
+	}
 	
 }
 
@@ -68,12 +97,12 @@ BOOL TABugFixing::AntiCheat (void)
 {
 	// sync "+now Film Chris Include Reload Assert"  with cheating
 
-	if (TRUE==*IsCheating)
+	if (TRUE!=*IsCheating)
 	{
-		(*TAmainStruct_PtrPtr)->SoftwareDebugMode|= 2;
-	}
-	else
-	{
+// 		(*TAmainStruct_PtrPtr)->SoftwareDebugMode|= 2;
+// 	}
+// 	else
+// 	{
 		(*TAmainStruct_PtrPtr)->SoftwareDebugMode= ((*TAmainStruct_PtrPtr)->SoftwareDebugMode)& (~ 2);
 	}
 
@@ -118,3 +147,4 @@ int __stdcall BadModelHunter (PInlineX86StackBuffer X86StrackBuffer)
 	}
 	return 0;
 }
+

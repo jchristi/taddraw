@@ -35,6 +35,8 @@ CDDDTA::CDDDTA()
 	SoundEnabled = false;
 	lpDs3dListener = NULL;
 
+	MapView= NULL;
+	MemMap= NULL;
 	if(DataShare->TAProgress == TAInGame && DataShare->ta3d)
 		InitDDDTA();
 
@@ -45,14 +47,14 @@ CDDDTA::~CDDDTA()
 	if(MapView!=NULL)
 		UnmapViewOfFile(MapView);
 
+	MapView= NULL;
 	if(MemMap != NULL)
 		CloseHandle(MemMap);
+	MemMap= NULL;
 }
 
 void CDDDTA::DeInitDDDTA()
 {
-
-
 	RestoreAllSharedTAMem();
 
 	int adress = 0x80A36;
@@ -70,7 +72,9 @@ void CDDDTA::DeInitDDDTA()
 	MapView = NULL;
 
 	if(MemMap != NULL)
+	{
 		CloseHandle ( MemMap);
+	}
 	MemMap = NULL;
 }
 
