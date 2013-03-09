@@ -34,3 +34,5 @@ typedef struct _GAFFrame
 
 
 LPDIRECTDRAWSURFACE CreateSurfByGafFrame (PGAFFrame Cursor_P, bool VidMem);
+
+LPBYTE InstanceGAFFrame (PGAFFrame GafFrame, LPBYTE * FrameBits, POINT * Aspect);

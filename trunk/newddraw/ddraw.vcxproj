@@ -154,8 +154,9 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ClCompile Include="fullscreenminimap.cpp" />
     <ClCompile Include="gaf.cpp" />
-    <ClCompile Include="HardCodedValue.cpp" />
+    <ClCompile Include="GuiExpand.cpp" />
     <ClCompile Include="HardCodeFunctions.cpp" />
     <ClCompile Include="hook\ModifyHook.cpp" />
     <ClCompile Include="HPIfunc.cpp" />
@@ -168,8 +169,8 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="GameRedrawer.cpp" />
+    <ClCompile Include="MapParse.cpp" />
     <ClCompile Include="MenuResolution.cpp" />
-    <ClCompile Include="MiscHook.cpp" />
     <ClCompile Include="MultiGameWeaponID.cpp" />
     <ClCompile Include="rings.cpp">
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -208,9 +209,9 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ClCompile Include="sharedialog.cpp" />
     <ClCompile Include="TABugFix.cpp" />
     <ClCompile Include="TAConfig.cpp" />
-    <ClCompile Include="tadrconfig.cpp" />
     <ClCompile Include="tahook.cpp">
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -256,7 +257,10 @@
     <ClInclude Include="dialog.h" />
     <ClInclude Include="ElementHandler.h" />
     <ClInclude Include="ExternQuickKey.h" />
+    <ClInclude Include="fullscreenminimap.h" />
     <ClInclude Include="Gaf.h" />
+    <ClInclude Include="gameredrawer.h" />
+    <ClInclude Include="GUIExpand.h" />
     <ClInclude Include="hook\etc.h" />
     <ClInclude Include="font.h" />
     <ClInclude Include="hook\hook.h" />
@@ -266,6 +270,7 @@
     <ClInclude Include="IncreaseSfxLimit.h" />
     <ClInclude Include="IRenderer.h" />
     <ClInclude Include="LimitCrack.h" />
+    <ClInclude Include="mapParse.h" />
     <ClInclude Include="maprect.h" />
     <ClInclude Include="MenuResolution.h" />
     <ClInclude Include="minimaphandler.h" />
@@ -275,6 +280,7 @@
     <ClInclude Include="PCX.H" />
     <ClInclude Include="pcxread.h" />
     <ClInclude Include="rings.h" />
+    <ClInclude Include="sharedialog.h" />
     <ClInclude Include="SwitchAlt.h" />
     <ClInclude Include="TAbugfix.h" />
     <ClInclude Include="TAConfig.h" />
@@ -285,6 +291,7 @@
     <ClInclude Include="taunitdrawer.h" />
     <ClInclude Include="AiSeardchMapEntriesLimit.h" />
     <ClInclude Include="UnicodeSupport.h" />
+    <ClInclude Include="UnitDrawer.h" />
     <ClInclude Include="UnitLimit.h" />
     <ClInclude Include="unitrotate.h" />
     <ClInclude Include="UnitTypeLimit.h" />
@@ -293,6 +300,7 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
     <None Include="ddraw.def" />
     <None Include="bitmaps\3stagedbutton.pcx" />
     <None Include="bitmaps\CheckBox.pcx" />

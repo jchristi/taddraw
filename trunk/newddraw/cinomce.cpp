@@ -184,6 +184,7 @@ void CIncome::ShowMyViewIncome (int posx, int posy)
 
 	char *SurfMem = (char*)SurfaceMemory;
 
+
 	for(int i=0; i<4; i++)
 	{
 		memset(&SurfMem[posx+(posy+i)*lPitch+ 44], 0u, 100);
@@ -197,8 +198,9 @@ void CIncome::ShowMyViewIncome (int posx, int posy)
 	{
 		memset(&SurfMem[posx+(posy+24 +i)*lPitch+ 44], 0u, 100);
 	}
+
+
 	//BackgroundType= Backup;
-	
 }
 
 void CIncome::ShowPlayerIncome(int Player, int posx, int posy)
@@ -479,10 +481,18 @@ bool CIncome::Message(HWND WinProchWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 						DataShare->LosViewOn= 0xa;
 						if (LocalShare->OrgLocalPlayerID!=Ptr->LocalHumanPlayer_PlayerID)
 						{
+							DeselectUnits ( );
+							UpdateSelectUnitEffect ( ) ;
+							ApplySelectUnitMenu_Wapper ( );
 							ViewPlayerLos_Replay ( 0, TRUE);
 						}
 						else
 						{
+
+							DeselectUnits ( );
+							UpdateSelectUnitEffect ( ) ;
+							ApplySelectUnitMenu_Wapper ( );
+
 							ViewPlayerLos_Replay ( 0);
 						}
 					}
@@ -500,10 +510,17 @@ bool CIncome::Message(HWND WinProchWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
 						if (DataShare->PlayingDemo)
 						{
+							DeselectUnits ( );
+							UpdateSelectUnitEffect ( ) ;
+							ApplySelectUnitMenu_Wapper ( );
 							ViewPlayerLos_Replay ( DataShare->LosViewOn, TRUE);
 						}
 						else
 						{
+							DeselectUnits ( );
+
+							UpdateSelectUnitEffect ( ) ;
+							ApplySelectUnitMenu_Wapper ( );
 							ViewPlayerLos_Replay ( DataShare->LosViewOn);
 						}
 						

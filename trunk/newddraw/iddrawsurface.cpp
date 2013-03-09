@@ -21,6 +21,8 @@ using namespace std;
 #include "changequeue.h"
 #include "ExternQuickKey.h"
 #include "TAbugfix.h"
+#include "fullscreenminimap.h"
+#include "GUIExpand.h"
 
 #include "iddrawsurface.h"
 
@@ -67,6 +69,11 @@ IDDrawSurface::IDDrawSurface(LPDIRECTDRAWSURFACE lpTASurf, bool iWindowed, int i
 	SettingsDialog= new Dialog ;
 	ChangeQueue= new CChangeQueue ;
 	DDDTA= new CDDDTA ;
+	if (GUIExpander
+		&&(GUIExpander->myMinimap))
+	{
+		GUIExpander->myMinimap->InitSurface ( reinterpret_cast<LPDIRECTDRAW>(LocalShare->TADirectDraw));
+	}
 
 	lpFront = lpTASurf;
 	OutptTxt("IDDrawSurface Created");
@@ -147,11 +154,38 @@ ULONG __stdcall IDDrawSurface::Release()
 		lpDDClipper->Release();
 		lpDDClipper = NULL;
 	}
+	ULONG result; 
+	if (lpFront)
+	{
+		result= lpFront->Release();
+	}
+	
 
-	ULONG result = lpFront->Release();
+	if (ScreenRegion)
+	{
+		delete ScreenRegion;
+	}
+	if (BattleFieldRegion)
+	{
+		delete BattleFieldRegion;
+	}
+	
 
-	delete ScreenRegion;
-	delete BattleFieldRegion;
+
+	delete WhiteBoard;
+	delete Income;
+	delete TAHook;
+	delete CommanderWarp;
+	delete SharedRect;
+	delete SettingsDialog;
+	delete ChangeQueue;
+	delete DDDTA;
+	if (GUIExpander
+		&&(GUIExpander->myMinimap))
+	{
+		GUIExpander->myMinimap->ReleaseSurface ( );
+	}
+	
 
 	delete this;
 
@@ -222,9 +256,10 @@ HRESULT __stdcall IDDrawSurface::GetAttachedSurface(LPDDSCAPS arg1, LPDIRECTDRAW
 	HRESULT result = lpFront->GetAttachedSurface(arg1, arg2);
 
 	lpBack = *arg2;
+	LocalShare->TADirectDrawBackSurface = *arg2;
 
 	CreateClipplist();
-	LocalShare->TADirectDrawBackSurface = *arg2;
+	
 
 	return result;
 }
@@ -375,6 +410,7 @@ HRESULT __stdcall IDDrawSurface::Unlock(LPVOID arg1)
 	} 
 	return result;
 	}   */
+	OutptTxt("Unlock");
 	UpdateTAProcess ( );
 
 	if(PlayingMovie) //deinterlace and flip directly
@@ -397,8 +433,8 @@ HRESULT __stdcall IDDrawSurface::Unlock(LPVOID arg1)
 	HRESULT result;
 	if(DataShare->ehaOff == 1 && !DataShare->PlayingDemo) //disable everything
 	{//just unlock flip and return
-		lpDDClipper->SetClipList(ScreenRegion,0);
-		result = lpBack->Unlock(arg1);
+		lpDDClipper->SetClipList ( ScreenRegion,0);
+		result = lpBack->Unlock ( arg1);
 		if(result!=DD_OK)
 			return result;
 	}
@@ -406,11 +442,11 @@ HRESULT __stdcall IDDrawSurface::Unlock(LPVOID arg1)
 	{
 		if(SurfaceMemory!=NULL)
 		{
-			WhiteBoard->LockBlit((char*)SurfaceMemory, lPitch);
-			SharedRect->LockBlit((char*)SurfaceMemory, lPitch);
+			WhiteBoard->LockBlit ( (char*)SurfaceMemory, lPitch);
+			SharedRect->LockBlit ( (char*)SurfaceMemory, lPitch);
 		}
 
-		result = lpBack->Unlock(arg1);
+		result = lpBack->Unlock ( arg1);
 		if(result!=DD_OK)
 			return result;
 
@@ -425,9 +461,16 @@ HRESULT __stdcall IDDrawSurface::Unlock(LPVOID arg1)
 		Income->BlitIncome(lpBack);
 		CommanderWarp->Blit(lpBack);
 		SettingsDialog->BlitDialog(lpBack);
+		if ((GUIExpander)
+			&&(GUIExpander->myMinimap))
+		{
+			GUIExpander->myMinimap->Blit ( lpBack);
+		}
+		
+
 		//////////////////////////////////////////////////////////////////////////
 		//unicode
-		if (NULL!=NowCrackLimit)
+		if (NULL!=NowSupportUnicode)
 		{
 			NowSupportUnicode->Blt ( lpBack);
 		}
@@ -458,7 +501,7 @@ HRESULT __stdcall IDDrawSurface::Unlock(LPVOID arg1)
 	if(lpBack->Blt(NULL, lpFront, NULL, DDBLT_ASYNC, NULL)!=DD_OK)
 	{
 		lpBack->Blt(NULL, lpFront, NULL, DDBLT_WAIT, NULL);
-		//OutptTxt("lpFront to lpBack Blit failed");
+		OutptTxt("lpFront to lpBack Blit failed");
 	}
 	//DataShare->UpdateLos = 0;
 	return result;
@@ -518,34 +561,38 @@ void IDDrawSurface::CreateClipplist()
 {
 
 	LPDIRECTDRAW TADD = (IDirectDraw*)LocalShare->TADirectDraw;
-	TADD->CreateClipper(0,&lpDDClipper,NULL);
+	if (lpBack)
+	{
+		TADD->CreateClipper(0,&lpDDClipper,NULL);
 
-	ScreenRegion = (LPRGNDATA)new char[sizeof(RGNDATAHEADER)+sizeof(RECT)];
-	BattleFieldRegion = (LPRGNDATA)new char[sizeof(RGNDATAHEADER)+sizeof(RECT)];
+		ScreenRegion = (LPRGNDATA)new char[sizeof(RGNDATAHEADER)+sizeof(RECT)];
+		BattleFieldRegion = (LPRGNDATA)new char[sizeof(RGNDATAHEADER)+sizeof(RECT)];
 
-	RECT ScreenRect = {0,0,ScreenWidth,ScreenHeight};
-	memcpy(ScreenRegion->Buffer, &ScreenRect,sizeof(RECT));
-	ScreenRegion->rdh.dwSize = sizeof(RGNDATAHEADER);
-	ScreenRegion->rdh.iType = RDH_RECTANGLES;
-	ScreenRegion->rdh.nCount = 1;
-	ScreenRegion->rdh.nRgnSize = sizeof(RECT);
-	ScreenRegion->rdh.rcBound.left = 0;
-	ScreenRegion->rdh.rcBound.top = 0;
-	ScreenRegion->rdh.rcBound.right = ScreenWidth;
-	ScreenRegion->rdh.rcBound.bottom = ScreenHeight;
+		RECT ScreenRect = {0,0,ScreenWidth,ScreenHeight};
+		memcpy(ScreenRegion->Buffer, &ScreenRect,sizeof(RECT));
+		ScreenRegion->rdh.dwSize = sizeof(RGNDATAHEADER);
+		ScreenRegion->rdh.iType = RDH_RECTANGLES;
+		ScreenRegion->rdh.nCount = 1;
+		ScreenRegion->rdh.nRgnSize = sizeof(RECT);
+		ScreenRegion->rdh.rcBound.left = 0;
+		ScreenRegion->rdh.rcBound.top = 0;
+		ScreenRegion->rdh.rcBound.right = ScreenWidth;
+		ScreenRegion->rdh.rcBound.bottom = ScreenHeight;
 
-	RECT BattleFieldRect = {128,32,ScreenWidth,ScreenHeight-32};
-	memcpy(BattleFieldRegion->Buffer, &BattleFieldRect,sizeof(RECT));
-	BattleFieldRegion->rdh.dwSize = sizeof(RGNDATAHEADER);
-	BattleFieldRegion->rdh.iType = RDH_RECTANGLES;
-	BattleFieldRegion->rdh.nCount = 1;
-	BattleFieldRegion->rdh.nRgnSize = sizeof(RECT);
-	BattleFieldRegion->rdh.rcBound.left = 128;
-	BattleFieldRegion->rdh.rcBound.top = 32;
-	BattleFieldRegion->rdh.rcBound.right = ScreenWidth;
-	BattleFieldRegion->rdh.rcBound.bottom = ScreenHeight-32;
+		RECT BattleFieldRect = {128,32,ScreenWidth,ScreenHeight-32};
+		memcpy(BattleFieldRegion->Buffer, &BattleFieldRect,sizeof(RECT));
+		BattleFieldRegion->rdh.dwSize = sizeof(RGNDATAHEADER);
+		BattleFieldRegion->rdh.iType = RDH_RECTANGLES;
+		BattleFieldRegion->rdh.nCount = 1;
+		BattleFieldRegion->rdh.nRgnSize = sizeof(RECT);
+		BattleFieldRegion->rdh.rcBound.left = 128;
+		BattleFieldRegion->rdh.rcBound.top = 32;
+		BattleFieldRegion->rdh.rcBound.right = ScreenWidth;
+		BattleFieldRegion->rdh.rcBound.bottom = ScreenHeight-32;
 
-	lpBack->SetClipper(lpDDClipper);
+
+		lpBack->SetClipper(lpDDClipper);
+	}
 }
 
 void IDDrawSurface::ScreenShot()
@@ -718,7 +765,7 @@ LRESULT CALLBACK WinProc(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam
 		//////////////////////////////////////////////////////////////////////////
 		if (NULL!=NowCrackLimit)
 		{
-			if(NowCrackLimit->myExternQuickKey->Message ( WinProcWnd, Msg, wParam, lParam))
+			if(myExternQuickKey->Message ( WinProcWnd, Msg, wParam, lParam))
 				return 0;
 
 		}
@@ -793,6 +840,15 @@ LRESULT CALLBACK WinProc(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam
 		if(DataShare->F1Disable)
 			if(Msg == WM_KEYDOWN && wParam == 112)
 				return 0;
+
+		if (GUIExpander
+			&&(GUIExpander->myMinimap))
+		{
+			if (GUIExpander->myMinimap->Message ( WinProcWnd, Msg, wParam, lParam))
+			{
+				return 0;
+			}
+		}
 	}
 	__except(EXCEPTION_EXECUTE_HANDLER)
 	{

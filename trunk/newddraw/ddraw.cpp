@@ -19,6 +19,7 @@ using namespace std;
 #include "LimitCrack.h"
 #include "taHPI.h"
 #include "TAbugfix.h"
+#include "GUIExpand.h"
 
 #include "TAConfig.h"
 //---------------------------------------------------------------------------
@@ -87,20 +88,6 @@ HINSTANCE SDDraw = NULL;
 
 bool Windowed;
 HINSTANCE HInstance;
-bool Log = true;
-
-//here is code that in extern from china
-
-
-_TAHPI * TAHPI;
-TADRConfig * MyConfig;
-MenuResolution* SyncMenuResolution;
-TABugFixing * FixTABug;
-
-LimitCrack* NowCrackLimit;
-UnicodeSupport* NowSupportUnicode;
-
-
 
 InlineSingleHook * AddtionInitHook;
 InlineSingleHook * AddtionInitAfterDDrawHook;// 
@@ -122,6 +109,10 @@ int __stdcall AddtionInit (PInlineX86StackBuffer X86StrackBuffer)
 	NowCrackLimit= new LimitCrack;
 
 	FixTABug= new TABugFixing;
+
+	myExternQuickKey= new ExternQuickKey ;
+
+	GUIExpander= new GUIExpand;
 
 	IDDrawSurface::OutptTxt ("Installing AddtionRoutine_CircleSelect");
 
@@ -218,8 +209,6 @@ bool APIENTRY DllMain(HINSTANCE hinst, unsigned long reason, void*)
 		FreeLibrary(SDDraw);
 		ShutdownLocalFileMap();
 		ShutDownTAHookFileMap();
-
-
 	}
 
 	return 1;

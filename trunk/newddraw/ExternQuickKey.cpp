@@ -9,9 +9,18 @@
 #include "hook\etc.h"
 #include "ExternQuickKey.h"
 #include "WeaponIDLimit.h"
-#include "LimitCrack.h"
 #include "tahook.h"
+#include <vector>
+using namespace std;
+#include "TAConfig.h"
 
+
+
+
+
+ExternQuickKey * myExternQuickKey;
+
+///////--------------
 
 ExternQuickKey::ExternQuickKey ()
 {
@@ -23,9 +32,9 @@ ExternQuickKey::ExternQuickKey ()
 	Semaphore_OnlyInScreenWeapon= CreateSemaphore ( NULL, 1, 1, NULL);
 	Semaphore_IdleCons= CreateSemaphore ( NULL, 1, 1, NULL);
 	Semaphore_IdleFac=  CreateSemaphore ( NULL, 1, 1, NULL);
-	IDDrawSurface::OutptTxt ( "New CIdleUnits");
 
-
+	DoubleClick= MyConfig->GetIniBool ( "DoubleClick", TRUE);
+	//TAMainStruct_Ptr->inter
 	HookInCircleSelect= new InlineSingleHook ( (unsigned int)AddrAboutCircleSelect, 5, 
 		INLINE_5BYTESLAGGERJMP, AddtionRoutine_CircleSelect);
 
@@ -105,27 +114,52 @@ bool ExternQuickKey::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 		switch (Msg)
 		{
 		case WM_LBUTTONDBLCLK:
+		case WM_RBUTTONDBLCLK:
+
+			if (! DoubleClick)
+			{
+				break;
+			}
+/*
+			if (0==(TAMainStruct_Ptr->InterfaceType))
+			{
+				if (Msg==WM_RBUTTONDBLCLK)
+				{
+					break;
+				}
+			}
+			else
+			{
+				if (Msg==WM_LBUTTONDBLCLK)
+				{
+					break;
+				}
+			}*/
+
 			if ((GetAsyncKeyState(VirtualKeyCode)&0x8000)==0)
 			{// don't catch the msg when whiteboard key down.
 				int xPos;
 				xPos= LOWORD(lParam);
 				int yPos;
 				yPos = HIWORD(lParam);
-				if ((xPos>128)&&(xPos<(*TAProgramStruct_PtrPtr)->ScreenWidth)&&(yPos>32)&&(yPos<((*TAProgramStruct_PtrPtr)->ScreenHeight- 0x30)))//TAµÄÆÁÄ»Ð¡µØÍ¼ÊÇ0x80µÄ¿í¶È.ÏÂ·½µÄ×´Ì¬À¸Ô¼ÊÇ0x30µÄ¿í¶È
+				if ((xPos>(TAMainStruct_Ptr->GameSreen_Rect.left))&&(xPos<(TAMainStruct_Ptr->GameSreen_Rect.right))&&(yPos>(TAMainStruct_Ptr->GameSreen_Rect.top))&&(yPos<(TAMainStruct_Ptr->GameSreen_Rect.bottom)))
 				{
 					if (0!=TAMainStruct_Ptr->MouseOverUnit)
 					{
-						SelectOnlyInScreenSameTypeUnit ( FALSE);
-						UpdateSelectUnitEffect ( ) ;
-						ApplySelectUnitMenu_Wapper ( );
-						return true;
+						if (TAMainStruct_Ptr->Players[TAMainStruct_Ptr->LocalHumanPlayer_PlayerID].PlayerAryIndex==(TAMainStruct_Ptr->OwnUnitBegin[TAMainStruct_Ptr->MouseOverUnit].Owner_PlayerPtr0->PlayerAryIndex))
+						{
+							SelectOnlyInScreenSameTypeUnit ( FALSE);
+							UpdateSelectUnitEffect ( ) ;
+							ApplySelectUnitMenu_Wapper ( );
+							return true;
+						}
 					}
 				}
 			}
+			break;
 		case WM_KEYDOWN:
 			if ((int)wParam==17)
 			{
-
 				WriteProcessMemory(GetCurrentProcess(), (void*)Add, &NumAdd, 1, NULL);
 				WriteProcessMemory(GetCurrentProcess(), (void*)Sub, &NumSub, 1, NULL);
 				//break;
@@ -218,9 +252,9 @@ reTry:
 			if (0.0F==(Current->Nanoframe))
 			{
 				//ID= ;
-				if ((NULL!=Current->ValidOwner_PlayerPtr))//&&(Player_LocalHuman==Current->ValidOwner_PlayerPtr->My_PlayerType))
+				if ((NULL!=Current->Owner_PlayerPtr1))//&&(Player_LocalHuman==Current->ValidOwner_PlayerPtr->My_PlayerType))
 				{
-					if (MatchInTypeAry ( Current->UnitCategoryMask, FactoryAry))
+					if (MatchInTypeAry ( Current->UnitID, FactoryAry))
 					{
 						if (NULL!=Current->UnitOrders)
 						{
@@ -331,7 +365,7 @@ void ExternQuickKey::FindIdleConst()
 				unsigned short *WorkerTime = &(DefiPTR->nWorkerTime);
 
 				if ((NULL!=CommandMaskAry)
-					&&(!(MatchInTypeAry ( Start->UnitCategoryMask, CommandMaskAry))))
+					&&(!(MatchInTypeAry ( Start->UnitID, CommandMaskAry))))
 				{// not comm
 					if(*WorkerTime>0)//ÓÐÉú²úÄÜÁ¦
 					{
@@ -419,7 +453,7 @@ int ExternQuickKey::SelectOnlyInScreenSameTypeUnit (BOOL FirstSelect_Flag)
 	{
 		if (0!=((Begin->UnitSelected)& 0x10))
 		{//this one are Selected OwnUnitBegin
-			SetIDMaskInTypeAry ( Begin->UnitCategoryMask, SelectedUnitTypeIDAry_Dw);
+			SetIDMaskInTypeAry ( Begin->UnitID, SelectedUnitTypeIDAry_Dw);
 		}
 		Begin= &Begin[1];
 	}
@@ -440,12 +474,16 @@ int ExternQuickKey::SelectOnlyInScreenSameTypeUnit (BOOL FirstSelect_Flag)
 			if (0.0F==(Current->Nanoframe))
 			{
 				//ID= ;
-				if (MatchInTypeAry ( Current->UnitCategoryMask, SelectedUnitTypeIDAry_Dw))
+				if (MatchInTypeAry ( Current->UnitID, SelectedUnitTypeIDAry_Dw))
 				{
-					if ((NULL!=Current->ValidOwner_PlayerPtr))
+					if ((NULL!=Current->Owner_PlayerPtr1))
 					{
-						Current->UnitSelected= (Current->UnitSelected)| (0x10);
-						++SelectedUnits;
+						if (TAMainStruct_Ptr->LocalHumanPlayer_PlayerID==Current->Owner_PlayerPtr1->PlayerAryIndex)
+						{
+							Current->UnitSelected= (Current->UnitSelected)| (0x10);
+							++SelectedUnits;
+						}
+
 					}
 				}
 			}
@@ -492,11 +530,13 @@ int ExternQuickKey::SelectOnlyInScreenWeaponUnit (unsigned int SelectWay_Mask)
 			{
 				if (0.0F==(Current->Nanoframe))
 				{
-					if ((NULL!=Current->ValidOwner_PlayerPtr))
+					if ((NULL!=Current->Owner_PlayerPtr1))
 					{
-
+						if (TAMainStruct_Ptr->LocalHumanPlayer_PlayerID==Current->Owner_PlayerPtr1->PlayerAryIndex)
+						{
 							Current->UnitSelected= (Current->UnitSelected)| (0x10);
 							++SelectedUnits;
+						}
 					}
 				}
 			}
@@ -567,14 +607,14 @@ int ExternQuickKey::FilterSelectedUnit (TAUnitType NeededType) //Ö»»áÔÚÒÑÑ¡ÖÐµÄµ
 			if (0.0F==(Current->Nanoframe))
 			{
 				//ID= ;
-				if ((NULL!=Current->ValidOwner_PlayerPtr))//&&(Player_LocalHuman==Current->ValidOwner_PlayerPtr->My_PlayerType))
+				if ((NULL!=Current->Owner_PlayerPtr1))//&&(Player_LocalHuman==Current->ValidOwner_PlayerPtr->My_PlayerType))
 				{
 					//Õâ¶ùÊÇ¹ýÂË  filter:
 					DoSelect_b= false;
 
 					if (0!=(COMMANDER& NeededType)&&
 						(NULL!=CommandMaskAry)&&
-						(MatchInTypeAry ( Current->UnitCategoryMask, CommandMaskAry)))
+						(MatchInTypeAry ( Current->UnitID, CommandMaskAry)))
 					{
 						DoSelect_b= true;
 					}
@@ -587,7 +627,7 @@ int ExternQuickKey::FilterSelectedUnit (TAUnitType NeededType) //Ö»»áÔÚÒÑÑ¡ÖÐµÄµ
 					{
 						DoSelect_b= true;
 						if ((NULL!=CommandMaskAry)&&
-							(MatchInTypeAry ( Current->UnitCategoryMask, CommandMaskAry)))
+							(MatchInTypeAry ( Current->UnitID, CommandMaskAry)))
 						{//don't select commander in here
 							DoSelect_b= false;
 						}
@@ -612,14 +652,14 @@ int ExternQuickKey::FilterSelectedUnit (TAUnitType NeededType) //Ö»»áÔÚÒÑÑ¡ÖÐµÄµ
 					if (0!=(ENGINEER& NeededType)
 						&&(0!=Current->UnitType->nWorkerTime)
 						&&(NULL==Current->UnitType->YardMap)//building
-						&&(! MatchInTypeAry ( Current->UnitCategoryMask, CommandMaskAry)))
+						&&(! MatchInTypeAry ( Current->UnitID, CommandMaskAry)))
 					{
 						DoSelect_b= true;
 					}
 					if (0!=(FACTORYS& NeededType)
 						&&(0!=Current->UnitType->nWorkerTime)
 						&&(NULL!=Current->UnitType->YardMap)
-						&&(! MatchInTypeAry ( Current->UnitCategoryMask, CommandMaskAry)))
+						&&(! MatchInTypeAry ( Current->UnitID, CommandMaskAry)))
 					{
 						DoSelect_b= true;
 					}
@@ -665,17 +705,17 @@ int __stdcall AddtionRoutine_CircleSelect (PInlineX86StackBuffer X86StrackBuffer
 		{
 			if (0<(0x8000&GetKeyState ( 0x57)))
 			{
-				X86StrackBuffer->Ebp= ((ExternQuickKey *)NowCrackLimit->myExternQuickKey)->FilterSelectedUnit ( WEAPONUNITS);
+				X86StrackBuffer->Ebp= ((ExternQuickKey *)myExternQuickKey)->FilterSelectedUnit ( WEAPONUNITS);
 				return X86STRACKBUFFERCHANGE;
 			}
 			else if (0<(0x8000&GetKeyState ( 0x42)))
 			{
-				X86StrackBuffer->Ebp= ((ExternQuickKey *)NowCrackLimit->myExternQuickKey)->FilterSelectedUnit ( ENGINEER);
+				X86StrackBuffer->Ebp= ((ExternQuickKey *)myExternQuickKey)->FilterSelectedUnit ( ENGINEER);
 				return X86STRACKBUFFERCHANGE;
 			}
 			else if (0<(0x8000&GetKeyState ( 0x59)))
 			{
-				X86StrackBuffer->Ebp= ((ExternQuickKey *)NowCrackLimit->myExternQuickKey)->FilterSelectedUnit ( FACTORYS);
+				X86StrackBuffer->Ebp= ((ExternQuickKey *)myExternQuickKey)->FilterSelectedUnit ( FACTORYS);
 				return X86STRACKBUFFERCHANGE;
 			}
 		}

@@ -5,6 +5,8 @@
 class InlineSingleHook;
 enum TAUnitType;
 
+
+
 int __stdcall AddtionRoutine_CircleSelect (PInlineX86StackBuffer X86StrackBuffer);
 
 class ExternQuickKey
@@ -16,6 +18,8 @@ private:
 	HANDLE Semaphore_OnlyInScreenWeapon;
 	HANDLE Semaphore_IdleCons;
 	HANDLE Semaphore_IdleFac;
+
+	BOOL DoubleClick;
 
 	InlineSingleHook * HookInCircleSelect;
 
@@ -50,5 +54,7 @@ private:
 	void ScrollToCenter(int x, int y);
 
 };
+
+extern ExternQuickKey * myExternQuickKey;
 
 #endif //EXTERNQUICKEY_H_316SDHSD

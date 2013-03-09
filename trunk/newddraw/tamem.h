@@ -44,7 +44,17 @@ struct _RaceSideData;
 struct _Vertices;
 struct _Shatte;
 struct _TAProgramStruct;
-
+struct _GUIInfo;
+struct _GUIMEMSTRUCT;
+struct _GUI1IDControl;
+struct _GUI0IDControl;
+struct _GUI2IDControl;
+struct _GUI3_4IDControl;
+struct _GUI5IDControl;
+struct _GUI78IDControl;
+struct _GUI6IDControl;
+struct _GUI9IDControl;
+struct _TAProgramStruct ;
 struct Point3{
 	int x;
 	int y;
@@ -69,45 +79,59 @@ struct PlayerResourcesStruct
 	double fEnergyWasted;
 	double fMetalWasted;
 	float fPlayerEnergyStorage ;
-	float PlayerMetalStorage ;
+	float fPlayerMetalStorage ;
 };
-
-struct PlayerStruct{
-  unsigned int PlayerActive;
-  char data1[8];
-  char PlayerNum;///?????
-  char data2[26];
-  PlayerInfoStruct *PlayerInfo;
-  char Name[30];
-  char SecondName[30];
-  UnitStruct *Units; //0x67 //Units_Begin
-  UnitStruct *UnitsAry_End; //Units_End
-  unsigned int data4;
-  unsigned char My_PlayerType;
-  unsigned int data5;
-  unsigned int data6;
-  unsigned int data7;
-  unsigned int data8;
-  unsigned int data9;
-  unsigned int data10;
-  PlayerResourcesStruct PlayerRes;
-  unsigned char data11[12];
-  unsigned int UpdateTime;
-  unsigned int WinLoseTime;
-  unsigned int DisplayTimer;
-  unsigned short Kills_word;
-  unsigned short Losses;
-  unsigned char data12[8];
-  unsigned char data13[10];
-  unsigned char data14[46];
-
-  unsigned int UnitsCounters;
-  unsigned short UnitsNumber;
-  unsigned char PlayerAryIndex;
-  unsigned short  data15;
-  unsigned short AddPlayerStorage_word;
- // char data5[208];
-}; //0x14b
+struct PlayerStruct
+{
+	int PlayerActive;
+	int DirectPlayID;
+	int field_8;
+	char PlayerNum;
+	char field_D[3];
+	int field_10;
+	char field_14[14];
+	char field_22;
+	char field_23[4];
+	PlayerInfoStruct * PlayerInfo;
+	char Name[30];
+	char SecondName[30];
+	UnitStruct * Units;
+	UnitStruct * UnitsAry_End;
+	__int16 UnitsIndex_Begin;
+	__int16 UnitsIndex_End;
+	char My_PlayerType;
+	int AiConfig;
+	int field_78;
+	int field_7C;
+	int field_80;
+	int field_84;
+	int field_88;
+	PlayerResourcesStruct PlayerRes;
+	float ShareMetal;
+	float ShareEnergy;
+	int field_EC;
+	int UpdateTime;
+	int WinLoseTime;
+	int DisplayTimer;
+	__int16 Kills;
+	__int16 Losses;
+	int field_100;
+	__int16 kills_2;
+	__int16 losse_2;
+	char AllyFlagAry[10];
+	char field_112;
+	char field_113;
+	char field_114[21];
+	char field_129;
+	char field_12A[21];
+	char AllyTeam;
+	int WholeUnitsCounters;
+	__int16 UnitsNumber;
+	char PlayerAryIndex;
+	char field_147;
+	char field_148;
+	__int16 AddPlayerStorage_word;
+};
 
 struct WeaponStruct {
   char WeaponName[0x20];
@@ -174,28 +198,64 @@ struct DSoundStruct{
 	char data2[0xC];
 	LPDIRECTSOUNDBUFFER DirectsoundBuffer2;
 };
+
+
+typedef struct _GUIInfo
+{
+	int field_0;
+	int commongui_GAF;
+	char field_8[16];
+	_GUIMEMSTRUCT * TheActive_GUIMEM;
+	int Cursor_0;
+	int Cursor_1;
+	int Cursor_2;
+	int field_28;
+	int Cursor_3;
+	__int16 field_30;
+	__int16 field_32;
+	int field_34;
+	int field_38;
+	char field_3C[24];
+	int field_54;
+	int field_58;
+	int field_5C;
+	int UIChange_f;
+	int field_64;
+	int field_68;
+	int field_6C;
+	int field_70;
+	int field_74;
+	int field_78;
+	char field_7C[60];
+	char field_B8[3090];
+	int GUIUpdated_b;
+}GUIInfo;
+
 //settimer 4fb368
 
 struct TAdynmemStruct{
-	char data21[12];
+	char data1[12];
 	_TAProgramStruct * TAProgramStruct_Ptr;
 	DSoundStruct *DSound;
-	char data1[0x1B4F];
-
+	char data2[0x505];
+	_GUIInfo desktopGUI;
+	char data3[0x97C];
 	PlayerStruct Players[10];	//0x1B63 , end at 0x2851
 
 	char data4[331];
-	unsigned int data4_;
+	unsigned int data5;
 	unsigned int AllyStruct_Ptr;
-	char data4_1[144];
+	char data6[144];
 	unsigned int PacketBufferSize;
 	unsigned int PacketBuffer_p;
 	unsigned short PlayerCounters;
 	unsigned int ChatTextIndex;
 	char LocalHumanPlayer_PlayerID;
 	char LOS_Sight_PlayerID;
-	char NetworkLayerEnabled;
-	char data4_2[585];
+	char NetworkLayerEnabled;// 02A44 
+	char data7[0x231];  
+	POINT CurtMousePostion;//0x2C76
+	char data7_[0x10];  //
 	short BuildPosX; //0x2C8E
 	short BuildPosY;
 	int BuildPosRealX; //0x2C92
@@ -204,17 +264,17 @@ struct TAdynmemStruct{
 	int unk1;
 	int Height2;
 
-	char data22[0x6];
+	char data8[0x6];
 
 	short MouseMapPosX;  //0x2CAC
-	char data16[6];
+	char data9[6];
 	short MouseMapPosY;  //0x2CB4
-	char data23[4];
+	char data10[4];
 	unsigned short MouseOverUnit; //0x2CBA
-	char data17[0x8];
+	char data11[0x8];
 	short BuildNum;  //0x2CC4,  unitindex for selected OwnUnitBegin to build
 	char BuildSpotState; //0x40=notoktobuild
-	char data18[0x2C];
+	char data12[0x2C];
 
 	WeaponStruct Weapons[256];  //0x2CF3  size=0x11500
 	//char data7[4];
@@ -222,30 +282,32 @@ struct TAdynmemStruct{
 	ProjectileStruct *Projectiles; //0x141F7
 	char data13[0x10];
 	WreckageInfoStruct *WreckageInfo; //0x1420B
-	char data14[0x24];
+	char data14[0x1c];
+	int MapSizeX;
+	int MapSizeY;
 	int FeatureMapSizeX; //0x14233
 	int FeatureMapSizeY; //0x14237
-	char data7[0x18];
-	int NumFeatureDefs;
 	char data15[0x18];
+	int NumFeatureDefs;
+	char data16[0x18];
 	FeatureDefStruct *FeatureDef; //0x1426F
-	char data8[8];
+	char data17[8];
 	LPVOID	*EyeBallMemory;  //0x1427B
-	char data12[2];
+	char data18[2];
 	unsigned short EyeBallState;// 0x14281
-	char data12_[4];
+	char data19[4];
 	FeatureStruct *Features; //0x14287
-	char data3[0x40];
+	char data20[0x40];
 	tagRECT MinimapRect;//0x142CB
 	RadarPicStruct *RadarFinal; //0x142DB
 	RadarPicStruct *RadarMapped;  //0x142DF
 	RadarPicStruct *RadarPicture;  //0x142E3
-	char data20[4];
+	char data21[4];
 	short RadarPicSizeX;  //0x142EB
 	short RadarPicSizeY;  //0x142ED
-	char data25[4];
+	char data22[4];
 	int CirclePointer;//0x142F3 //used in drawcircle funktion
-	char data19[0x28];
+	char data23[0x28];
 	int MapX;	//0x1431f
 	int MapY;   //0x14323
 	int MapXScrollingTo; //0x14327
@@ -258,24 +320,31 @@ struct TAdynmemStruct{
 	short int *HotRadarUnits;
 	int NumHotUnits; //0x14367
 	int NumHotRadarUnits;
-	char data5[0x2c];
+	char data25[0x2c];
 	UnitDefStruct *UnitDef;  //0x1439b 
-	char data11[0x52c];
+	char data26[0x440];
+	_GAFSequence * radlogo; //0147DF
+	char data26_[0xE8];
 	_GAFSequence * CurcosNormal;//0x148CB
-	char data13_[0x4c];
+	char data27[0x4c];
 	int NumExplosions; //0x1491B
 	//char data9[0x6270];
 	ExplosionStruct Explosions[300]; //0x1491F
-	LPVOID Unk2; //0x1AB8F
-	char data10[0x1D39C]; //0x38A47 0x037F2F  B18
+	LPVOID data28; //0x1AB8F
+	char data29[0x1D294]; //0x1AB93
+	RECT GameSreen_Rect; //0x37E27 
+	char data30[0xC3];
+	int InterfaceType;
+	char data31[0x31];
 	unsigned short SoftwareDebugMode;// 0x37f2f
-	char data10_[0xB16];
-	int GameTime; //0x38A47
+	char data32[0xB16];
+	short int GameTime; //0x38A47
+	short int GameSpeed;
 	char ShotUrl;// 0x38a47+c= TA截图目录的字符串，即TA目录+当前用户名 
-	char data6[0x792];
+	char data33[0x792];
 	MapFileStruct *MapFile; //0x391E9
-	int data19_;
-	char data_20[11];
+	int data34;
+	char data_35[11];
 	int State_GUI_CallBack;//0x0391F1
 	LPVOID GUI_CallBack;
 };
@@ -489,23 +558,26 @@ struct UnitStruct {
   int Unknow_Order;//
   UnitStruct *FirstUnit; //?
   UnitDefStruct *UnitType; //0x92
-  PlayerStruct *SpotFor_PlayerPt; //?
+  PlayerStruct  * Owner_PlayerPtr0; //?
   LPVOID UnkPTR2;
   Object3doStruct *Object3do;
-  int data_4;
-  short int UnitCategoryMask;
+  int Order_Unknow ;
+  short int UnitID;
   char data9[16];
 
   short Kills;
   char data17[50];
-  PlayerStruct *ValidOwner_PlayerPtr; //?
+  PlayerStruct * Owner_PlayerPtr1; //?
   char data16[6];
   char HealthPerA;  //health in percent
   char HealthPerB;  //health in percent, changes slower (?)
   char data19[2];
   unsigned char RecentDamage;  //0xFA
   unsigned char Height;
-  char data10[8];
+  short int  OwnerIndex ;
+  char data28;
+  char myLos_PlayerID;
+  char data10[4];
   float Nanoframe;
   short Health;
   char data14[6];
@@ -707,6 +779,319 @@ typedef struct _OFFSCREEN
 	RECT ScreenRect;
 	unsigned int field_2C ;
 }OFFSCREEN;
+
+
+/*  105 */
+
+
+/*  126 */
+
+typedef struct _GUIMEMSTRUCT
+{
+	int per_active;
+	_GUI0IDControl * topControl;
+	int OnCommand;
+	int TAMainStructPtr;
+	int field_10;
+	int field_14;
+	int ActiveUp;
+	int Update_proc;
+	int field_20;
+	int field_24;
+	char field_28[19];
+	int field_3B;
+	char field_3F[119];
+	__int16 SubGUICount;
+	int field_B8;
+	int field_BC;
+	int field_C0;
+	char field_C4[153];
+	char field_15D[2137];
+	char HPIPath[256];
+	char field_AB6[66660];
+	char field_10F1A[61];
+}GUIMEMSTRUCT;
+
+
+/*  134 */
+
+typedef struct _GUI1IDControl
+{
+	char id;
+	char assoc;
+	char name[16];
+	char gap_12[1];
+	__int16 xpos;
+	__int16 ypos;
+	__int16 width;
+	__int16 height;
+	int attribs;
+	int colorf;
+	int colorb;
+	char texturenumber;
+	char fontnumber;
+	char active;
+	char commonattribs;
+	char gap_2B[8];
+	char help[128];
+	char gap_B3[1];
+	__int16 gaffile;
+	char text[128];
+	char stages;
+	char status_curnt;
+	__int16 status_init;
+	__int16 quickkey;
+	int grayedout;
+	__int16 field_140;
+	__int16 field_142;
+	int unk_proc;
+	__int16 field_148;
+	int TAMainPtr;
+	char field_14E[13];
+}GUI1IDControl;
+
+
+/*  151 */
+
+typedef struct _GUI0IDControl
+{
+	char id;
+	char assoc;
+	char name[16];
+	char gap_12[1];
+	__int16 xpos;
+	__int16 ypos;
+	__int16 width;
+	__int16 height;
+	int attribs;
+	int colorf;
+	int colorb;
+	char texturenumber;
+	char fontnumber;
+	char active;
+	char commonattribs;
+	char field_2B[8];
+	char help[128];
+	char gap_B3[1];
+	__int16 gaffile;
+	__int16 totalgadgets;
+	__int16 field_B8;
+	__int16 field_BA;
+	int OFFSCREEN_p;
+	char field_C0[8];
+	char field_C8;
+	char major;
+	char minor;
+	char revision;
+	char crdefault[16];
+	char escdefault[16];
+	char defaultfocus[16];
+	char panel[16];
+	char field_10C[42];
+	__int16 field_136;
+	__int16 status;
+	__int16 field_13A;
+	int field_13C;
+	__int16 field_140;
+	__int16 field_142;
+	int unk_proc;
+	__int16 field_148;
+	int TAMainPtr;
+	char field_14E[13];
+}GUI0IDControl;
+
+
+/*  152 */
+
+typedef struct _GUI2IDControl
+{
+	char id;
+	char assoc;
+	char name[16];
+	char gap_12[1];
+	__int16 xpos;
+	__int16 ypos;
+	__int16 width;
+	__int16 height;
+	int attribs;
+	int colorf;
+	int colorb;
+	char texturenumber;
+	char fontnumber;
+	char active;
+	char commonattribs;
+	char field_2B[8];
+	char help[128];
+	char field_B3[7];
+	__int16 selected_i;
+	char field_BC[22];
+	int unk_3;
+	int unk_0;
+	int itemheight;
+	int unk_1;
+	char field_E2[98];
+	int unk_proc;
+	__int16 field_148;
+	int TAMainPtr;
+	char field_14E[13];
+}GUI2IDControl;
+
+
+/*  154 */
+typedef void (__stdcall * _PosProc)(GUIInfo * , int);
+typedef struct _GUI3_4IDControl
+{
+	char id;
+	char assoc;
+	char name[16];
+	char gap_12[1];
+	__int16 xpos;
+	__int16 ypos;
+	__int16 width;
+	__int16 height;
+	int attribs;
+	int colorf;
+	int colorb;
+	char texturenumber;
+	char fontnumber;
+	char active;
+	char commonattribs;
+	char field_2B[8];
+	char help[128];
+	char field_B3[43];
+	char field_DE[24];
+	char text[64];
+	__int16 range;
+	char maxchars;
+	char gap_139[3];
+	int thick;
+	__int16 knobpos;
+	__int16 knobsize;
+	_PosProc pos_proc;
+	__int16 field_148;
+	int TAMainPtr;
+	char field_14E[13];
+}GUI3_4IDControl;
+
+
+/*  155 */
+
+typedef struct _GUI5IDControl
+{
+	char id;
+	char assoc;
+	char name[16];
+	char gap_12[1];
+	__int16 xpos;
+	__int16 ypos;
+	__int16 width;
+	__int16 height;
+	int attribs;
+	int colorf;
+	int colorb;
+	char texturenumber;
+	char fontnumber;
+	char active;
+	char commonattribs;
+	char field_2B[8];
+	char help[128];
+	char field_B3[67];
+	char text[64];
+	char link[16];
+	char gap_146[1];
+	char unk_0;
+	char gap_148[2];
+	int TAMainPtr;
+	char field_14E[13];
+}GUI5IDControl;
+
+
+/*  156 */
+
+typedef struct _GUI78IDControl
+{
+	char id;
+	char assoc;
+	char name[16];
+	char gap_12[1];
+	__int16 xpos;
+	__int16 ypos;
+	__int16 width;
+	__int16 height;
+	int attribs;
+	int colorf;
+	int colorb;
+	char texturenumber;
+	char fontnumber;
+	char active;
+	char commonattribs;
+	char field_2B[8];
+	char help[128];
+	char field_B3[67];
+	char filename[32];
+	char field_116[52];
+	int TAMainPtr;
+	char field_14E[13];
+}GUI78IDControl;
+
+
+/*  157 */
+
+typedef struct _GUI6IDControl
+{
+	char id;
+	char assoc;
+	char name[16];
+	char gap_12[1];
+	__int16 xpos;
+	__int16 ypos;
+	__int16 width;
+	__int16 height;
+	int attribs;
+	int colorf;
+	int colorb;
+	char texturenumber;
+	char fontnumber;
+	char active;
+	char commonattribs;
+	char field_2B[8];
+	char help[128];
+	char field_B3[49];
+	int hotornot;
+	char field_E8[98];
+	int TAMainPtr;
+	char field_14E[13];
+}GUI6IDControl;
+
+
+/*  158 */
+
+typedef struct _GUI9IDControl
+{
+	char id;
+	char assoc;
+	char name[16];
+	char gap_12[1];
+	__int16 xpos;
+	__int16 ypos;
+	__int16 width;
+	__int16 height;
+	int attribs;
+	int colorf;
+	int colorb;
+	char texturenumber;
+	char fontnumber;
+	char active;
+	char commonattribs;
+	char field_2B[8];
+	char help[128];
+	char field_B3[67];
+	int nuttin;
+	char field_FA[80];
+	int TAMainPtr;
+	char field_14E[13];
+}GUI9IDControl;
+
 typedef struct _TAProgramStruct 
 {
 	int HInstance;
@@ -824,10 +1209,36 @@ enum EyeBallEnum
 
 enum WeaponMask
 {
-	 stockpile_mask   = 0x10000000,
+	 stockpile_mask   = 0x1000000,
 	 targetable_mask  = 0x20000000,
 	 interceptor_mask  = 0x40000000
 };
+
+enum SharedStates
+{
+	 SharedMetal      = 2,
+	 SharedEnergy     = 4,
+	 SharedLOS        = 8,
+	 SharedMappings   = 0x20,
+	 SharedRadar      = 0x40
+};
+
+namespace softwaredebugmode
+{
+	enum SOFTWAREDEBUGMODE
+	{
+		Drop             = 1,
+		Now              = 2,
+		Noshake          = 0x10,
+		Clock            = 0x40,
+		Doubleshot       = 0x80,
+		Halfshot         = 0x100,
+		Radar            = 0x200,
+		Shootall         = 0x400
+	};
+};
+
+#define PLAYERNUM (10)
 
 #pragma pack()
 

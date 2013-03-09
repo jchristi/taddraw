@@ -13,6 +13,7 @@ struct posstruct{
 	int y;
 };
 
+struct _GAFFrame;
 
 //////////////////////////////////////////////////////////////////////////////////////////
 /// Working.
@@ -54,11 +55,37 @@ extern _LoadTARegConfig LoadTARegConfig;
 
 typedef int (__stdcall * _ViewCommandProc) (char * );//this is spec struct, but I'm lazy to define it.
 extern _ViewCommandProc ViewCommandProc;
+
+typedef int (__stdcall * _SubGUIIndex)(GUI0IDControl * GUIControl_p, char *SubControlName, int _0xe);
+extern _SubGUIIndex SubGUIIndex;
+
+typedef int (__stdcall * _SubControl_str2ptr)(GUI0IDControl * GUIINFO_P, char *ControlName);
+extern _SubControl_str2ptr SubControl_str2ptr;
+
+typedef int (__stdcall * _SetValue_GUI5ID)(GUIInfo * GUIINFO_P, char *ControlName, char * NewStr, int _zero);
+extern _SetValue_GUI5ID SetValue_GUI5ID;
+
+typedef int (__stdcall * _IsPressCommand)(GUIInfo * TAUI_p, char * ControlName);
+extern _IsPressCommand IsPressCommand;
+
+typedef int (__stdcall * _CallInternalCommandHandler)(char *Command_ptr, int CommandLevel);
+extern _CallInternalCommandHandler CallInternalCommandHandler;
+
+typedef int (__stdcall *_ChangeGameSpeed)(int NewSpeed, int TellOther_B);
+extern _ChangeGameSpeed ChangeGameSpeed;
+
+typedef _GAFFrame * (__stdcall * _Index2Frame_InSequence)(_GAFSequence * ParsedGaf, int index);
+extern _Index2Frame_InSequence  Index2Frame_InSequence;
+
+ 
+typedef	int (__stdcall * _CopyGafToContext)(_OFFSCREEN * OFFSCREN_ptr, _GAFFrame * GafFrame, int Off_X, int Off_Y);
+extern _CopyGafToContext CopyGafToContext;
 //////////////////////////////////////////////////////////////////////////////////////////
 /// Not working.
 //////////////////////////////////////////////////////////////////////////////////////////
 typedef void (__stdcall *_TestGridSpot)(UnitStruct *BuildUnit, int pos, int unk, PlayerStruct *Player); //unk=zero
 extern _TestGridSpot TestGridSpot;
+
 
 
 ////-----------
@@ -83,6 +110,7 @@ void freeTAMem (LPVOID MemAddress);
 LPDWORD GetUnitIDMaskAryByCategory (LPSTR CategoryName_cstrp);
 void UpdateSelectUnitEffect (void);
 void ApplySelectUnitMenu_Wapper (void);
+int ChatText (LPSTR str);
 
 
 extern TAProgramStruct * * TAProgramStruct_PtrPtr;

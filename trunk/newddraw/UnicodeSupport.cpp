@@ -11,6 +11,10 @@ using namespace std;
 #include "LimitCrack.h"
 #include "dialog.h"
 
+
+
+UnicodeSupport* NowSupportUnicode;
+//////-------------
 UnicodeSupport::UnicodeSupport(LPCSTR FontName, DWORD Color, DWORD Background)
 {
 	DrawTextInScreen_ISH= NULL;
@@ -562,7 +566,7 @@ bool UnicodeSupport::Blt (LPDIRECTDRAWSURFACE DescSurface)
 	//
 	__try
 	{
-			if (NULL==DescSurface)
+		if (NULL==DescSurface)
 		{
 			return false;
 		}
@@ -606,11 +610,12 @@ bool UnicodeSupport::Blt (LPDIRECTDRAWSURFACE DescSurface)
 			DescSurface->Blt(&Dest, lpImeSurface, &Src, DDBLT_WAIT| DDBLT_KEYSRCOVERRIDE, &ddbltfx);
 		}
 
+/*
 		if ((CursorY!=-1)
 			&&(CursorX!=-1))
 		{
 			((Dialog *)LocalShare->Dialog)->BlitCursor ( DescSurface, CursorX, CursorY);
-		}
+		}*/
 
 		return true;
 	}

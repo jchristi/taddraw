@@ -11,6 +11,14 @@ using namespace std;
 
 
 
+
+
+MenuResolution * SyncMenuResolution;
+
+
+
+
+//-----------
 MenuResolution::MenuResolution (BOOL EqualIt_b)
 {
 	Hook_0049E91C= NULL;
@@ -110,9 +118,9 @@ int  __stdcall  sub_0049E91C (PInlineX86StackBuffer X86StrackBuffer)
 {
 	DWORD Width;
 	
-	if (0!=NowCrackLimit->SyncMenuResolution->Width)
+	if (0!=SyncMenuResolution->Width)
 	{
-		Width= NowCrackLimit->SyncMenuResolution->Width;
+		Width= SyncMenuResolution->Width;
 	}
 	else
 	{
@@ -138,9 +146,9 @@ int  __stdcall  sub_0049E93B (PInlineX86StackBuffer X86StrackBuffer)
 {
 	DWORD Height;
 
-	if (0!=NowCrackLimit->SyncMenuResolution->Height)
+	if (0!=SyncMenuResolution->Height)
 	{
-		Height= NowCrackLimit->SyncMenuResolution->Height;
+		Height= SyncMenuResolution->Height;
 	}
 	else
 	{
@@ -173,11 +181,11 @@ int  __stdcall  sub_00491A75 (PInlineX86StackBuffer X86StrackBuffer)
 	DWORD Height= 0;
 	DWORD Width= 0;
 
-	if ((0!=NowCrackLimit->SyncMenuResolution->Width)
-		&&(0!=NowCrackLimit->SyncMenuResolution->Height))
+	if ((0!=SyncMenuResolution->Width)
+		&&(0!=SyncMenuResolution->Height))
 	{
-		Width= NowCrackLimit->SyncMenuResolution->Width;
-		Height= NowCrackLimit->SyncMenuResolution->Height;
+		Width= SyncMenuResolution->Width;
+		Height= SyncMenuResolution->Height;
 	}
 	else
 	{
@@ -212,11 +220,11 @@ int __stdcall sub_00491B01 (PInlineX86StackBuffer X86StrackBuffer)
 	DWORD Height= 0;
 	DWORD Width= 0;
 
-	if ((0!=NowCrackLimit->SyncMenuResolution->Width)
-		&&(0!=NowCrackLimit->SyncMenuResolution->Height))
+	if ((0!=SyncMenuResolution->Width)
+		&&(0!=SyncMenuResolution->Height))
 	{
-		Width= NowCrackLimit->SyncMenuResolution->Width;
-		Height= NowCrackLimit->SyncMenuResolution->Height;
+		Width= SyncMenuResolution->Width;
+		Height= SyncMenuResolution->Height;
 	}
 	else
 	{

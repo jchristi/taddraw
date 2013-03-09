@@ -1,7 +1,8 @@
 #include "oddraw.h"
 #include "iddrawsurface.h"
 #include "gaf.h"
-
+#include "tamem.h"
+#include "tafunctions.h"
 
 LPDIRECTDRAWSURFACE CreateSurfByGafFrame (PGAFFrame Cursor_P, bool VidMem)
 {
@@ -43,16 +44,43 @@ LPDIRECTDRAWSURFACE CreateSurfByGafFrame (PGAFFrame Cursor_P, bool VidMem)
 		for(int i=0; i<Height; i++)
 		{
 			memcpy(&SurfPTR[i*ddsd.lPitch], &reinterpret_cast<LPBYTE>(GafFrame->PtrFrameBits)[i*Width], Width);
-/*
-			unsigned char *  SrcLine= &(GafFrame->PtrFrameBits[i*Width]);
-			unsigned char * DescLine= &SurfPTR[i*ddsd.lPitch];
-			for (int i_1= 0; i_1<Width; i_1++)
-			{
-				DescLine[i_1]= (0x9==SrcLine[ i_1])? 1: SrcLine[ i_1];
-			}*/
 		}
 	}
 
 	RetSurf->Unlock(NULL);
 	return RetSurf;
+}
+
+LPBYTE InstanceGAFFrame (PGAFFrame GafFrame, LPBYTE * FrameBits, POINT * Aspect)// need free
+{
+	if (NULL==GafFrame)
+	{
+		return NULL;
+	}
+	OFFSCREEN OffScreen={0};
+
+	OffScreen.Height= GafFrame->Height;
+	OffScreen.Width= GafFrame->Width;
+	OffScreen.lPitch= GafFrame->Width;
+	OffScreen.lpSurface= malloc(OffScreen.Height* OffScreen.lPitch);
+
+	OffScreen.ScreenRect.left= 0;
+	OffScreen.ScreenRect.right= OffScreen.Width;
+	OffScreen.ScreenRect.top= 0;
+	OffScreen.ScreenRect.bottom= OffScreen.Height;
+
+	CopyGafToContext ( &OffScreen, GafFrame, 0, 0);
+
+	if (Aspect)
+	{
+		Aspect->y = GafFrame->Height;
+		Aspect->x = GafFrame->Width;
+	}
+	if (FrameBits)
+	{
+		*FrameBits= reinterpret_cast<LPBYTE>(OffScreen.lpSurface);
+	}
+	
+	
+	return reinterpret_cast<LPBYTE>(OffScreen.lpSurface);
 }

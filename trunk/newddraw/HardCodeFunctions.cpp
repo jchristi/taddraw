@@ -55,6 +55,7 @@ int ViewPlayerLos_Replay (int PlayerAryIndex, BOOL HaveControl)
 
 	LoadTARegConfig ( );
 	UpdateLosState ( 0);
+	
 	//PTR1->LOS_Sight_PlayerID= Curt_LOS_Sight_PlayerID;
 	//UpdateLosState ( 0);
 	return Curt_LOS_Sight_PlayerID;
@@ -65,18 +66,24 @@ int UpdateTAProcess (void)
 	TAdynmemStruct * PTR1 = *(TAdynmemStruct * *)0x511de8;
 
 
-	if (2==PTR1->State_GUI_CallBack)
-	{
-		DataShare->TAProgress= TALobby;
-	}
+// 	if (2==PTR1->State_GUI_CallBack)
+// 	{
+// 		DataShare->TAProgress= TALobby;
+// 	}
+//	else 
 	if (5==PTR1->State_GUI_CallBack)
 	{
 		DataShare->TAProgress= TALoading;
 	}
-	if (6==PTR1->State_GUI_CallBack)
+	else if (6==PTR1->State_GUI_CallBack)
 	{
 		DataShare->TAProgress= TAInGame;
 	}
+	else
+	{
+		DataShare->TAProgress= TALobby;
+	}
+	
 	
 
 	return DataShare->TAProgress;
@@ -120,11 +127,6 @@ void UpdateSelectUnitEffect (void)
 	int *PTR = (int*)0x00511de8;
 	BYTE temp= *((BYTE *)(*PTR+ 0x37EBE));
 	*((BYTE *)(*PTR+ 0x37EBE))= (BYTE)(temp| 0x10);
-
-	//
-/*
-
-*/
 }
 
 void ApplySelectUnitMenu_Wapper (void)
@@ -153,9 +155,18 @@ void DeselectUnits(void)
 
 		Start= &Start[1];
 	}
-	
 }
 
+int ChatText (LPSTR str)
+{
+	if ('+'==str[0])
+	{
+		CallInternalCommandHandler ( &str[1], 1);
+	}
+	
+	ShowText (  &((*TAmainStruct_PtrPtr)->Players[(*TAmainStruct_PtrPtr)->LocalHumanPlayer_PlayerID]), str, 4, 0);
+	 return strlen ( str);
+}
 
 //find OwnUnitBegin under mousepointer
 _FindMouseUnit FindMouseUnit = (_FindMouseUnit)0x48CD80;
@@ -191,6 +202,21 @@ _malloc_SafeWay malloc_SafeWay= (_malloc_SafeWay) 0x004B4F10;
 _UpdateLOSState UpdateLosState= (_UpdateLOSState) 0x004816A0;
 _LoadTARegConfig LoadTARegConfig= (_LoadTARegConfig) 0x00430F00;
 _ViewCommandProc ViewCommandProc= (_ViewCommandProc) 0x00416B50;
+
+_SubGUIIndex SubGUIIndex= (_SubGUIIndex)0x0049FDF0 ;
+
+_SetValue_GUI5ID SetValue_GUI5ID= (_SetValue_GUI5ID)0x04A0BF0;
+_SubControl_str2ptr SubControl_str2ptr= (_SubControl_str2ptr)0x004A0200;
+
+_IsPressCommand IsPressCommand= (_IsPressCommand) 0x0049FD60;
+
+_CallInternalCommandHandler CallInternalCommandHandler= (_CallInternalCommandHandler)0x0417B50;
+
+_ChangeGameSpeed ChangeGameSpeed= (_ChangeGameSpeed)0x0490DF0;
+
+_Index2Frame_InSequence Index2Frame_InSequence= (_Index2Frame_InSequence )0x04B7F30;
+
+_CopyGafToContext CopyGafToContext= (_CopyGafToContext)0x04B7F90;
 //////////////////////////////////////////////////////////////////////////////////////////
 /// Not working.
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -211,6 +237,7 @@ LPDWORD AISearchMapEntriesLimit= (LPDWORD) 0x0040EAD6;
 LPBYTE AddrAboutCircleSelect= (LPBYTE)0x48C599;
 //
 _ApplySelectUnitGUI ApplySelectUnitGUI= (_ApplySelectUnitGUI)0x00495860;
+
 
 
 
