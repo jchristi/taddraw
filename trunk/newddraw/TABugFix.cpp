@@ -1,3 +1,4 @@
+
 #include "iddraw.h"
 #include "iddrawsurface.h"
 
@@ -10,7 +11,7 @@
 #include "TAbugfix.h"
 
 
-
+#include "ddraw.h"
 
 
 TABugFixing * FixTABug;
@@ -42,8 +43,7 @@ unsigned int GUIErrorLengthAry[GUIERRORCOUNT]=
 };
 BYTE GUIErrorLengthBits[]= {0x80};
 
-
-
+unsigned int AppHelpDdrawCreate_addr= 0x049F710;
 TABugFixing::TABugFixing ()
 {
 	NullUnitDeathVictim= new SingleHook ( NullUnitDeathVictimAddr, sizeof(NullUnitDeathVictimBits), INLINE_UNPROTECTEVINMENT, NullUnitDeathVictimBits);
@@ -59,8 +59,9 @@ TABugFixing::TABugFixing ()
 	{
 		GUIErrorLengthHookAry[i]= new SingleHook ( GUIErrorLengthAry[i], sizeof(GUIErrorLengthBits), INLINE_UNPROTECTEVINMENT, GUIErrorLengthBits);
 	}
-		// 	0041D6B0   74 0E            JE SHORT totala.0041D6C0
-		// 		0041D6B2   B0 2E            MOV AL,2E
+
+
+
 }
 
 TABugFixing::~TABugFixing ()
@@ -90,7 +91,8 @@ TABugFixing::~TABugFixing ()
 		}
 		
 	}
-	
+
+
 }
 
 BOOL TABugFixing::AntiCheat (void)

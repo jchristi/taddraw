@@ -8,7 +8,10 @@ int ViewPlayerLos_Replay (int PlayerAryIndex, BOOL HaveControl)
 {
 	TAdynmemStruct * PTR1 = *(TAdynmemStruct * *)0x511de8;
 
-	PTR1->EyeBallState= PTR1->EyeBallState& (~ FULLLOS);
+	PTR1->LosType= PTR1->LosType& (~ Permanent);
+	PTR1->LosType= PTR1->LosType& (~ NOMAPPING);
+
+	
 	//PTR1->LOS_Sight_PlayerID= 0;
 	char Curt_LOS_Sight_PlayerID= PTR1->LOS_Sight_PlayerID;
 
@@ -31,7 +34,8 @@ int ViewPlayerLos_Replay (int PlayerAryIndex, BOOL HaveControl)
 			}
 			else
 			{
-				PTR1->EyeBallState|= FULLLOS;
+				PTR1->LosType|= Permanent;
+				PTR1->LosType|= NOMAPPING;
 			}
 
 			Curt_LOS_Sight_PlayerID= PlayerAryIndex;

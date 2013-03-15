@@ -8,13 +8,7 @@ using namespace std;
 #include "tafunctions.h"
 #include "hook\etc.h"
 #include "hook\hook.h"
-
-
-
-
-
-MenuResolution * SyncMenuResolution;
-
+#include "GUIExpand.h"
 
 
 
@@ -118,9 +112,9 @@ int  __stdcall  sub_0049E91C (PInlineX86StackBuffer X86StrackBuffer)
 {
 	DWORD Width;
 	
-	if (0!=SyncMenuResolution->Width)
+	if (0!=GUIExpander->SyncMenuResolution->Width)
 	{
-		Width= SyncMenuResolution->Width;
+		Width= GUIExpander->SyncMenuResolution->Width;
 	}
 	else
 	{
@@ -146,9 +140,9 @@ int  __stdcall  sub_0049E93B (PInlineX86StackBuffer X86StrackBuffer)
 {
 	DWORD Height;
 
-	if (0!=SyncMenuResolution->Height)
+	if (0!=GUIExpander->SyncMenuResolution->Height)
 	{
-		Height= SyncMenuResolution->Height;
+		Height= GUIExpander->SyncMenuResolution->Height;
 	}
 	else
 	{
@@ -181,11 +175,11 @@ int  __stdcall  sub_00491A75 (PInlineX86StackBuffer X86StrackBuffer)
 	DWORD Height= 0;
 	DWORD Width= 0;
 
-	if ((0!=SyncMenuResolution->Width)
-		&&(0!=SyncMenuResolution->Height))
+	if ((0!=GUIExpander->SyncMenuResolution->Width)
+		&&(0!=GUIExpander->SyncMenuResolution->Height))
 	{
-		Width= SyncMenuResolution->Width;
-		Height= SyncMenuResolution->Height;
+		Width= GUIExpander->SyncMenuResolution->Width;
+		Height= GUIExpander->SyncMenuResolution->Height;
 	}
 	else
 	{
@@ -220,11 +214,11 @@ int __stdcall sub_00491B01 (PInlineX86StackBuffer X86StrackBuffer)
 	DWORD Height= 0;
 	DWORD Width= 0;
 
-	if ((0!=SyncMenuResolution->Width)
-		&&(0!=SyncMenuResolution->Height))
+	if ((0!=GUIExpander->SyncMenuResolution->Width)
+		&&(0!=GUIExpander->SyncMenuResolution->Height))
 	{
-		Width= SyncMenuResolution->Width;
-		Height= SyncMenuResolution->Height;
+		Width= GUIExpander->SyncMenuResolution->Width;
+		Height= GUIExpander->SyncMenuResolution->Height;
 	}
 	else
 	{

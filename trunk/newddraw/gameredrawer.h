@@ -2,7 +2,7 @@
 
 class TAGameAreaReDrawer
 {
-private:
+public:
 	LPDIRECTDRAWSURFACE OwnGameAreaSurface_ptr;
 
 public:
@@ -13,6 +13,7 @@ public:
 
 	BOOL MixDSufInBlit (LPRECT DescRect, LPDIRECTDRAWSURFACE Src_DDrawSurface, LPRECT SrcScope, DWORD Background_Color);
 	BOOL MixBitsInBlit (LPRECT DescRect, LPBYTE SrcBits, LPPOINT SrcAspect, LPRECT SrcScope);
+	BOOL GrayBlitOfBits (LPRECT DescRect, LPBYTE SrcBits, LPPOINT SrcAspect, LPRECT SrcScope, BOOL NoMapped);
 
 	LPRECT TAWGameAreaRect (LPRECT Out_Rect);
 

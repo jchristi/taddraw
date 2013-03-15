@@ -124,10 +124,8 @@ void SingleHook::InitHookClass (LPBYTE AddrToHook_Pvoid, DWORD Len_Dw, int HookM
 		m_LenToModify_Dw= Len_Dw;
 
 		mallocedBuf[0]= 0xe9;
-		*((DWORD *)&mallocedBuf [1])= (DWORD)((NewBytes_Pbyte)- m_OrgBytes_Pbyte - 0x5);
 
-		DWORD tempForProtect_Dw;
-		VirtualProtect ( mallocedBuf, Len_Dw, PAGE_EXECUTE_READWRITE, &tempForProtect_Dw);
+		*((DWORD *)&mallocedBuf [1])= (DWORD)((NewBytes_Pbyte)- AddrToHook_Pvoid - 0x5);
 
 		m_NewBytes_Pbyte= mallocedBuf;
 

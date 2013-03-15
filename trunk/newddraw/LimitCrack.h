@@ -8,8 +8,7 @@ class Switchalt;
 class InlineSingleHook;
 class IncreaseSfxLimit;
 class ModifyWeaponPacket;
-class UnicodeSupport;
-class MenuResolution;
+
 class UnitLimit;
 
 class LimitCrack

@@ -12,6 +12,7 @@ private:
 	InlineSingleHook * BadModelHunter_ISH;
 
 	SingleHook * GUIErrorLengthHookAry[GUIERRORCOUNT];
+
 public:
 	TABugFixing ();
 	~TABugFixing ();

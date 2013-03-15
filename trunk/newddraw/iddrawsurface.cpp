@@ -777,29 +777,18 @@ LRESULT CALLBACK WinProc(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam
 
 		if((Msg == WM_KEYUP)||(WM_KEYDOWN==Msg))
 		{
-			if(wParam == 120&&(GetAsyncKeyState ( 17) &0x8000)>0)
+			if((wParam == 120&&(GetAsyncKeyState ( 17) &0x8000)>0)
+				||wParam == VK_SNAPSHOT)
 			{
 				if (Msg == WM_KEYUP)
 				{
-					((IDDrawSurface*)LocalShare->DDrawSurfClass)->ScreenShot();
-				}
 
-				return 0;
-			}
-			if( wParam == VK_SNAPSHOT)
-				//     if((GetAsyncKeyState(17)&0x8000)>0)
-			{
-				if (Msg == WM_KEYUP)
-				{
 					((IDDrawSurface*)LocalShare->DDrawSurfClass)->ScreenShot();
 				}
 
 				return 0;
 			}
 		}
-
-
-
 		//////////////////////////////////////////////////////////////////////////
 
 		if((NULL!=LocalShare->Whiteboard)

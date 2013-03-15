@@ -35,7 +35,7 @@ TNTtoMiniMap::TNTtoMiniMap (DWORD Width, DWORD Height)
 	PaletteRefCount= PaletteRefCount+ 1;
 	if (NULL==TALogPalette_Ptr)
 	{
-		TALogPalette_Ptr= reinterpret_cast<LPLOGPALETTE>(new BYTE[sizeof(LOGPALETTE)+ sizeof(RGBQUAD)* 256]);
+		TALogPalette_Ptr= reinterpret_cast<LPLOGPALETTE>(new BYTE[sizeof(LOGPALETTE)+ sizeof(RGBQUAD)* 256+ 1]);
 		TALogPalette_Ptr->palNumEntries= 256;
 		TALogPalette_Ptr->palVersion= 0x300;
 		memcpy ( &(TALogPalette_Ptr->palPalEntry), rqAry, sizeof(RGBQUAD)* 256);
@@ -60,6 +60,7 @@ TNTtoMiniMap::~TNTtoMiniMap ()
 		if (NULL!=TALogPalette_Ptr)
 		{
 			delete TALogPalette_Ptr;
+			TALogPalette_Ptr= NULL;
 		}
 	}
 }
@@ -247,18 +248,28 @@ LPBYTE MiniMapPicture::StretchTATNTDataToMiniMap (PTNTHeaderStruct TATNT_PTNTH)
 	int MapDataHeight_I= TATNT_PTNTH->Height;
 	float XInterval_I;
 	float YInterval_I;
-	if (MapDataHeight_I!=MapDataWidth_I)
+	float MiniMapScale= static_cast<float>(Width)/ static_cast<float>(Height);
+	
+	if ((MapDataHeight_I* MiniMapScale)<MapDataWidth_I)
 	{
-		Width= static_cast<int>((static_cast<float>(MapDataWidth_I)* static_cast<float>(Height)/ static_cast<float>(MapDataHeight_I)));
+		Height= static_cast<int>(static_cast<float>(Width)/ static_cast<float>(MapDataWidth_I) * static_cast<float>(MapDataHeight_I));
 	}
-/*
-	else if (MapDataHeight_I>MapDataWidth_I)
-	{//
-		Height= static_cast<int>((static_cast<float>(MapDataHeight_I)* static_cast<float>(Width)/ static_cast<float>(MapDataWidth_I)));
-	}*/
+	else 
+	if ((MapDataHeight_I* MiniMapScale)>MapDataWidth_I)
+	{
+		Width= static_cast<int>(static_cast<float>(Height)/ static_cast<float>(MapDataHeight_I)* static_cast<float>(MapDataWidth_I) );
+	}
 	else
 	{
-		Width= Height;
+		if (Width<Height)
+		{
+			Height= Width;
+
+		}
+		else
+		{
+			Width= Height;
+		}
 	}
 	XInterval_I= static_cast<float>(MapDataWidth_I)* 32.0f;
 	XInterval_I= XInterval_I/ Width;
@@ -318,18 +329,28 @@ LPBYTE MiniMapPicture::StretchTAMapToMiniMap (LPBYTE RectPixelBitsBuf_PB, RECT *
 	float XInterval_I;
 	float YInterval_I;
 
-	if (MapHeight_I!=MapWidth_I)
+
+	if (MapHeight_I<MapWidth_I)
 	{
-		Width= static_cast<int>((static_cast<float>(MapWidth_I)* static_cast<float>(Height)/ static_cast<float>(MapHeight_I)));
+		Height= static_cast<int>(static_cast<float>(Width)/ static_cast<float>(MapWidth_I) * static_cast<float>(MapHeight_I));
+		
 	}
-/*
-	else if (MapHeight_I>MapWidth_I)
-	{//
-		Height= static_cast<int>((static_cast<float>(MapHeight_I)* static_cast<float>(Width)/ static_cast<float>(MapWidth_I)));
-	}*/
+	else
+	if (MapHeight_I>MapWidth_I)
+	{
+		Width= static_cast<int>(static_cast<float>(Height)/ static_cast<float>(MapHeight_I)* static_cast<float>(MapWidth_I));
+	}
 	else
 	{
-		Width= Height;
+		if (Width<Height)
+		{
+			Height= Width;
+			
+		}
+		else
+		{
+			Width= Height;
+		}
 	}
 
 	XInterval_I= static_cast<float>(MapWidth_I)* 32.0f;

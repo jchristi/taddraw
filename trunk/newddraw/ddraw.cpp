@@ -1,6 +1,7 @@
 //---------------------------------------------------------------------------
 #include "oddraw.h"
 #include "iddraw.h"
+
 #include "iddrawsurface.h"
 
 #include <vector>
@@ -23,11 +24,11 @@ using namespace std;
 
 #include "TAConfig.h"
 //---------------------------------------------------------------------------
-
+#include "ddraw.h"
 //---------------------------------------------------------------------------
 
 
-#define DDRAW_INIT_STRUCT(ddstruct) { memset(&ddstruct,0,sizeof(ddstruct)); ddstruct.dwSize=sizeof(ddstruct); }
+//#define DDRAW_INIT_STRUCT(ddstruct) { memset(&ddstruct,0,sizeof(ddstruct)); ddstruct.dwSize=sizeof(ddstruct); }
 
 DataShare_* DataShare;
 HANDLE hMemMap;
@@ -41,46 +42,6 @@ HANDLE TAHookhMemMap;
 void *TAHookpMapView;
 
 
-typedef HRESULT (*DirectDrawCreateProc)(GUID FAR *, LPDIRECTDRAW FAR *, IUnknown FAR *);
-//extern "C" __declspec(dllexport) HRESULT WINAPI DirectDrawCreate(GUID FAR *lpGUID, LPDIRECTDRAW FAR *lplpDD, IUnknown FAR *pUnkOuter);
-typedef HRESULT (*DirectDrawCreateExProc)(GUID FAR *, LPVOID ,  REFIID, IUnknown FAR *);
-//extern "C" __declspec(dllexport) HRESULT WINAPI DirectDrawCreateEx(GUID FAR *arg1, LPVOID *arg2, REFIID arg3, IUnknown FAR *arg4);
-typedef HRESULT (*DirectDrawCreateClipperProc)(DWORD, LPDIRECTDRAWCLIPPER FAR * , IUnknown FAR *);
-//extern "C" __declspec(dllexport) HRESULT WINAPI DirectDrawCreateClipper(DWORD arg1, LPDIRECTDRAWCLIPPER FAR *arg2, IUnknown FAR *arg3);
-typedef HRESULT (*DirectDrawEnumerateProc)(LPDDENUMCALLBACK, LPVOID);
-//extern "C" __declspec(dllexport) HRESULT WINAPI DirectDrawEnumerate(LPDDENUMCALLBACK arg1, LPVOID arg2);
-typedef HRESULT (*DirectDrawEnumerateExProc)(LPDDENUMCALLBACKEX, LPVOID, DWORD);
-//extern "C" __declspec(dllexport) HRESULT WINAPI DirectDrawEnumerateEx(LPDDENUMCALLBACKEX arg1, LPVOID arg2, DWORD arg3);
-typedef HRESULT (*DllGetClassObjectProc)(const CLSID &, const IID &, void **);
-//extern "C" __declspec(dllexport) HRESULT WINAPI DllGetClassObject(const CLSID & arg1, const IID & arg2, void ** arg3);
-typedef HRESULT (*DllCanUnloadNowProc)();
-//extern "C" __declspec(dllexport) HRESULT WINAPI DllCanUnloadNow();
-
-/*typedef int WINAPI (*VidMemLargestFreeProc)(LPVOID);
-extern "C" __declspec(dllexport) int WINAPI VidMemLargestFree(LPVOID arg1);
-typedef int WINAPI (*VidMemAmountFreeProc)(LPVOID);
-extern "C" __declspec(dllexport) int WINAPI VidMemAmountFree(LPVOID arg1);
-typedef int WINAPI (*VidMemFiniProc)(LPVOID);
-extern "C" __declspec(dllexport) int WINAPI VidMemFini(LPVOID arg1);
-typedef int WINAPI (*VidMemFreeProc)(LPVOID, LPVOID);
-extern "C" __declspec(dllexport) int WINAPI VidMemFree(LPVOID arg1, LPVOID arg2);
-typedef int WINAPI (*VidMemAllocProc)(LPVOID, LPVOID, LPVOID);
-extern "C" __declspec(dllexport) int WINAPI VidMemAlloc(LPVOID arg1, LPVOID arg2, LPVOID arg3);
-typedef int WINAPI (*VidMemInitProc)(LPVOID, LPVOID, LPVOID, LPVOID, LPVOID);
-extern "C" __declspec(dllexport) int WINAPI VidMemInit(LPVOID arg1, LPVOID arg2, LPVOID arg3, LPVOID arg4, LPVOID arg5);
-*/
-
-
-bool SetupFileMap();
-void ShutdownFileMap();
-bool SetupLocalFileMap();
-void ShutdownLocalFileMap();
-void GetSysDir();
-
-void SetupTAHookFileMap();
-void ShutDownTAHookFileMap();
-void EnableSound();
-//void ReplaceTAProc();
 
 char SystemDDraw[MAX_PATH];
 
@@ -114,13 +75,6 @@ int __stdcall AddtionInit (PInlineX86StackBuffer X86StrackBuffer)
 
 	GUIExpander= new GUIExpand;
 
-	IDDrawSurface::OutptTxt ("Installing AddtionRoutine_CircleSelect");
-
-/*
-	LocalShare->TAWndProc= TAWndProc_Addr;
-	DWORD WinProcAddrBuf= (DWORD)WinProc;
-	WndProc_SH= new SingleHook ( TAWndProcSH_Addr, 4, INLINE_UNPROTECTEVINMENT, (LPBYTE)&WinProcAddrBuf );*/
-	//ReplaceTAProc();
 	return 0;
 }
 
@@ -223,6 +177,7 @@ void GetSysDir()
 	lstrcpyA(SystemDDraw,Buff);
 	lstrcatA(SystemDDraw, "\\ddraw.dll");
 	SDDraw = LoadLibrary(SystemDDraw);
+
 }
 
 HRESULT WINAPI DirectDrawCreate(GUID FAR *lpGUID, LPDIRECTDRAW FAR *lplpDD, IUnknown FAR *pUnkOuter)
@@ -330,49 +285,6 @@ void ShutdownLocalFileMap()
 		CloseHandle(LocalhMemMap);
 }
 
-
-HRESULT WINAPI DirectDrawCreateEx(GUID FAR *arg1, LPVOID *arg2, REFIID arg3, IUnknown FAR *arg4)
-{
-	DirectDrawCreateExProc Proc;
-	Proc = (DirectDrawCreateExProc)GetProcAddress(SDDraw, "DirectDrawCreateEx");
-	return Proc(arg1, arg2, arg3, arg4);
-}
-
-HRESULT WINAPI DirectDrawCreateClipper(DWORD arg1, LPDIRECTDRAWCLIPPER FAR *arg2, IUnknown FAR *arg3)
-{
-	DirectDrawCreateClipperProc Proc;
-	Proc = (DirectDrawCreateClipperProc)GetProcAddress(SDDraw, "DirectDrawCreateClipper");
-	return Proc(arg1, arg2, arg3);
-}
-
-HRESULT WINAPI DirectDrawEnumerate(LPDDENUMCALLBACK arg1, LPVOID arg2)
-{
-	DirectDrawEnumerateProc Proc;
-	Proc = (DirectDrawEnumerateProc)GetProcAddress(SDDraw, "DirectDrawEnumerate");
-	return Proc(arg1, arg2);
-}
-
-HRESULT WINAPI DirectDrawEnumerateEx(LPDDENUMCALLBACKEX arg1, LPVOID arg2, DWORD arg3)
-{
-	DirectDrawEnumerateExProc Proc;
-	Proc = (DirectDrawEnumerateExProc)GetProcAddress(SDDraw, "DirectDrawEnumerateEx");
-	return Proc(arg1, arg2, arg3);
-}
-
-HRESULT WINAPI DllGetClassObject(const CLSID & arg1, const IID & arg2, void ** arg3)
-{
-	DllGetClassObjectProc Proc;
-	Proc = (DllGetClassObjectProc)GetProcAddress(SDDraw, "DllGetClassObject");
-	return Proc(arg1, arg2, arg3);
-}
-
-HRESULT WINAPI DllCanUnloadNow()
-{
-	DllCanUnloadNowProc Proc;
-	Proc = (DllCanUnloadNowProc)GetProcAddress(SDDraw, "DllCanUnloadNow");
-	return Proc();
-}
-
 void SetupTAHookFileMap()
 {
 	//initiate a tahook filmap so the recorder detects tahook running
@@ -418,15 +330,6 @@ void EnableSound()
 }
 
 /*
-void ReplaceTAProc()
-{
-	HWND TopWindow= *(HWND *)(0x051F320+ 0x40) ;
-
-	LocalShare->TAWndProc = (WNDPROC)SetWindowLong ( TopWindow, GWL_WNDPROC, (long)WinProc);
-}
-*/
-
-/*
 int WINAPI VidMemLargestFree(LPVOID arg1)
 {
 VidMemLargestFreeProc Proc;
@@ -468,3 +371,239 @@ VidMemInitProc Proc;
 Proc = (VidMemInitProc)GetProcAddress(SDDraw, "VidMemInit");
 return Proc(arg1, arg2, arg3, arg4, arg5);
 }        */
+
+FARPROC WINAPI GetAddress(PCSTR pszProcName)
+{
+	FARPROC fpAddress;
+
+	fpAddress = GetProcAddress ( SDDraw, pszProcName);
+
+	return fpAddress;
+}
+
+ALCDECL AheadLib_AcquireDDThreadLock(void)
+{
+	GetAddress("AcquireDDThreadLock");
+	__asm JMP EAX;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 导出函数
+ALCDECL AheadLib_CompleteCreateSysmemSurface(void)
+{
+	GetAddress("CompleteCreateSysmemSurface");
+	__asm JMP EAX;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 导出函数
+ALCDECL AheadLib_D3DParseUnknownCommand(void)
+{
+	GetAddress("D3DParseUnknownCommand");
+	__asm JMP EAX;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 导出函数
+ALCDECL AheadLib_DDGetAttachedSurfaceLcl(void)
+{
+	GetAddress("DDGetAttachedSurfaceLcl");
+	__asm JMP EAX;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 导出函数
+ALCDECL AheadLib_DDInternalLock(void)
+{
+	GetAddress("DDInternalLock");
+	__asm JMP EAX;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 导出函数
+ALCDECL AheadLib_DDInternalUnlock(void)
+{
+	GetAddress("DDInternalUnlock");
+	__asm JMP EAX;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 导出函数
+ALCDECL AheadLib_DSoundHelp(void)
+{
+	GetAddress("DSoundHelp");
+	__asm JMP EAX;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 导出函数
+ALCDECL AheadLib_DirectDrawCreateClipper(void)
+{
+	GetAddress("DirectDrawCreateClipper");
+	__asm JMP EAX;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 导出函数
+ALCDECL AheadLib_DirectDrawCreateEx(void)
+{
+	GetAddress("DirectDrawCreateEx");
+	__asm JMP EAX;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 导出函数
+ALCDECL AheadLib_DirectDrawEnumerateA(void)
+{
+	GetAddress("DirectDrawEnumerateA");
+	__asm JMP EAX;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 导出函数
+ALCDECL AheadLib_DirectDrawEnumerateExA(void)
+{
+	GetAddress("DirectDrawEnumerateExA");
+	__asm JMP EAX;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 导出函数
+ALCDECL AheadLib_DirectDrawEnumerateExW(void)
+{
+	GetAddress("DirectDrawEnumerateExW");
+	__asm JMP EAX;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 导出函数
+ALCDECL AheadLib_DirectDrawEnumerateW(void)
+{
+	GetAddress("DirectDrawEnumerateW");
+	__asm JMP EAX;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 导出函数
+ALCDECL AheadLib_DllCanUnloadNow(void)
+{
+	GetAddress("DllCanUnloadNow");
+	__asm JMP EAX;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 导出函数
+ALCDECL AheadLib_DllGetClassObject(void)
+{
+	GetAddress("DllGetClassObject");
+	__asm JMP EAX;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 导出函数
+ALCDECL AheadLib_GetDDSurfaceLocal(void)
+{
+	GetAddress("GetDDSurfaceLocal");
+	__asm JMP EAX;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 导出函数
+ALCDECL AheadLib_GetOLEThunkData(void)
+{
+	GetAddress("GetOLEThunkData");
+	__asm JMP EAX;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 导出函数
+ALCDECL AheadLib_GetSurfaceFromDC(void)
+{
+	GetAddress("GetSurfaceFromDC");
+	__asm JMP EAX;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 导出函数
+ALCDECL AheadLib_RegisterSpecialCase(void)
+{
+	GetAddress("RegisterSpecialCase");
+	__asm JMP EAX;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 导出函数
+ALCDECL AheadLib_ReleaseDDThreadLock(void)
+{
+	GetAddress("ReleaseDDThreadLock");
+	__asm JMP EAX;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 导出函数
+ALCDECL AheadLib_SetAppCompatData(void)
+{
+	GetAddress("SetAppCompatData");
+	__asm JMP EAX;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

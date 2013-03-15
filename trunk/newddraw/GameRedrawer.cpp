@@ -30,7 +30,7 @@ LPDIRECTDRAWSURFACE TAGameAreaReDrawer::InitOwnSurface (LPDIRECTDRAW TADD)
 		ddsd.dwWidth = GameAreaRect.right- GameAreaRect.left;
 		ddsd.dwHeight = GameAreaRect.bottom- GameAreaRect.top;
 
-		TADD->CreateSurface(&ddsd, &OwnGameAreaSurface_ptr, NULL);
+		TADD->CreateSurface( &ddsd, &OwnGameAreaSurface_ptr, NULL);
 	}
 	
 	return OwnGameAreaSurface_ptr;
@@ -98,19 +98,23 @@ BOOL TAGameAreaReDrawer::MixBitsInBlit (LPRECT DescRect, LPBYTE SrcBits, LPPOINT
 		}
 		DDSURFACEDESC ddsd;
 		DDRAW_INIT_STRUCT ( ddsd);
-	
-		DWORD DescYStart;
-		DWORD DescXStart;
-		DWORD CopyHeight;
-		DWORD CopyWidth;
-		DWORD DescPitch;
-		DWORD DescHeight;
-		DWORD DescWidth;
-		LPBYTE DescMem;
 
 
 		if (DD_OK==OwnGameAreaSurface_ptr->Lock ( NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR| DDLOCK_WAIT, NULL))
 		{
+			DWORD DescYStart;
+			DWORD DescXStart;
+			DWORD SrcXStart;
+			DWORD SrcYStart;
+			DWORD CopyHeight;
+			DWORD CopyWidth;
+			DWORD DescPitch;
+			DWORD DescHeight;
+			DWORD DescWidth;
+			LPBYTE DescMem;
+
+			DescMem= reinterpret_cast<LPBYTE>(ddsd.lpSurface);
+			DescPitch= ddsd.lPitch;
 
 			if (NULL==DescRect)
 			{
@@ -124,22 +128,37 @@ BOOL TAGameAreaReDrawer::MixBitsInBlit (LPRECT DescRect, LPBYTE SrcBits, LPPOINT
 			{
 				DescXStart= DescRect->left;
 				DescYStart= DescRect->top;
-				DescWidth= DescRect->right- DescRect->left;
-				DescHeight= DescRect->bottom- DescRect->top;
+				DescWidth= DescRect->right;
+				DescHeight= DescRect->bottom;
 			}
 
 			if (NULL==SrcScope)
 			{
+				SrcXStart= 0;
+				SrcYStart= 0;
 				CopyHeight= SrcAspect->y;
 				CopyWidth= SrcAspect->x;
 			}
 			else
 			{
+				SrcXStart= SrcScope->left;
+				SrcYStart= SrcScope->right;
 				CopyHeight= SrcScope->bottom;
 				CopyWidth= SrcScope->right;
 			}
 
-			DescMem= reinterpret_cast<LPBYTE>(ddsd.lpSurface);
+
+
+			if ((ddsd.dwWidth<DescXStart)
+				||(DescHeight<0)
+				||(ddsd.dwHeight<DescYStart)
+				||(DescWidth<0)
+				||(CopyHeight<0)
+				||(CopyWidth<0))
+			{
+				return Rtn_B;
+			}
+
 			if (DescXStart<0)
 			{
 				DescXStart= 0;
@@ -148,26 +167,33 @@ BOOL TAGameAreaReDrawer::MixBitsInBlit (LPRECT DescRect, LPBYTE SrcBits, LPPOINT
 			{
 				DescYStart= 0;
 			}
-			if (DescHeight<0)
+			if (ddsd.dwWidth<DescWidth)
 			{
-				DescHeight= 0;
+				DescWidth= ddsd.dwWidth;
 			}
-			if (DescWidth<0)
+			if (ddsd.dwHeight<DescHeight)
 			{
-				DescWidth= 0;
+				DescHeight= ddsd.dwHeight;
 			}
-
-			DescPitch= ddsd.lPitch;
 			//
+			if (SrcXStart<0)
+			{
+				SrcXStart= 0;
+			}
+			if (SrcYStart<0)
+			{
+				SrcYStart= 0;
+			}
 
-			if (CopyHeight<0)
+			if (CopyHeight>static_cast<DWORD>(SrcAspect->y))
 			{
-				CopyHeight= 0;
+				CopyHeight= static_cast<DWORD>(SrcAspect->y);
 			}
-			if (CopyWidth<0)
+			if (CopyWidth>static_cast<DWORD>(SrcAspect->x))
 			{
-				CopyWidth= 0;
+				CopyWidth= static_cast<DWORD>(SrcAspect->x);
 			}
+
 			if ((CopyHeight)>DescHeight)
 			{
 				CopyHeight= DescHeight;
@@ -178,29 +204,27 @@ BOOL TAGameAreaReDrawer::MixBitsInBlit (LPRECT DescRect, LPBYTE SrcBits, LPPOINT
 			}
 			
 			DWORD TailCopyWidth= CopyWidth% 4;
-			DWORD i;
-			DWORD i_1;
+			DWORD i, i_1, i_2, i_3;
 			CopyWidth= CopyWidth- TailCopyWidth;
 
-			for ( i= DescYStart; i< CopyHeight; ++i)
+			for ( i= DescYStart, i_1= SrcYStart; i< CopyHeight; ++i, ++i_1)
 			{
 				int DescYOffset= i* DescPitch;
-				int SrcYOffset= i* SrcAspect->x;
-				for ( i_1= DescXStart; i_1< CopyWidth; i_1= i_1+ 4)
+				int SrcYOffset= i_1* SrcAspect->x;
+				for ( i_2= DescXStart, i_3= SrcXStart; i_2< CopyWidth; i_2= i_2+ 4, i_3= i_3+ 4)
 				{
-					*reinterpret_cast<LPDWORD>( &(DescMem[DescYOffset+ i_1]))= *reinterpret_cast<LPDWORD>( &(SrcBits[SrcYOffset+ i_1]));
+					*reinterpret_cast<LPDWORD>( &(DescMem[DescYOffset+ i_2]))= *reinterpret_cast<LPDWORD>( &(SrcBits[SrcYOffset+ i_3]));
 				}
 
 				for (DWORD temp_counter= 0; temp_counter<TailCopyWidth; ++temp_counter)
 				{
-					DescMem[DescYOffset+ i_1+ temp_counter]= SrcBits[SrcYOffset+ i_1+ temp_counter];
+					DescMem[DescYOffset+ i_2+ temp_counter]= SrcBits[SrcYOffset+ i_3+ temp_counter];
 				}
 			}
 		
 			OwnGameAreaSurface_ptr->Unlock ( ddsd.lpSurface);
 			Rtn_B= TRUE;
 		}
-
 	}
 	return Rtn_B;
 }
@@ -232,6 +256,163 @@ BOOL TAGameAreaReDrawer::MixDSufInBlit (LPRECT DescRect, LPDIRECTDRAWSURFACE Src
 	return Rtn_B;
 }
 
+BOOL TAGameAreaReDrawer::GrayBlitOfBits (LPRECT DescRect, LPBYTE SrcBits, LPPOINT SrcAspect, LPRECT SrcScope, BOOL NoMapped)
+{
+	BOOL Rtn_B= FALSE;
+	LPBYTE TAGrayTABLE_p= (*TAmainStruct_PtrPtr)->TAProgramStruct_Ptr->GRAY_TABLE;
+	if (NULL!=OwnGameAreaSurface_ptr)
+	{
+		if ( DD_OK!=OwnGameAreaSurface_ptr->IsLost ( ))
+		{
+			OwnGameAreaSurface_ptr->Restore ( );
+		}
+		DDSURFACEDESC ddsd;
+		DDRAW_INIT_STRUCT ( ddsd);
+
+
+		if (DD_OK==OwnGameAreaSurface_ptr->Lock ( NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR| DDLOCK_WAIT, NULL))
+		{
+			DWORD DescYStart;
+			DWORD DescXStart;
+			DWORD SrcXStart;
+			DWORD SrcYStart;
+			DWORD CopyHeight;
+			DWORD CopyWidth;
+			DWORD DescPitch;
+			DWORD DescHeight;
+			DWORD DescWidth;
+			LPBYTE DescMem;
+
+			DescMem= reinterpret_cast<LPBYTE>(ddsd.lpSurface);
+			DescPitch= ddsd.lPitch;
+
+			if (NULL==DescRect)
+			{
+				DescXStart= 0;
+				DescYStart= 0;
+
+				DescWidth= ddsd.dwWidth;
+				DescHeight= ddsd.dwHeight;
+			}
+			else
+			{
+				DescXStart= DescRect->left;
+				DescYStart= DescRect->top;
+				DescWidth= DescRect->right;
+				DescHeight= DescRect->bottom;
+			}
+
+			if (NULL==SrcScope)
+			{
+				SrcXStart= 0;
+				SrcYStart= 0;
+				CopyHeight= SrcAspect->y;
+				CopyWidth= SrcAspect->x;
+			}
+			else
+			{
+				SrcXStart= SrcScope->left;
+				SrcYStart= SrcScope->right;
+				CopyHeight= SrcScope->bottom;
+				CopyWidth= SrcScope->right;
+			}
+
+			if ((ddsd.dwWidth<DescXStart)
+				||(DescHeight<0)
+				||(ddsd.dwHeight<DescYStart)
+				||(DescWidth<0)
+				||(CopyHeight<0)
+				||(CopyWidth<0))
+			{
+				return Rtn_B;
+			}
+
+			if (DescXStart<0)
+			{
+				DescXStart= 0;
+			}
+			if (DescYStart<0)
+			{
+				DescYStart= 0;
+			}
+			if (ddsd.dwWidth<DescWidth)
+			{
+				DescWidth= ddsd.dwWidth;
+			}
+			if (ddsd.dwHeight<DescHeight)
+			{
+				DescHeight= ddsd.dwHeight;
+			}
+			//
+			if (SrcXStart<0)
+			{
+				SrcXStart= 0;
+			}
+			if (SrcYStart<0)
+			{
+				SrcYStart= 0;
+			}
+
+			if (CopyHeight>static_cast<DWORD>(SrcAspect->y))
+			{
+				CopyHeight= static_cast<DWORD>(SrcAspect->y);
+			}
+			if (CopyWidth>static_cast<DWORD>(SrcAspect->x))
+			{
+				CopyWidth= static_cast<DWORD>(SrcAspect->x);
+			}
+
+			if ((CopyHeight)>DescHeight)
+			{
+				CopyHeight= DescHeight;
+			}
+			if ((CopyWidth)>DescWidth)
+			{
+				CopyWidth= DescWidth;
+			}
+
+			DWORD i, i_1, i_2, i_3;
+			DWORD DescXPos;
+
+
+			if (NoMapped)
+			{
+				for ( i= DescYStart, i_1= SrcYStart; i< CopyHeight; ++i, ++i_1)
+				{
+					int DescYOffset= i* DescPitch;
+					int SrcYOffset= i_1* SrcAspect->x;
+					for ( i_2= DescXStart, i_3= SrcXStart; i_2< CopyWidth; i_2++, i_3++)
+					{
+						if (0==SrcBits[SrcYOffset+ i_3])
+						{ // black
+			
+							DescMem[DescYOffset+ i_2]= 0;
+						}
+					}
+				}
+			}
+			else
+			{
+				for ( i= DescYStart, i_1= SrcYStart; i< CopyHeight; ++i, ++i_1)
+				{
+					int DescYOffset= i* DescPitch;
+					int SrcYOffset= i_1* SrcAspect->x;
+					for ( i_2= DescXStart, i_3= SrcXStart; i_2< CopyWidth; i_2++, i_3++)
+					{
+						if (0==SrcBits[SrcYOffset+ i_3])
+						{ // too slowly 
+							DescXPos= DescYOffset+ i_2;
+							DescMem[DescXPos]= TAGrayTABLE_p[DescMem[DescXPos]];
+						}
+					}
+				}
+			}
+			OwnGameAreaSurface_ptr->Unlock ( ddsd.lpSurface);
+			Rtn_B= TRUE;
+		}
+	}
+	return Rtn_B;
+}
 void TAGameAreaReDrawer::ReleaseSurface (void)
 {
 	if (NULL!=OwnGameAreaSurface_ptr)
