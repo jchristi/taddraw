@@ -165,9 +165,6 @@
     <ClCompile Include="hook\etc.cpp">
       <Filter>Source Files\Functions\misc</Filter>
     </ClCompile>
-    <ClCompile Include="ExternQuickKey.cpp">
-      <Filter>Source Files\Functions\externFromChina\LimitCrack</Filter>
-    </ClCompile>
     <ClCompile Include="MultiGameWeaponID.cpp">
       <Filter>Source Files\Functions\externFromChina\LimitCrack</Filter>
     </ClCompile>
@@ -196,6 +193,9 @@
       <Filter>Source Files\Functions\externFromChina\GUI</Filter>
     </ClCompile>
     <ClCompile Include="UnicodeSupport.cpp">
+      <Filter>Source Files\Functions\externFromChina</Filter>
+    </ClCompile>
+    <ClCompile Include="ExternQuickKey.cpp">
       <Filter>Source Files\Functions\externFromChina</Filter>
     </ClCompile>
   </ItemGroup>
@@ -350,11 +350,14 @@
     <ClInclude Include="UnitDrawer.h">
       <Filter>Header Files\Functions\externFromChina\GUI</Filter>
     </ClInclude>
+    <ClInclude Include="ddraw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mappedmap.h">
+      <Filter>Header Files\Functions\externFromChina\GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ddraw.def">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="bitmaps\3stagedbutton.pcx">
       <Filter>Resource Files</Filter>
     </None>
@@ -397,7 +400,7 @@
     <None Include="bitmaps\standarbutton.pcx">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="ClassDiagram1.cd" />
+    <None Include="ddraw.def" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ddraw.rc">

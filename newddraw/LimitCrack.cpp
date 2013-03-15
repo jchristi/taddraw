@@ -85,8 +85,6 @@ LimitCrack::~LimitCrack ( void)
 	//delete NowSwitchalt;
 	delete NowIncreaseSfxLimit;
 	delete NowModifyWeaponPacket;
-	
-	delete SyncMenuResolution;
 
 	delete myExternQuickKey;
 

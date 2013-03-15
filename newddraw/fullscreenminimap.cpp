@@ -12,6 +12,7 @@
 #include "mapParse.h"
 #include "gameredrawer.h"
 #include "UnitDrawer.h"
+#include "mappedmap.h"
 
 #include "fullscreenminimap.h"
 #include "dialog.h"
@@ -36,6 +37,7 @@ FullScreenMinimap::FullScreenMinimap (BOOL Doit)
 	MyMinimap_p= NULL;
 	GameDrawer= NULL;
 	UnitsMap= NULL;
+	Mapped_p= NULL;
 
 	Blit_b= FALSE;
 
@@ -64,15 +66,27 @@ FullScreenMinimap::~FullScreenMinimap (void)
 	{
 		delete GameDrawer;
 	}
+
+	if (NULL!=Mapped_p)
+	{
+		delete Mapped_p;
+	}
 }
 
 void FullScreenMinimap::InitMinimap (TNTHeaderStruct * TNTPtr, RECT * GameScreen)
 {
+	Blit_b= FALSE;
 	if (MyMinimap_p)
 	{
 		delete MyMinimap_p;
 		MyMinimap_p= NULL;
 	}
+
+	if (NULL==GameDrawer->OwnGameAreaSurface_ptr)
+	{
+		GameDrawer->InitOwnSurface ( (IDirectDraw*)LocalShare->TADirectDraw);
+	}
+	
 	
 	if (NULL==GameScreen)
 	{
@@ -81,10 +95,17 @@ void FullScreenMinimap::InitMinimap (TNTHeaderStruct * TNTPtr, RECT * GameScreen
 
 	int GameWidth= GameScreen->right- GameScreen->left;
 	int GameHeight= GameScreen->bottom- GameScreen->top;
+
+	POINT MinimapAspect;
+
+
+
 	MyMinimap_p= new TNTtoMiniMap ( GameWidth, GameHeight);
 	if (MyMinimap_p)
 	{
 		MyMinimap_p->MapFromTNTInMem ( reinterpret_cast<LPVOID>(TNTPtr));
+
+		MyMinimap_p->PictureInfo ( NULL, &MinimapAspect);
 	}
 
 	if (UnitsMap)
@@ -93,61 +114,85 @@ void FullScreenMinimap::InitMinimap (TNTHeaderStruct * TNTPtr, RECT * GameScreen
 		UnitsMap= NULL;
 	}
 
-	POINT MinimapAspect;
 	if (MyMinimap_p)
 	{
-		MyMinimap_p->PictureInfo ( NULL, &MinimapAspect);
-
+	
 		UnitsMap= new UnitsMinimap (  this, MinimapAspect.x, MinimapAspect.y);
 		UnitsMap->InitSurface ( (IDirectDraw*)LocalShare->TADirectDraw);
+	}
+
+	if (Mapped_p)
+	{
+		delete Mapped_p;
+		Mapped_p= NULL;
+	}
+
+	if (MyMinimap_p)
+	{
+		Mapped_p= new MappedMap ( MinimapAspect.x, MinimapAspect.y);
 	}
 }
 
 void FullScreenMinimap::Blit(LPDIRECTDRAWSURFACE DestSurf)
 {
+	static int i= 0;
+
 	if (Do_b
 		&&Blit_b)
 	{
 		if (TAInGame==DataShare->TAProgress)
 		{
-
 			IDDrawSurface::OutptTxt ( "FullScreenMinimap blit");
 
 			int CursorX= (*TAmainStruct_PtrPtr)->CurtMousePostion.x;
 			int CursorY= (*TAmainStruct_PtrPtr)->CurtMousePostion.y;
-			POINT Aspect;
-			LPBYTE PixelBits;
-			RECT DescRect;
-			GameDrawer->TAWGameAreaRect ( &DescRect);
-			MyMinimap_p->PictureInfo ( &PixelBits, &Aspect);
-			DescRect.right= DescRect.right- DescRect.left;
-			DescRect.bottom= DescRect.bottom- DescRect.top;
-			DescRect.top= 0;
-			DescRect.left= 0;
-
-// 
-// 			if ((Aspect.x<DescRect.right)
-// 				&&(2<(DescRect.right- Aspect.x)))
-// 			{
-// 				DescRect.left= (DescRect.right- Aspect.x)/ 2;
-// 				DescRect.right= DescRect.left+ Aspect.x;
-// 			}
-// 
-// 			if ((Aspect.y<DescRect.bottom)
-// 				&&(2<(DescRect.bottom- Aspect.y)))
-// 			{
-// 				DescRect.top= (DescRect.bottom- Aspect.y)/ 2;
-// 				DescRect.bottom= DescRect.top+ Aspect.y;
-// 			}
-// 
-			DescRect.right= Aspect.x;
-			DescRect.bottom= Aspect.y;
-
-			GameDrawer->MixBitsInBlit ( &DescRect, PixelBits, &Aspect, NULL);
 
 
-			UnitsMap->NowDrawUnits ( );
-			GameDrawer->MixDSufInBlit ( &DescRect, UnitsMap->GetSurface ( ) , NULL, 0xffffffff);
+			i++;
+			if (30<i)
+			{//
+				i= 0;
+
+				POINT Aspect;
+				LPBYTE PixelBits;
+				RECT DescRect;
+				BOOL NoMapped_b;
+				GameDrawer->TAWGameAreaRect ( &DescRect);
+				MyMinimap_p->PictureInfo ( &PixelBits, &Aspect);
+				DescRect.right= DescRect.right- DescRect.left;
+				DescRect.bottom= DescRect.bottom- DescRect.top;
+				DescRect.top= 0;
+				DescRect.left= 0;
+
+				DescRect.right= Aspect.x;
+				DescRect.bottom= Aspect.y;
+
+				// 
+				// 			if ((Aspect.x<DescRect.right)
+				// 				&&(2<(DescRect.right- Aspect.x)))
+				// 			{
+				// 				DescRect.left= (DescRect.right- Aspect.x)/ 2;
+				// 				DescRect.right= DescRect.left+ Aspect.x;
+				// 			}
+				// 
+				// 			if ((Aspect.y<DescRect.bottom)
+				// 				&&(2<(DescRect.bottom- Aspect.y)))
+				// 			{
+				// 				DescRect.top= (DescRect.bottom- Aspect.y)/ 2;
+				// 				DescRect.bottom= DescRect.top+ Aspect.y;
+				// 			}
+
+				GameDrawer->MixBitsInBlit ( &DescRect, PixelBits, &Aspect, NULL);
+
+
+				NoMapped_b= Mapped_p->NowDrawMapped ( );
+				Mapped_p->PictureInfo (  &PixelBits, &Aspect);
+				GameDrawer->GrayBlitOfBits ( &DescRect, PixelBits, &Aspect, NULL, NoMapped_b);
+				//GameDrawer->MixBitsInBlit ( &DescRect, PixelBits, &Aspect, NULL);
+
+				UnitsMap->NowDrawUnits ( );
+				GameDrawer->MixDSufInBlit ( &DescRect, UnitsMap->GetSurface ( ) , NULL, 0xffffffff);
+			}
 
 			GameDrawer->BlitTAGameArea ( DestSurf);
 
@@ -163,12 +208,9 @@ void FullScreenMinimap::Blit(LPDIRECTDRAWSURFACE DestSurf)
 
 void FullScreenMinimap::InitSurface (LPDIRECTDRAW TADD)
 {
-	if (Do_b)
+	if (Do_b
+		&&(TALobby!=DataShare->TAProgress))
 	{
-		if (GameDrawer)
-		{
-			GameDrawer->InitOwnSurface ( TADD);
-		}
 		if (UnitsMap)
 		{
 			POINT MinimapAspect;
@@ -176,6 +218,11 @@ void FullScreenMinimap::InitSurface (LPDIRECTDRAW TADD)
 			UnitsMap->ReSet ( MinimapAspect.x, MinimapAspect.y);
 
 			UnitsMap->InitSurface ( TADD);
+		}
+
+		if (GameDrawer)
+		{
+			GameDrawer->InitOwnSurface ( TADD);
 		}
 	}
 }
@@ -185,12 +232,24 @@ void FullScreenMinimap::ReleaseSurface (void)
 	if (GameDrawer)
 	{
 		GameDrawer->ReleaseSurface ( );
+		
+	}
+	if (UnitsMap)
+	{
 		UnitsMap->ReleaseSurface ( );
 	}
+	
 }
 
 bool FullScreenMinimap::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
+	LPRECT GameScreen;
+	int xPos, yPos;
+
+
+
+	if (TAInGame==DataShare->TAProgress)
+	{
 		switch(Msg)
 		{
 		case WM_KEYUP:
@@ -199,8 +258,33 @@ bool FullScreenMinimap::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM
 				Blit_b= ! Blit_b;
 				return true;
 			}
+			break;
+		case WM_LBUTTONDOWN:
+		case WM_LBUTTONDBLCLK:
+		case WM_LBUTTONUP:
+		case WM_RBUTTONDOWN:
+		case WM_RBUTTONUP:
+		case WM_RBUTTONDBLCLK: 
+			if (Blit_b)
+			{
+				GameScreen= GameDrawer->TAWGameAreaRect ( NULL);
+				xPos = LOWORD(lParam);  // horizontal position of cursor 
+				yPos = HIWORD(lParam);  // vertical position of cursor 
+
+				if ((xPos<GameScreen->right)
+					&&(GameScreen->left<xPos)
+					&&(yPos<GameScreen->bottom)
+					&&(GameScreen->top<yPos))
+				{
+					return true;
+				}
+			}
+
+
+			break;
 		}
-		return false;
+	}
+	return false;
 }
 //hook .text:00466DC0 000 83 EC 1C                                                        sub     esp, 1Ch
 //  .text:00466E83 02C 0F BF 43 6C      movsx   eax, word ptr [ebx+(UnitsInGame.UnitPosition.X+2)] ; //0x6A
@@ -480,26 +564,9 @@ LPDIRECTDRAWSURFACE UnitsMinimap::GetSurface (void)
 	}
 	return UnitsMapSfc;
 }
-static BYTE gblUnitPicture[32* 32]; 
-void * _gbl123= memset ( gblUnitPicture, 0x59, sizeof(gblUnitPicture));
 
 LPBYTE UnitsMinimap::UnitPicture(int PlayerID, LPBYTE * PixelBits_pp, POINT * Aspect)
 {
-/*
-	if (PixelBits_pp)
-	{
-		*PixelBits_pp= gblUnitPicture;
-	}
-	if (Aspect)
-	{
-		Aspect->x= 32;
-		Aspect->y= 32;
-	}
-
-
-	return gblUnitPicture;*/
-
-
 	if ((PLAYERNUM<PlayerID)
 		||(PlayerID<0))
 	{
@@ -553,10 +620,10 @@ void UnitsMinimap::DrawUnit ( LPBYTE PixelBits, POINT * Aspect, int  PlayerID, u
 
 
 	UnitPicture( PlayerID, &GafPixelBits, &GafAspect);
-	DescRect.left= static_cast<int>(static_cast<float>(TAx)* (static_cast<float>(Width_m)/ static_cast<float>((*TAmainStruct_PtrPtr)->MapSizeX)));
-	DescRect.right= DescRect.left+ GafAspect.x;
-	DescRect.top= static_cast<int>(static_cast<float>(TAy)* (static_cast<float>(Height_m)/ static_cast<float>((*TAmainStruct_PtrPtr)->MapSizeY)));
-	DescRect.bottom= DescRect.top+ GafAspect.y;
+	DescRect.left= static_cast<int>(static_cast<float>(TAx)* (static_cast<float>(Width_m)/ static_cast<float>((*TAmainStruct_PtrPtr)->MapSizeX)))-  GafAspect.x/ 2;
+	DescRect.right= DescRect.left+ GafAspect.x/ 2;
+	DescRect.top= static_cast<int>(static_cast<float>(TAy)* (static_cast<float>(Height_m)/ static_cast<float>((*TAmainStruct_PtrPtr)->MapSizeY)))-  GafAspect.y/ 2;
+	DescRect.bottom= DescRect.top+ GafAspect.y/ 2;
 
 	Aspect->x= (Aspect->x)/ 4* 4;// avoid draw out of the surface, this x== pitch
 	if ((DescRect.right<0)
@@ -593,10 +660,10 @@ void UnitsMinimap::DrawUnit ( LPBYTE PixelBits, POINT * Aspect, int  PlayerID, u
 		for (int YPos= 0; YPos<DescHeight_I; YPos++)
 		{	//Y
 			int DescPixelYStart= (YPos+ DescRect.top)* (DesclPitch);
-
+			int SrcPixelYStart= YPos* GafAspect.x;
 			for (int XPos= 0; XPos<DescWidth_I; XPos++)
 			{//X 
-				PixelBits[DescPixelYStart+ (XPos+ DescRect.left)]= GafPixelBits[YPos* GafAspect.x+ XPos];
+				PixelBits[DescPixelYStart+ (XPos+ DescRect.left)]= GafPixelBits[SrcPixelYStart+ XPos];
 			}
 		}
 	}
@@ -604,22 +671,17 @@ void UnitsMinimap::DrawUnit ( LPBYTE PixelBits, POINT * Aspect, int  PlayerID, u
 	{
 		
 	}
-	
 }
 
 void UnitsMinimap::NowDrawUnits ( void)
 {
-	static int i= 0;
 
 	if (TAInGame!=DataShare->TAProgress)
 	{
 		return ;
 	}
-	i++;
-	if (30<i)
-	{
+
 		IDDrawSurface::OutptTxt ( "Draw units");
-		i= 0;
 		POINT Aspect= {0, 0};
 		LPBYTE PixelBits= NULL;
 
@@ -632,21 +694,155 @@ void UnitsMinimap::NowDrawUnits ( void)
 			{
 				memset ( PixelBits, 0xffffffff, Aspect.x* Aspect.y);
 
-				UnitStruct * unitPtr= (*TAmainStruct_PtrPtr)->OwnUnitBegin;
-				UnitStruct * unitEndPtr= (*TAmainStruct_PtrPtr)->OwnUnitEnd;
+				UnitStruct * Begin= (*TAmainStruct_PtrPtr)->OwnUnitBegin;
+				UnitStruct * unitPtr;
 
-				for (; unitPtr!=unitEndPtr; ++unitPtr)
+				int NumHotRadarUnits= (*TAmainStruct_PtrPtr)->NumHotRadarUnits;
+				RadarUnit_ * RadarUnits_v= (*TAmainStruct_PtrPtr)->RadarUnits;
+
+				
+				for (int i= 0; i<NumHotRadarUnits; ++i)
 				{
+					unitPtr= &Begin[RadarUnits_v[i].ID];
 					if (0!=unitPtr->UnitID)
 					{
-						if ((*TAmainStruct_PtrPtr)->LOS_Sight_PlayerID==unitPtr->myLos_PlayerID)
-						{
-							DrawUnit (  PixelBits, &Aspect, unitPtr->Owner_PlayerPtr0->PlayerAryIndex, unitPtr->XPos, unitPtr->YPos);
-						}
+						DrawUnit (  PixelBits, &Aspect, unitPtr->Owner_PlayerPtr0->PlayerAryIndex, unitPtr->XPos,  unitPtr->YPos- (unitPtr->ZPos));  (Height_m/ ((*TAmainStruct_PtrPtr)->RadarPicSizeY));
 					}
 				}
+			
+// 				if (NOMAPPING!=(NOMAPPING&((*TAmainStruct_PtrPtr)->LosType))
+// 					&&Permanent!=(Permanent&((*TAmainStruct_PtrPtr)->LosType)))
+// 				{
+// 					for (; unitPtr!=unitEndPtr; ++unitPtr)
+// 					{
+// 						if (0!=unitPtr->UnitID)
+// 						{
+// 							DrawUnit (  PixelBits, &Aspect, unitPtr->Owner_PlayerPtr0->PlayerAryIndex, unitPtr->XPos,  unitPtr->YPos- (unitPtr->ZPos));  //(Height_m/ ((*TAmainStruct_PtrPtr)->RadarPicSizeY));
+// 						}
+// 					}
+// 				}
+// 				else
+// 				{
+// 					for (; unitPtr!=unitEndPtr; ++unitPtr)
+// 					{
+// 						if (0!=unitPtr->UnitID)
+// 						{
+// 							if (((*TAmainStruct_PtrPtr)->LOS_Sight_PlayerID==unitPtr->myLos_PlayerID)
+// 								||(unitPtr->Owner_PlayerPtr0->AllyFlagAry[(*TAmainStruct_PtrPtr)->LOS_Sight_PlayerID]))
+// 							{
+// 								DrawUnit (  PixelBits, &Aspect, unitPtr->Owner_PlayerPtr0->PlayerAryIndex, unitPtr->XPos,  unitPtr->YPos- (unitPtr->ZPos));  //(Height_m/ ((*TAmainStruct_PtrPtr)->RadarPicSizeY));
+// 							}
+// 							else
+// 							{// not ally or my unit
+// 
+// 							}
+// 						}
+// 					}
+// 				}
 			}
 		}
 		Unlock ( PixelBits);
+	
+}
+
+
+MappedMap::MappedMap (int Width, int Height)
+{
+	Width_m= Width;
+	Height_m= Height;
+	MappedBits= static_cast<LPBYTE>(malloc ( Width_m* Height_m+ 1));
+}
+
+MappedMap::~MappedMap()
+{
+	if (MappedBits)
+	{
+		free ( MappedBits);
 	}
+}
+
+BOOL MappedMap::NowDrawMapped (void)
+{
+	if (TAInGame!=DataShare->TAProgress)
+	{
+		return FALSE;
+	}
+	IDDrawSurface::OutptTxt ( "Draw Mapped");
+
+	memset ( MappedBits, 1, Width_m* Height_m);
+
+	if (NOMAPPING==(NOMAPPING&((*TAmainStruct_PtrPtr)->LosType)))
+	{//
+		;
+		if (Permanent==(Permanent&((*TAmainStruct_PtrPtr)->LosType)))
+		{// total visual 
+			;
+		}
+		else
+		{//
+			int PlayerID= (*TAmainStruct_PtrPtr)->LocalHumanPlayer_PlayerID;
+			PlayerStruct * Player_p= &((*TAmainStruct_PtrPtr)->Players[PlayerID]);
+			int MapX= ((*TAmainStruct_PtrPtr)->FeatureMapSizeX)/ 2;
+			int MapY= ((*TAmainStruct_PtrPtr)->FeatureMapSizeY)/ 2;
+			LPWORD MappedMemory_p= (*TAmainStruct_PtrPtr)->MAPPED_MEMORY_p;
+
+			float XScale= (static_cast<float>(MapX)/ static_cast<float>(Width_m));
+			float YScale= (static_cast<float>(MapY)/ static_cast<float>(Height_m));
+			float MAPPEDMEM_h, MAPPEDMEM_w;
+			int i, j;
+			for	( i= 0, MAPPEDMEM_h= 0.0; i<Height_m; ++i, MAPPEDMEM_h= MAPPEDMEM_h+ YScale)
+			{
+				int YOff= i* Width_m;
+				int LosBitYOff=  static_cast<int>(MAPPEDMEM_h)* MapX;
+
+				for	( j= 0, MAPPEDMEM_w= 0.0; j<Width_m; ++j, MAPPEDMEM_w= MAPPEDMEM_w+ XScale)
+				{
+					MappedBits[YOff+ j]= ((1<<PlayerID)& MappedMemory_p[LosBitYOff+ static_cast<int>(MAPPEDMEM_w)])>> PlayerID;
+				}
+			}
+
+			return TRUE;
+		}
+	}
+	else
+	{
+		PlayerStruct * Player_p= &((*TAmainStruct_PtrPtr)->Players[(*TAmainStruct_PtrPtr)->LocalHumanPlayer_PlayerID]);
+		int MapX= Player_p->LOS_Tilewidth;
+		int MapY= Player_p->LOS_Tileheight;
+		LPBYTE PlayerLosBits= Player_p->LOS_MEMORY_p;
+
+		float XScale= static_cast<float>(MapX)/ static_cast<float>(Width_m);
+		float YScale= static_cast<float>(MapY)/ static_cast<float>(Height_m);
+		float Los_w, Los_h;
+		int i, j;
+		for	( i= 0, Los_h= 0.0; i<Height_m; ++i, Los_h= Los_h+ YScale)
+		{
+			int YOff= i* Width_m;
+			
+			int LosBitYOff=  static_cast<int>(Los_h)* MapX;
+
+			for	( j= 0, Los_w= 0.0; j<Width_m; ++j, Los_w= Los_w+ XScale)
+			{
+				MappedBits[YOff+ j]= PlayerLosBits[LosBitYOff+ static_cast<int>(Los_w)];
+			}
+		}
+	}
+
+	return FALSE;
+}
+
+LPBYTE MappedMap::PictureInfo (LPBYTE * PixelBits_pp, POINT * Aspect)
+{
+	if (PixelBits_pp)
+	{
+		*PixelBits_pp= MappedBits;
+	}
+
+	if (Aspect)
+	{
+		Aspect->x= Width_m;
+		Aspect->y= Height_m;
+	}
+
+	return MappedBits;
 }

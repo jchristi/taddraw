@@ -254,6 +254,7 @@
     <ClInclude Include="changequeue.h" />
     <ClInclude Include="cincome.h" />
     <ClInclude Include="commanderwarp.h" />
+    <ClInclude Include="ddraw.h" />
     <ClInclude Include="dialog.h" />
     <ClInclude Include="ElementHandler.h" />
     <ClInclude Include="ExternQuickKey.h" />
@@ -271,6 +272,7 @@
     <ClInclude Include="IRenderer.h" />
     <ClInclude Include="LimitCrack.h" />
     <ClInclude Include="mapParse.h" />
+    <ClInclude Include="mappedmap.h" />
     <ClInclude Include="maprect.h" />
     <ClInclude Include="MenuResolution.h" />
     <ClInclude Include="minimaphandler.h" />
@@ -300,7 +302,6 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
     <None Include="ddraw.def" />
     <None Include="bitmaps\3stagedbutton.pcx" />
     <None Include="bitmaps\CheckBox.pcx" />

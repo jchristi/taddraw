@@ -6,12 +6,16 @@ class TAGameAreaReDrawer;
 class InlineSingleHook;
 
 class UnitsMinimap;
+class MappedMap;
+
+
 class FullScreenMinimap
 {
 public:
 	TAGameAreaReDrawer * GameDrawer;
 	UnitsMinimap * UnitsMap;
 	TNTtoMiniMap * MyMinimap_p;
+	MappedMap* Mapped_p;
 
 public:
 	FullScreenMinimap (BOOL Doit);

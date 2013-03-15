@@ -30,4 +30,3 @@ private:
 	void UninstallHook (void);
 };
 
-extern MenuResolution* SyncMenuResolution;

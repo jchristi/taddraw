@@ -1251,6 +1251,7 @@ LONG RegReadData (HKEY RootKey, LPTSTR lpSubKey, LPTSTR lpValueName, DWORD Type,
 		{
 			return Rtn;
 		}
+		
 	}
 
 	Rtn= RegQueryValueEx(
@@ -1262,12 +1263,12 @@ LONG RegReadData (HKEY RootKey, LPTSTR lpSubKey, LPTSTR lpValueName, DWORD Type,
 		&TypeLen 	// address of data buffer size 
 		);
 	//
-	if (ERROR_SUCCESS!=Rtn)
+	if ((NULL!=lpSubKey)
+		&&(ERROR_SUCCESS!=Rtn))
 	{
 		RegCloseKey(hKey);
-		return Rtn;
 	}
-	Rtn= RegCloseKey(hKey);
+
 
 	return Rtn;
 }

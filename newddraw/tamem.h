@@ -8,7 +8,6 @@
 
 #pragma pack(1)
 
-struct _GAFSequence;
 
 enum PlayerType;
 enum PlayerPropertyMask;
@@ -55,6 +54,8 @@ struct _GUI78IDControl;
 struct _GUI6IDControl;
 struct _GUI9IDControl;
 struct _TAProgramStruct ;
+struct _GAFSequence;
+struct RadarUnit_ ;
 struct Point3{
 	int x;
 	int y;
@@ -102,10 +103,10 @@ struct PlayerStruct
 	char My_PlayerType;
 	int AiConfig;
 	int field_78;
-	int field_7C;
-	int field_80;
-	int field_84;
-	int field_88;
+	unsigned char * LOS_MEMORY_p;
+	int LOS_Tilewidth;
+	int LOS_Tileheight;
+	int LOS_bitsNum;
 	PlayerResourcesStruct PlayerRes;
 	float ShareMetal;
 	float ShareEnergy;
@@ -291,10 +292,11 @@ struct TAdynmemStruct{
 	int NumFeatureDefs;
 	char data16[0x18];
 	FeatureDefStruct *FeatureDef; //0x1426F
-	char data17[8];
+	unsigned short * MAPPED_MEMORY_p;
+	DWORD LastZPos;
 	LPVOID	*EyeBallMemory;  //0x1427B
 	char data18[2];
-	unsigned short EyeBallState;// 0x14281
+	unsigned short LosType;// 0x14281
 	char data19[4];
 	FeatureStruct *Features; //0x14287
 	char data20[0x40];
@@ -317,7 +319,7 @@ struct TAdynmemStruct{
 	UnitStruct *OwnUnitBegin;//UnitStruct *
 	UnitStruct *OwnUnitEnd; //0x1435B UnitStruct *
 	short int *HotUnits;//0x1435F
-	short int *HotRadarUnits;
+	RadarUnit_ * RadarUnits;
 	int NumHotUnits; //0x14367
 	int NumHotRadarUnits;
 	char data25[0x2c];
@@ -1092,6 +1094,14 @@ typedef struct _GUI9IDControl
 	char field_14E[13];
 }GUI9IDControl;
 
+
+typedef struct RadarUnit_ 
+{
+	short int ID ;
+	unsigned int x;
+	unsigned int y;
+}RadarUnit; 
+
 typedef struct _TAProgramStruct 
 {
 	int HInstance;
@@ -1122,11 +1132,11 @@ typedef struct _TAProgramStruct
 	int lpDD_BackSurface_1;
 	int field_B8;
 	int CurrentOFFSCREEN;
-	int ALPHA_TABLE;
-	int SHADE_TABLE;
-	int LIGHT_TABLE;
-	int GRAY_TABLE;
-	int BLUE_TABLE;
+	LPBYTE ALPHA_TABLE;
+	LPBYTE SHADE_TABLE;
+	LPBYTE LIGHT_TABLE;
+	LPBYTE GRAY_TABLE;
+	LPBYTE BLUE_TABLE;
 	int ScreenWidth;
 	int ScreenHeight;
 	int NewOFFSCREEN_Notify;
@@ -1185,6 +1195,7 @@ typedef struct _TAProgramStruct
 	char field_728;
 }TAProgramStruct;
 
+
 enum PlayerPropertyMask
 {
 	WATCH= 0x40,
@@ -1201,10 +1212,13 @@ enum PlayerType
 	Player_RemoteAI  = 4  //
 };      
 
-enum EyeBallEnum
+enum LOSTYPE
 {
-	FULLLOS = 2,
-	Updating= 8
+	 NOMAPPING        = 1,
+	 Permanent        = 2,
+	 LOSTYPE          = 4,
+	 Updating         = 8
+
 };
 
 enum WeaponMask

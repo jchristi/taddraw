@@ -389,7 +389,7 @@ int TADRConfig::EnumIniRegInfo_Begin (PEnumRegInfo * iterator_arg, LPCSTR * Name
 
 	int Rtn= 0;
 
-	iterator_pvar= new EnumRegInfo;
+	iterator_pvar= (PEnumRegInfo)malloc (sizeof(EnumRegInfo)+ 1);
 	iterator_pvar->Dword_iter= RegDwords_vec.begin ( );
 	iterator_pvar->String_iter= RegStrings_vec.begin();
 	iterator_pvar->Count= 0;
@@ -439,8 +439,10 @@ int TADRConfig::EnumIniRegInfo_End (PEnumRegInfo * iterator_arg)
 	PEnumRegInfo iterator_var;
 	iterator_var= *iterator_arg;
 
+
+
 	int Rtn= RegStrings_vec.size ( )+ RegDwords_vec.size ( )- iterator_var->Count;
-	delete iterator_arg;
+	free ( iterator_var);
 	return Rtn;
 }
 
