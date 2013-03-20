@@ -13,6 +13,8 @@
 #include <vector>
 using namespace std;
 #include "TAConfig.h"
+#include "LimitCrack.h"
+#include "UnitTypeLimit.h"
 
 
 
@@ -34,7 +36,9 @@ ExternQuickKey::ExternQuickKey ()
 	Semaphore_IdleFac=  CreateSemaphore ( NULL, 1, 1, NULL);
 
 	DoubleClick= MyConfig->GetIniBool ( "DoubleClick", TRUE);
-	//TAMainStruct_Ptr->inter
+	
+
+	InitExternTypeMask ( );
 	HookInCircleSelect= new InlineSingleHook ( (unsigned int)AddrAboutCircleSelect, 5, 
 		INLINE_5BYTESLAGGERJMP, AddtionRoutine_CircleSelect);
 
@@ -101,6 +105,8 @@ ExternQuickKey::~ExternQuickKey ()
 	
 	WriteProcessMemory ( GetCurrentProcess(), (void*)Add, &OldAdd, 1, NULL);
 	WriteProcessMemory ( GetCurrentProcess(), (void*)Sub, &OldSub, 1, NULL);
+
+	DestroyExternTypeMask ( );
 }
 
 bool ExternQuickKey::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
@@ -441,7 +447,8 @@ int ExternQuickKey::SelectOnlyInScreenSameTypeUnit (BOOL FirstSelect_Flag)
 {// FirstSelect mean if already selected  in screen same type units, then will select all same units ever not in screen
 //  return Selected units number
 	WaitForSingleObject ( Semaphore_OnlyInScreenSameType, INFINITE);
-	DWORD SelectedUnitTypeIDAry_Dw[0x100];
+	
+	LPDWORD SelectedUnitTypeIDAry_Dw= new DWORD[CategroyMaskSize/ 4];
 	memset ( SelectedUnitTypeIDAry_Dw, 0, sizeof(SelectedUnitTypeIDAry_Dw));
 
 	WORD ID= 0;
@@ -494,6 +501,7 @@ int ExternQuickKey::SelectOnlyInScreenSameTypeUnit (BOOL FirstSelect_Flag)
 	UpdateSelectUnitEffect ( ) ;
 	ApplySelectUnitMenu_Wapper ( );
 
+	delete [] SelectedUnitTypeIDAry_Dw;
 	ReleaseSemaphore ( Semaphore_OnlyInScreenSameType, 1, NULL);
 	return SelectedUnits;
 }
@@ -552,20 +560,6 @@ int ExternQuickKey::SelectOnlyInScreenWeaponUnit (unsigned int SelectWay_Mask)
 	return SelectedUnits;
 }
 
-bool ExternQuickKey::SetIDMaskInTypeAry (WORD ID, DWORD SelectedUnitTypeIDAry_Dw[])
-{
-	SelectedUnitTypeIDAry_Dw[ID/ 32]|= (1<< (ID& 0x1f));
-	return true;
-}
-
-bool ExternQuickKey::MatchInTypeAry (WORD ID, DWORD SelectedUnitTypeIDAry_Dw[])
-{
-	if (0!=(SelectedUnitTypeIDAry_Dw[ID/ 32]& (1<< (ID& 0x1f))))
-	{
-		return true;
-	}
-	return false;
-}
 
 int ExternQuickKey::FilterSelectedUnit (TAUnitType NeededType) //Ö»»áÔÚÒÑÑ¡ÖÐµÄµ¥Î»ÖÐÑ¡Ôñ!!!!ËÙ¶ÈºÜÂý£¬È«²¿µ¥Î»¶¼Ã¶¾ÙÒ»±é!
 {
@@ -576,14 +570,6 @@ int ExternQuickKey::FilterSelectedUnit (TAUnitType NeededType) //Ö»»áÔÚÒÑÑ¡ÖÐµÄµ
 
 	WaitForSingleObject ( Semaphore_FilterSelect, INFINITE);
 
-	LPDWORD CommandMaskAry= NULL;
-	//LPDWORD ENGINEER
-	//FACTORYS
-	LPDWORD WeaponUnitsMaskAry= NULL;
-
-	CommandMaskAry= GetUnitIDMaskAryByCategory ( "Commander");
-	//WeaponUnitsMaskAry= GetUnitIDMaskAryByCategory ( "CTRL_W");
-
 	TAdynmemStruct *PTR = TAMainStruct_Ptr;
 	
 	UnitStruct *  Begin= PTR->OwnUnitBegin;
@@ -593,11 +579,9 @@ int ExternQuickKey::FilterSelectedUnit (TAUnitType NeededType) //Ö»»áÔÚÒÑÑ¡ÖÐµÄµ
 
 	bool DoSelect_b;
 
-	unsigned long NoWeaponPtr;
 
 	//"NoWeapon"
 	PTR = *reinterpret_cast<TAdynmemStruct * *>(*(WeaponRelatedPtr[0]));
-	NoWeaponPtr= reinterpret_cast<unsigned long> (&(PTR->Weapons[0]));
 	
 	PTR = TAMainStruct_Ptr;
 	while (Current<=End)
@@ -613,53 +597,25 @@ int ExternQuickKey::FilterSelectedUnit (TAUnitType NeededType) //Ö»»áÔÚÒÑÑ¡ÖÐµÄµ
 					DoSelect_b= false;
 
 					if (0!=(COMMANDER& NeededType)&&
-						(NULL!=CommandMaskAry)&&
-						(MatchInTypeAry ( Current->UnitID, CommandMaskAry)))
+						(NULL!=CommanderMask)&&
+						(MatchInTypeAry ( Current->UnitID, CommanderMask)))
 					{
 						DoSelect_b= true;
 					}
 					
-					if (0!=(WEAPONUNITS& NeededType)&&
-							((NoWeaponPtr!=reinterpret_cast<unsigned long>(Current->UnitType->weapon1))|| 
-							(NoWeaponPtr!=reinterpret_cast<unsigned long>(Current->UnitType->weapon2))||
-							(NoWeaponPtr!=reinterpret_cast<unsigned long>(Current->UnitType->weapon3)))
-						)
+					if (0!=(WEAPONUNITS& NeededType)
+						&&MatchInTypeAry ( Current->UnitID, MobileWeaponMask))
 					{
-						DoSelect_b= true;
-						if ((NULL!=CommandMaskAry)&&
-							(MatchInTypeAry ( Current->UnitID, CommandMaskAry)))
-						{//don't select commander in here
-							DoSelect_b= false;
-						}
-						if((0!=Current->UnitType->nWorkerTime))
-						{
-							DoSelect_b= false;
-						}
-						
-						if (NULL!=Current->UnitType->YardMap)
-						{//building
-							DoSelect_b= false;
-						}
-
-						if ((0!=(stockpile_mask&(Current->UnitType->weapon1->WeaponTypeMask)))
-							||(0!=(stockpile_mask&(Current->UnitType->weapon2->WeaponTypeMask)))
-							||(0!=(stockpile_mask&(Current->UnitType->weapon3->WeaponTypeMask))))
-						{
-							DoSelect_b= false;
-						}
+									DoSelect_b= false;
 					}
 
 					if (0!=(ENGINEER& NeededType)
-						&&(0!=Current->UnitType->nWorkerTime)
-						&&(NULL==Current->UnitType->YardMap)//building
-						&&(! MatchInTypeAry ( Current->UnitID, CommandMaskAry)))
+						&&MatchInTypeAry ( Current->UnitID, ConstructorMask))
 					{
 						DoSelect_b= true;
 					}
 					if (0!=(FACTORYS& NeededType)
-						&&(0!=Current->UnitType->nWorkerTime)
-						&&(NULL!=Current->UnitType->YardMap)
-						&&(! MatchInTypeAry ( Current->UnitID, CommandMaskAry)))
+						&&MatchInTypeAry ( Current->UnitID, FactoryMask))
 					{
 						DoSelect_b= true;
 					}
@@ -691,6 +647,211 @@ int ExternQuickKey::FilterSelectedUnit (TAUnitType NeededType) //Ö»»áÔÚÒÑÑ¡ÖÐµÄµ
 	return SelectedCounter;
 }
 
+int ExternQuickKey::InitExternTypeMask (void)
+{
+	CategroyMaskSize=  (((NowCrackLimit->NowIncreaseUnitTypeLimit->CurtUnitTypeNum)/ 8/ 0x40)+ 1)* 0x40;
+	UnitDefStruct * Begin= TAMainStruct_Ptr->UnitDef;
+	UnitDefStruct * Current;
+	int TypeCount= TAMainStruct_Ptr->UNITINFOCount;
+	unsigned long NoWeaponPtr= reinterpret_cast<unsigned long> (&(TAMainStruct_Ptr->Weapons[0]));
+
+	CommanderMask= (LPDWORD)malloc ( sizeof(DWORD)* CategroyMaskSize);
+	for (DWORD i= 0; i<TAMainStruct_Ptr->RaceCounter; ++i)
+	{
+		SetIDMaskInTypeAry (  UnitName2ID (TAMainStruct_Ptr->RaceSideDataAry[i].commanderUnitName), CommanderMask);
+	}
+
+	MobileWeaponMask= (LPDWORD)malloc ( sizeof(DWORD)* CategroyMaskSize);
+	for (int i= 0; i<TypeCount; ++i)
+	{
+		Current= &Begin[i];
+		if((NoWeaponPtr!=reinterpret_cast<unsigned long>(Current->weapon1))
+			|| (NoWeaponPtr!=reinterpret_cast<unsigned long>(Current->weapon2))
+			|| (NoWeaponPtr!=reinterpret_cast<unsigned long>(Current->weapon3)))
+		{
+			if (NULL==Current->weapon1
+				||(0!=(stockpile_mask&(Current->weapon1->WeaponTypeMask))))
+			{
+				if (NULL==Current->weapon2
+					||(0!=(stockpile_mask&(Current->weapon2->WeaponTypeMask))))
+				{
+					if (NULL==Current->weapon3
+						||(0!=(stockpile_mask&(Current->weapon3->WeaponTypeMask))))
+					{
+						if ((NULL!=CommanderMask)&&
+							(MatchInTypeAry ( Current->UnitTypeID, CommanderMask)))
+						{//don't select commander in here
+							if((0!=Current->nWorkerTime))
+							{
+								if (NULL!=Current->YardMap)
+								{//building
+									if (canfly!=(canfly& Current->UnitTypeMask_0))
+									{
+										SetIDMaskInTypeAry ( Current->UnitTypeID, MobileWeaponMask);
+										continue;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		CleanIDMaskInTypeAry ( Current->UnitTypeID, MobileWeaponMask);
+	}
+	
+	ConstructorMask= (LPDWORD)malloc ( sizeof(DWORD)* CategroyMaskSize);
+
+	for (int i= 0; i<TypeCount; ++i)
+	{
+		Current= &Begin[i];
+		if ((0!=Current->nWorkerTime)
+			&&(NULL==Current->YardMap)//building
+			&&(! MatchInTypeAry ( Current->UnitTypeID, CommanderMask))
+			&&(canfly!=(canfly& Current->UnitTypeMask_0)))
+		{
+			SetIDMaskInTypeAry ( Current->UnitTypeID, ConstructorMask);
+		}
+		else
+		{
+			CleanIDMaskInTypeAry ( Current->UnitTypeID, ConstructorMask);
+		}
+	}
+
+
+	FactoryMask= (LPDWORD)malloc ( sizeof(DWORD)* CategroyMaskSize);
+	for (int i= 0; i<TypeCount; ++i)
+	{
+		Current= &Begin[i];
+
+		if ((0!=Current->nWorkerTime)
+			&&(NULL!=Current->YardMap)
+			&&(! MatchInTypeAry ( Current->UnitTypeID, CommanderMask)))
+		{
+			SetIDMaskInTypeAry ( Current->UnitTypeID, FactoryMask);
+		}
+		else
+		{
+			CleanIDMaskInTypeAry ( Current->UnitTypeID, FactoryMask);
+		}
+	}
+
+
+
+	BuildingMask= (LPDWORD)malloc ( sizeof(DWORD)* CategroyMaskSize);
+	for (int i= 0; i<TypeCount; ++i)
+	{
+		Current= &Begin[i];
+
+		if ((0==Current->nWorkerTime)
+			&&(NULL!=Current->YardMap)
+			&&(! MatchInTypeAry ( Current->UnitTypeID, CommanderMask)))
+		{
+			SetIDMaskInTypeAry ( Current->UnitTypeID, BuildingMask);
+		}
+		else
+		{
+			CleanIDMaskInTypeAry ( Current->UnitTypeID, BuildingMask);
+		}
+	}
+
+	AirWeaponMask= (LPDWORD)malloc ( sizeof(DWORD)* CategroyMaskSize);
+	for (int i= 0; i<TypeCount; ++i)
+	{
+		Current= &Begin[i];
+		if((NoWeaponPtr!=reinterpret_cast<unsigned long>(Current->weapon1))
+			|| (NoWeaponPtr!=reinterpret_cast<unsigned long>(Current->weapon2))
+			|| (NoWeaponPtr!=reinterpret_cast<unsigned long>(Current->weapon3)))
+		{
+			if (NULL==Current->weapon1
+				||(0!=(stockpile_mask&(Current->weapon1->WeaponTypeMask))))
+			{
+				if (NULL==Current->weapon2
+					||(0!=(stockpile_mask&(Current->weapon2->WeaponTypeMask))))
+				{
+					if (NULL==Current->weapon3
+						||(0!=(stockpile_mask&(Current->weapon3->WeaponTypeMask))))
+					{
+						if ((NULL!=CommanderMask)&&
+							(MatchInTypeAry ( Current->UnitTypeID, CommanderMask)))
+						{//don't select commander in here
+							if((0!=Current->nWorkerTime))
+							{
+								if (NULL!=Current->YardMap)
+								{//building
+									if (canfly==(canfly& Current->UnitTypeMask_0))
+									{
+										SetIDMaskInTypeAry ( Current->UnitTypeID, AirWeaponMask);
+										continue;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		CleanIDMaskInTypeAry ( Current->UnitTypeID, AirWeaponMask);
+	}
+
+	AirConMask= (LPDWORD)malloc ( sizeof(DWORD)* CategroyMaskSize);
+	for (int i= 0; i<TypeCount; ++i)
+	{
+		Current= &Begin[i];
+		if ((0!=Current->nWorkerTime)
+			&&(NULL==Current->YardMap)//building
+			&&(! MatchInTypeAry ( Current->UnitTypeID, CommanderMask))
+			&&(canfly==(canfly& Current->UnitTypeMask_0)))
+		{
+			SetIDMaskInTypeAry ( Current->UnitTypeID, AirConMask);
+		}
+		else
+		{
+			CleanIDMaskInTypeAry ( Current->UnitTypeID, AirConMask);
+		}
+	}
+
+	return 7;
+}
+
+void ExternQuickKey::DestroyExternTypeMask (void)
+{
+	if (CommanderMask)
+	{
+		free (CommanderMask);
+		CommanderMask= NULL;
+	}
+	if (MobileWeaponMask)
+	{
+		free ( MobileWeaponMask);
+		MobileWeaponMask= NULL;
+	}
+	if (ConstructorMask)
+	{
+		free ( ConstructorMask);
+		ConstructorMask= NULL;
+	}
+	if (FactoryMask)
+	{
+		free ( FactoryMask);
+		FactoryMask= NULL;
+	}
+	if (BuildingMask)
+	{
+		free ( BuildingMask);
+		BuildingMask= NULL;
+	}
+	if (AirWeaponMask)
+	{
+		free ( AirWeaponMask);
+		AirWeaponMask= NULL;
+	}
+	if (AirConMask)
+	{
+		free ( AirConMask);
+		AirConMask= NULL;
+	}
+}
 int __stdcall AddtionRoutine_CircleSelect (PInlineX86StackBuffer X86StrackBuffer)
 {
 	//int Selected= X86StrackBuffer->Ebp;

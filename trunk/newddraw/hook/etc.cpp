@@ -1336,6 +1336,7 @@ unsigned int __stdcall CalcCRC(char* data, int len)
 	return tmp1| (tmp2<< 8)| (tmp3<< 8)| (tmp4<< 8);
 }
 
+
 char * duplicate_str (char * Org)
 {
 	if (NULL==Org)
@@ -1367,6 +1368,20 @@ int getDBCSlen (char * DBCSstr)
 		++temp;
 	}
 	return temp;
+}
+char * clean_remark ( char * src, char remarkTag)
+{
+	if	((NULL==src)
+		||('\0'==src[0]))
+	{
+		return NULL;
+	}
+	char * tag= strrchr ( src, remarkTag);
+	if (tag)
+	{
+		*tag= '\0';
+	}
+	return src;
 }
 
 /*

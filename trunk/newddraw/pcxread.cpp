@@ -46,16 +46,17 @@ LPDIRECTDRAWSURFACE CreateSurfPCXResource(WORD PCXNum, bool VidMem)
 	RetSurf->Lock(NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
 
 	unsigned char *SurfPTR = (unsigned char*)ddsd.lpSurface;
-	if (NULL!=SurfPTR)
-	{
-		for(int i=0; i<Height; i++)
-		{
-			memcpy(&SurfPTR[i*ddsd.lPitch], &PCXPic.buffer[i*Width], Width);
-		}
-	}
 	if (NULL!=PCXPic.buffer)
 	{
-		delete PCXPic.buffer;
+		if (NULL!=SurfPTR)
+		{
+			for(int i=0; i<Height; i++)
+			{
+				memcpy(&SurfPTR[i*ddsd.lPitch], &PCXPic.buffer[i*Width], Width);
+			}
+		}
+
+		delete [] PCXPic.buffer;
 	}
 
 	RetSurf->Unlock(NULL);
@@ -89,17 +90,17 @@ void RestoreFromPCX(WORD PCXNum, LPDIRECTDRAWSURFACE lpSurf)
 	lpSurf->Lock(NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
 
 	unsigned char *SurfPTR = (unsigned char*)ddsd.lpSurface;
-	if ((NULL!=SurfPTR)&&(NULL!=PCXPic.buffer))
-	{
-		for(int i=0; i<Height; i++)
-		{
-			memcpy(&SurfPTR[i*ddsd.lPitch], &PCXPic.buffer[i*Width], Width);
-		}
-	}
 
 	if ((NULL!=PCXPic.buffer))
 	{
-		delete PCXPic.buffer;
+		if ((NULL!=SurfPTR)&&(NULL!=PCXPic.buffer))
+		{
+			for(int i=0; i<Height; i++)
+			{
+				memcpy(&SurfPTR[i*ddsd.lPitch], &PCXPic.buffer[i*Width], Width);
+			}
+		}
+		delete [] PCXPic.buffer;
 	}
 
 

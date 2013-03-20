@@ -4,7 +4,6 @@
 #include "oddraw.h"
 
 
-
 #include "hook/hook.h"
 #include "hook/etc.h"
 #include "tamem.h"
@@ -13,11 +12,17 @@
 #include "gameredrawer.h"
 #include "UnitDrawer.h"
 #include "mappedmap.h"
+#include "PCX.H"
 
 #include "fullscreenminimap.h"
 #include "dialog.h"
 #include "gaf.h"
 #include "iddrawsurface.h"
+
+#include <vector>
+using namespace std;
+#include "TAConfig.h"
+#include "ExternQuickKey.h"
 
 int __stdcall LoadMap_Routine (PInlineX86StackBuffer X86StrackBuffer)
 {
@@ -26,6 +31,52 @@ int __stdcall LoadMap_Routine (PInlineX86StackBuffer X86StrackBuffer)
 
 	
 	thethis->InitMinimap ( TNTPtr);
+	return 0;
+}
+
+DWORD WINAPI FSMMFrameUpdate( LPVOID FSMM_p)
+{
+	Sleep ( 500);
+	FullScreenMinimap * _this= (FullScreenMinimap *)FSMM_p;
+	if (FSMM_p)
+	{
+		POINT Aspect;
+		LPBYTE PixelBits;
+		RECT DescRect;
+		BOOL NoMapped_b;
+		_this->GameDrawer->TAWGameAreaRect ( &DescRect);
+		_this->MyMinimap_p->PictureInfo ( &PixelBits, &Aspect);
+
+		NoMapped_b= _this->Mapped_p->NowDrawMapped ( PixelBits, &Aspect);
+
+		_this->Mapped_p->PictureInfo (  &PixelBits, &Aspect);
+		_this->UnitsMap->NowDrawUnits ( PixelBits, &Aspect);
+
+		DescRect.right= DescRect.right- DescRect.left;
+		DescRect.bottom= DescRect.bottom- DescRect.top;
+		DescRect.top= 0;
+		DescRect.left= 0;
+
+		if ((Aspect.x<DescRect.right)
+			&&(2<(DescRect.right- Aspect.x)))
+		{
+			DescRect.left= (DescRect.right- Aspect.x)/ 2;
+			DescRect.right= DescRect.left+ Aspect.x;
+		}
+
+		if ((Aspect.y<DescRect.bottom)
+			&&(2<(DescRect.bottom- Aspect.y)))
+		{
+			DescRect.top= (DescRect.bottom- Aspect.y)/ 2;
+			DescRect.bottom= DescRect.top+ Aspect.y;
+		}
+
+		_this->GameDrawer->MixDSufInBlit ( &DescRect, _this->UnitsMap->GetSurface ( ) , NULL, 0xffffffff);
+		_this->GameDrawer->Flip ( );
+	}
+
+	_this->Flipping= FALSE;
+
 	return 0;
 }
 
@@ -40,6 +91,8 @@ FullScreenMinimap::FullScreenMinimap (BOOL Doit)
 	Mapped_p= NULL;
 
 	Blit_b= FALSE;
+
+	Flipping= FALSE;
 
 	Do_b= Doit;
 	if (Doit)
@@ -82,7 +135,7 @@ void FullScreenMinimap::InitMinimap (TNTHeaderStruct * TNTPtr, RECT * GameScreen
 		MyMinimap_p= NULL;
 	}
 
-	if (NULL==GameDrawer->OwnGameAreaSurface_ptr)
+	if (NULL==GameDrawer->GameAreaSurfaceFront_ptr)
 	{
 		GameDrawer->InitOwnSurface ( (IDirectDraw*)LocalShare->TADirectDraw);
 	}
@@ -149,49 +202,15 @@ void FullScreenMinimap::Blit(LPDIRECTDRAWSURFACE DestSurf)
 
 
 			i++;
-			if (30<i)
+			if (10<i)
 			{//
 				i= 0;
-
-				POINT Aspect;
-				LPBYTE PixelBits;
-				RECT DescRect;
-				BOOL NoMapped_b;
-				GameDrawer->TAWGameAreaRect ( &DescRect);
-				MyMinimap_p->PictureInfo ( &PixelBits, &Aspect);
-				DescRect.right= DescRect.right- DescRect.left;
-				DescRect.bottom= DescRect.bottom- DescRect.top;
-				DescRect.top= 0;
-				DescRect.left= 0;
-
-				DescRect.right= Aspect.x;
-				DescRect.bottom= Aspect.y;
-
-				// 
-				// 			if ((Aspect.x<DescRect.right)
-				// 				&&(2<(DescRect.right- Aspect.x)))
-				// 			{
-				// 				DescRect.left= (DescRect.right- Aspect.x)/ 2;
-				// 				DescRect.right= DescRect.left+ Aspect.x;
-				// 			}
-				// 
-				// 			if ((Aspect.y<DescRect.bottom)
-				// 				&&(2<(DescRect.bottom- Aspect.y)))
-				// 			{
-				// 				DescRect.top= (DescRect.bottom- Aspect.y)/ 2;
-				// 				DescRect.bottom= DescRect.top+ Aspect.y;
-				// 			}
-
-				GameDrawer->MixBitsInBlit ( &DescRect, PixelBits, &Aspect, NULL);
-
-
-				NoMapped_b= Mapped_p->NowDrawMapped ( );
-				Mapped_p->PictureInfo (  &PixelBits, &Aspect);
-				GameDrawer->GrayBlitOfBits ( &DescRect, PixelBits, &Aspect, NULL, NoMapped_b);
-				//GameDrawer->MixBitsInBlit ( &DescRect, PixelBits, &Aspect, NULL);
-
-				UnitsMap->NowDrawUnits ( );
-				GameDrawer->MixDSufInBlit ( &DescRect, UnitsMap->GetSurface ( ) , NULL, 0xffffffff);
+				if (! Flipping)
+				{
+					Flipping= TRUE;
+					DWORD TID;
+					CreateThread ( 0, 0, FSMMFrameUpdate, reinterpret_cast<LPVOID>(this), 0, &TID);
+				}
 			}
 
 			GameDrawer->BlitTAGameArea ( DestSurf);
@@ -246,8 +265,6 @@ bool FullScreenMinimap::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM
 	LPRECT GameScreen;
 	int xPos, yPos;
 
-
-
 	if (TAInGame==DataShare->TAProgress)
 	{
 		switch(Msg)
@@ -276,11 +293,10 @@ bool FullScreenMinimap::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM
 					&&(yPos<GameScreen->bottom)
 					&&(GameScreen->top<yPos))
 				{
+
 					return true;
 				}
 			}
-
-
 			break;
 		}
 	}
@@ -380,6 +396,8 @@ UnitsMinimap::UnitsMinimap (FullScreenMinimap * inheritFrom, int Width, int Heig
 	}
 
 	ReSet ( Width, Height);
+
+	LoadUnitPicture ( );
 // 	
 // 	ReSet_hook= new InlineSingleHook ( 0x0466DC0, 0x5, INLINE_5BYTESLAGGERJMP, ReSet_proc);
 // 	DrawUnit_hook= new InlineSingleHook ( 0x0466E83, 0x5, INLINE_5BYTESLAGGERJMP, drawunit_proc);
@@ -401,6 +419,7 @@ UnitsMinimap::UnitsMinimap (FullScreenMinimap * inheritFrom)
 		PlayerColros[i]= 0xff;
 	}
 	ReSet ( 0, 0);
+	LoadUnitPicture ( );
 // 	ReSet_hook= new InlineSingleHook ( 0x0466DC0, 0x5, INLINE_5BYTESLAGGERJMP, ReSet_proc);
 // 	DrawUnit_hook= new InlineSingleHook ( 0x0466E83, 0x5, INLINE_5BYTESLAGGERJMP, drawunit_proc);
 //	ReSet_hook->SetParamOfHook ( (LPVOID)this);
@@ -409,6 +428,8 @@ UnitsMinimap::UnitsMinimap (FullScreenMinimap * inheritFrom)
 UnitsMinimap::~UnitsMinimap()
 {
 	ReSet ( 0, 0);
+
+	FreeUnitPicture ( );
 //	if (DrawUnit_hook)
 // 	{
 // 		delete DrawUnit_hook;
@@ -564,28 +585,167 @@ LPDIRECTDRAWSURFACE UnitsMinimap::GetSurface (void)
 	}
 	return UnitsMapSfc;
 }
+void UnitsMinimap::InitPicturePlayerColors (int PlayeyColor, int FillColor, LPBYTE * * PPCptr)
+{
+	IDDrawSurface::OutptTxt( "InitPictureColors");
+	LPBYTE * PPC;
+	if (*PPCptr)
+	{
+		PPC= *PPCptr;
+	}
+	else
+	{
+		PPC= (LPBYTE *)malloc ( sizeof(LPBYTE)* MaskNum);
+		memset ( PPC, 0, sizeof(LPBYTE)* MaskNum);
+	}
 
-LPBYTE UnitsMinimap::UnitPicture(int PlayerID, LPBYTE * PixelBits_pp, POINT * Aspect)
+	for (int i= 0; i<MaskNum; ++i)
+	{
+		if (PicturesBits[i])
+		{
+			int Width= PicturesBits[i]->Width();
+			int Height= PicturesBits[i]->Height();
+			LPBYTE bits= PicturesBits[i]->Data();
+			if (bits)
+			{
+				if (NULL==PPC[i])
+				{
+					PPC[i]= (LPBYTE)malloc ( Width* Height+ 1);
+				}
+
+				if (NULL!=PPC[i])
+				{
+					for (int j= 0; j<Height; ++j)
+					{
+						int Line= j* Width;
+						for (int y= 0; y<Width; ++y)
+						{
+							register int Color= bits[Line+ y];
+							if (FillColor==Color)
+							{
+								Color= PlayeyColor;
+							}
+
+							PPC[i][Line+ y]= Color;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	*PPCptr= PPC;
+}
+
+LPBYTE UnitsMinimap::UnitPicture(UnitStruct * unitPtr,int PlayerID, LPBYTE * PixelBits_pp, POINT * Aspect)
 {
 	if ((PLAYERNUM<PlayerID)
 		||(PlayerID<0))
 	{
 		return NULL;
 	}
+
+	BOOL Update_b= FALSE;
 	int CurtColor= (*TAmainStruct_PtrPtr)->Players[PlayerID].PlayerInfo->PlayerLogoColor;
+	if (PlayerColros[PlayerID]!=CurtColor)
+	{
+		PlayerColros[PlayerID]= CurtColor;
+		Update_b= TRUE;
+	}
+
+	//
+	if (0<MaskNum)
+	{
+		if ((NULL==PicturesPlayerColors[PlayerID])
+		||(Update_b))
+		{// Init player color
+			switch(CurtColor)
+			{
+			case 0:
+				CurtColor = (char)227;
+				break;
+			case 1:
+				CurtColor = (char)212;
+				break;
+			case 2:
+				CurtColor = (char)80;
+				break;
+			case 3:
+				CurtColor = (char)235;
+				break;
+			case 4:
+				CurtColor = (char)108;
+				break;
+			case 5:
+				CurtColor = (char)219;
+				break;
+			case 6:
+				CurtColor = (char)208;
+				break;
+			case 7:
+				CurtColor = (char)93;
+				break;
+			case 8:
+				CurtColor = (char)130;
+				break;
+			case 9:
+				CurtColor = (char)67;
+				break;
+			}
+		
+			InitPicturePlayerColors ( CurtColor, FillColor, &PicturesPlayerColors[PlayerID]);
+		}
+
+		if (CheckUnitInPlayerLOS ( &(*TAmainStruct_PtrPtr)->Players[PlayerID], unitPtr))
+		{
+			for (int i= 0; i<MaskNum; ++i)
+			{
+				if ((i!=UnknowMaskIndex)// avoid null mask
+				&&(MatchInTypeAry ( unitPtr->UnitID, MaskAry[i])))
+				{
+					if (PixelBits_pp)
+					{
+						*PixelBits_pp= PicturesPlayerColors[PlayerID][i];
+					}
+					if (Aspect)
+					{
+						Aspect->x=  PicturesBits[i]->Width ( );
+						Aspect->y=  PicturesBits[i]->Height ( );
+					}
+					return PicturesPlayerColors[PlayerID][i];
+				}
+			}
+		}
+
+
+		if (PixelBits_pp)
+		{
+			*PixelBits_pp= PicturesPlayerColors[PlayerID][UnknowMaskIndex];
+		}
+		if (Aspect)
+		{
+			Aspect->x=  PicturesBits[UnknowMaskIndex]->Width ( );
+			Aspect->y=  PicturesBits[UnknowMaskIndex]->Height ( );
+		}
+		return PicturesPlayerColors[PlayerID][UnknowMaskIndex];
+	}
+	//if (0==MaskNum)
 	if (NULL==PlayerBits[PlayerID])
 	{
 		PGAFFrame UnitPic= Index2Frame_InSequence ( (*TAmainStruct_PtrPtr)->radlogo, CurtColor);
 		InstanceGAFFrame ( UnitPic, &PlayerBits[PlayerID], &PlayerAspect[PlayerID]);
 	}
-	if (PlayerColros[PlayerID]!=CurtColor)
+
+	if (Update_b)
 	{
 		free ( PlayerBits[PlayerID]);
+		PlayerBits[PlayerID]= NULL;
 		PlayerAspect[PlayerID].x= 0;
 		PlayerAspect[PlayerID].y= 0;
 
 		PGAFFrame UnitPic= Index2Frame_InSequence ( (*TAmainStruct_PtrPtr)->radlogo, CurtColor);
 		InstanceGAFFrame ( UnitPic, &PlayerBits[PlayerID], &PlayerAspect[PlayerID]);
+		Update_b= TRUE;
 	}
 
 	if (PixelBits_pp)
@@ -599,16 +759,248 @@ LPBYTE UnitsMinimap::UnitPicture(int PlayerID, LPBYTE * PixelBits_pp, POINT * As
 	}
 
 	return PlayerBits[PlayerID];
+	
 }
-void UnitsMinimap::DrawUnit ( LPBYTE PixelBits, POINT * Aspect, int  PlayerID, unsigned int TAx, unsigned int TAy)
+
+
+void UnitsMinimap::LoadUnitPicture ( void)
+{
+	MaskAry= NULL;
+	PicturesBits= NULL;
+	MaskNum= 0;
+	UseDefaultIcon= FALSE;
+	UnknowMaskIndex= 0;
+	FillColor= DEFAULTFILLCOLOR;
+	TransportColor= DEFAULTTRANSPORTCOLOR;
+	for (int i= 0; i<PLAYERNUM; ++i)
+	{
+		PicturesPlayerColors[i]= NULL;
+	}
+
+	char ConfigFileName[MAX_PATH]={0};
+	char TAPath[MAX_PATH];
+	char ConfigFilePath[MAX_PATH];
+
+
+	MyConfig->GetIniStr ( "MegaMapConfig", ConfigFileName, MAX_PATH, NULL);
+	clean_remark (  ConfigFileName, ';');
+	if (0!=ConfigFileName[0])
+	{// valid
+
+		if (0!=GetCurrentDirectoryA  ( MAX_PATH, TAPath))
+		{
+			wsprintfA ( ConfigFilePath, "%s\\%s", TAPath, ConfigFileName);
+		}
+		
+		char * CategoryNameAry= (char *)malloc ( 0x10000);
+
+		if (CategoryNameAry)
+		{
+			int CfgSize= GetPrivateProfileSection ( "Icon", CategoryNameAry, 0x10000, ConfigFilePath);
+
+			for (int i= 0, end= 0; i<CfgSize; ++i)
+			{
+				end= strlen ( &CategoryNameAry[i]);
+				MaskNum++;
+				i+= end;
+			}
+			if (0<MaskNum)
+			{
+
+				UnknowMaskIndex= 0;
+				
+				*strrchr ( ConfigFilePath, '\\')= 0;
+				strcpy_s ( TAPath, ConfigFilePath);
+				MaskAry= (LPDWORD* )malloc ( sizeof(LPDWORD)* MaskNum);
+				memset ( MaskAry, 0, sizeof(LPDWORD)* MaskNum);
+				PicturesBits= (UnitIcon * *)malloc ( sizeof(UnitIcon *)* MaskNum);
+				memset ( PicturesBits, 0, sizeof(UnitIcon *)* MaskNum);
+
+				MaskNum= 0;
+
+				for (int i= 0, end= 0; i<CfgSize; ++i)
+				{
+					end= strlen ( &CategoryNameAry[i]);
+
+					char * Aftequ;
+					if (0!=end)
+					{
+						Aftequ= strchr ( &CategoryNameAry[i], '=');
+						if (Aftequ)
+						{
+							*(Aftequ)= '\0';
+							Aftequ= &Aftequ[1];
+							_strlwr_s ( &CategoryNameAry[i], 0x40);
+							if (0==strcmp ( &CategoryNameAry[i], "fillcolor"))
+							{
+								FillColor= atoi(Aftequ);
+							}
+							else if (0==strcmp ( &CategoryNameAry[i], "transportcolor"))
+							{
+								TransportColor= atoi(Aftequ);
+							}
+							else
+							{
+								if (0==strcmp ( &CategoryNameAry[i], "nothing"))
+								{
+									UnknowMaskIndex= MaskNum;
+								}
+								else
+								{
+									MaskAry[MaskNum]= GetUnitIDMaskAryByCategory ( &CategoryNameAry[i]);
+								}
+								wsprintfA ( ConfigFilePath, "%s\\%s", TAPath, Aftequ);
+								clean_remark (  ConfigFilePath, ';');
+								PicturesBits[MaskNum]= new UnitIcon( ConfigFilePath);
+								MaskNum++;
+							}
+						}
+					}
+					i+= end;
+				}
+
+			}
+			free ( CategoryNameAry);
+		}
+	}
+	//else if (MyConfig->GetIniBool( "MegaMapUseDefaultIconSet", TRUE))
+	if (0!=GetCurrentDirectoryA  ( MAX_PATH, TAPath))
+	{
+		MaskAry= (LPDWORD* )malloc ( sizeof(LPDWORD)* 8);
+		memset ( MaskAry, 0, sizeof(LPDWORD)* 8);
+		PicturesBits= (UnitIcon * *)malloc ( sizeof(UnitIcon *)* 8);
+		memset ( PicturesBits, 0, sizeof(UnitIcon *)* 8);
+
+		UseDefaultIcon= TRUE;
+
+		wsprintfA ( ConfigFilePath, "%s\\Icon\\%s", TAPath, "COMM.PCX");
+		if (0xffffffff!=GetFileAttributesA ( ConfigFilePath))
+		{
+			MaskAry[MaskNum]= myExternQuickKey->CommanderMask;
+			PicturesBits[MaskNum]= new UnitIcon( ConfigFilePath);
+			MaskNum++;
+		}
+		wsprintfA ( ConfigFilePath, "%s\\Icon\\%s", TAPath, "MOBILE.PCX");
+		if (0xffffffff!=GetFileAttributesA ( ConfigFilePath))
+		{
+			MaskAry[MaskNum]= myExternQuickKey->MobileWeaponMask;
+			PicturesBits[MaskNum]= new UnitIcon( ConfigFilePath);
+			MaskNum++;
+		}
+		wsprintfA ( ConfigFilePath, "%s\\Icon\\%s", TAPath, "CON.PCX");
+		if (0xffffffff!=GetFileAttributesA ( ConfigFilePath))
+		{
+			MaskAry[MaskNum]= myExternQuickKey->ConstructorMask;
+			PicturesBits[MaskNum]= new UnitIcon( ConfigFilePath);
+			MaskNum++;
+		}
+		wsprintfA ( ConfigFilePath, "%s\\Icon\\%s", TAPath, "FCTY.PCX");
+		if (0xffffffff!=GetFileAttributesA ( ConfigFilePath))
+		{
+			MaskAry[MaskNum]= myExternQuickKey->FactoryMask;
+			PicturesBits[MaskNum]= new UnitIcon( ConfigFilePath);
+			MaskNum++;
+		}
+		wsprintfA ( ConfigFilePath, "%s\\Icon\\%s", TAPath, "BLDG.PCX");
+		if (0xffffffff!=GetFileAttributesA ( ConfigFilePath))
+		{
+			MaskAry[MaskNum]= myExternQuickKey->BuildingMask;
+			PicturesBits[MaskNum]= new UnitIcon( ConfigFilePath);
+			MaskNum++;
+		}
+		wsprintfA ( ConfigFilePath, "%s\\Icon\\%s", TAPath, "AIR.PCX");
+		if (0xffffffff!=GetFileAttributesA ( ConfigFilePath))
+		{
+			MaskAry[MaskNum]= myExternQuickKey->AirWeaponMask;
+			PicturesBits[MaskNum]= new UnitIcon( ConfigFilePath);
+			MaskNum++;
+		}
+		wsprintfA ( ConfigFilePath, "%s\\Icon\\%s", TAPath, "AIRCON.PCX");
+		if (0xffffffff!=GetFileAttributesA ( ConfigFilePath))
+		{
+			MaskAry[MaskNum]= myExternQuickKey->AirConMask;
+			PicturesBits[MaskNum]= new UnitIcon( ConfigFilePath);
+			MaskNum++;
+		}
+		wsprintfA ( ConfigFilePath, "%s\\Icon\\%s", TAPath, "NONE.PCX");
+		if (0xffffffff!=GetFileAttributesA ( ConfigFilePath))
+		{
+			PicturesBits[MaskNum]= new UnitIcon( ConfigFilePath);
+			MaskNum++;
+			UnknowMaskIndex= MaskNum;
+		}
+	}
+}
+
+void UnitsMinimap::FreeUnitPicture ( void)
+{	
+	if (MaskAry)
+	{
+		free ( MaskAry);
+		MaskAry= NULL;
+	}
+
+	if (PicturesBits)
+	{
+		for (int i= 0; i<MaskNum; ++i)
+		{
+			delete PicturesBits[i];
+		}
+
+		free  ( PicturesBits);
+		PicturesBits= NULL;
+	}
+
+
+	for (int i= 0; i<PLAYERNUM; ++i)
+	{
+		if (PicturesPlayerColors[i])
+		{
+			for (int j= 0; j<MaskNum; ++j)
+			{
+				if (PicturesPlayerColors[i][j])
+				{
+					free ( PicturesPlayerColors[i][j]);
+				}
+			}
+		}
+		PicturesPlayerColors[i]= NULL;
+	}
+
+	for (int i= 0; i<PLAYERNUM; ++i)
+	{
+		if (PlayerBits[i])
+		{
+			free ( PlayerBits[i]);
+			PlayerBits[i]= NULL;
+		}
+
+		if (0!=PlayerAspect[i].x)
+		{
+			PlayerAspect[i].x= 0;
+			PlayerAspect[i].y= 0;
+		}
+		PlayerColros[i]= 0xff;
+	}
+
+	 MaskNum= 0;
+	 UnknowMaskIndex= 0;
+}
+
+
+void UnitsMinimap::DrawUnit ( LPBYTE PixelBits, POINT * Aspect, UnitStruct * unitPtr)
 {
 	if ((NULL==PixelBits)
 		||(NULL==Aspect))
 	{
 		return ;
 	}
-	
 
+	int  PlayerID= unitPtr->Owner_PlayerPtr0->PlayerAryIndex;
+
+	unsigned int TAx= unitPtr->XPos; 
+	unsigned int TAy= unitPtr->YPos- (unitPtr->ZPos)/ 2;
+	// (Height_m/ ((*TAmainStruct_PtrPtr)->RadarPicSizeY)
 	POINT GafAspect= {0, 0};
 	LPBYTE GafPixelBits= NULL;
 	RECT DescRect;
@@ -619,11 +1011,11 @@ void UnitsMinimap::DrawUnit ( LPBYTE PixelBits, POINT * Aspect, int  PlayerID, u
 	//parent->GameDrawer->TAWGameAreaRect ( &DescRect);
 
 
-	UnitPicture( PlayerID, &GafPixelBits, &GafAspect);
+	UnitPicture( unitPtr, PlayerID, &GafPixelBits, &GafAspect);
 	DescRect.left= static_cast<int>(static_cast<float>(TAx)* (static_cast<float>(Width_m)/ static_cast<float>((*TAmainStruct_PtrPtr)->MapSizeX)))-  GafAspect.x/ 2;
-	DescRect.right= DescRect.left+ GafAspect.x/ 2;
+	DescRect.right= DescRect.left+ GafAspect.x;
 	DescRect.top= static_cast<int>(static_cast<float>(TAy)* (static_cast<float>(Height_m)/ static_cast<float>((*TAmainStruct_PtrPtr)->MapSizeY)))-  GafAspect.y/ 2;
-	DescRect.bottom= DescRect.top+ GafAspect.y/ 2;
+	DescRect.bottom= DescRect.top+ GafAspect.y;
 
 	Aspect->x= (Aspect->x)/ 4* 4;// avoid draw out of the surface, this x== pitch
 	if ((DescRect.right<0)
@@ -663,24 +1055,26 @@ void UnitsMinimap::DrawUnit ( LPBYTE PixelBits, POINT * Aspect, int  PlayerID, u
 			int SrcPixelYStart= YPos* GafAspect.x;
 			for (int XPos= 0; XPos<DescWidth_I; XPos++)
 			{//X 
-				PixelBits[DescPixelYStart+ (XPos+ DescRect.left)]= GafPixelBits[SrcPixelYStart+ XPos];
+				register int Color= GafPixelBits[SrcPixelYStart+ XPos];
+				if (Color!=TransportColor)
+				{
+					PixelBits[DescPixelYStart+ (XPos+ DescRect.left)]= Color;
+				}
 			}
 		}
 	}
 	catch (...)
 	{
-		
+
 	}
 }
 
-void UnitsMinimap::NowDrawUnits ( void)
+void UnitsMinimap::NowDrawUnits ( LPBYTE PixelBitsBack, POINT * AspectSrc)
 {
-
 	if (TAInGame!=DataShare->TAProgress)
 	{
 		return ;
 	}
-
 		IDDrawSurface::OutptTxt ( "Draw units");
 		POINT Aspect= {0, 0};
 		LPBYTE PixelBits= NULL;
@@ -692,7 +1086,15 @@ void UnitsMinimap::NowDrawUnits ( void)
 
 			if (NULL!=PixelBits)
 			{
-				memset ( PixelBits, 0xffffffff, Aspect.x* Aspect.y);
+				for (int i= 0; i<AspectSrc->y; ++i)
+				{
+					int Line= Aspect.x* i;
+					int SrcLine= AspectSrc->x* i;
+					for (int j= 0; j<AspectSrc->x; ++j)
+					{
+						PixelBits[Line+ j]= PixelBitsBack[SrcLine+ j];
+					}
+				}
 
 				UnitStruct * Begin= (*TAmainStruct_PtrPtr)->OwnUnitBegin;
 				UnitStruct * unitPtr;
@@ -706,7 +1108,8 @@ void UnitsMinimap::NowDrawUnits ( void)
 					unitPtr= &Begin[RadarUnits_v[i].ID];
 					if (0!=unitPtr->UnitID)
 					{
-						DrawUnit (  PixelBits, &Aspect, unitPtr->Owner_PlayerPtr0->PlayerAryIndex, unitPtr->XPos,  unitPtr->YPos- (unitPtr->ZPos));  (Height_m/ ((*TAmainStruct_PtrPtr)->RadarPicSizeY));
+			
+						DrawUnit (  PixelBits, &Aspect, unitPtr);
 					}
 				}
 			
@@ -745,6 +1148,14 @@ void UnitsMinimap::NowDrawUnits ( void)
 	
 }
 
+class ProjectileMap
+{
+public:
+	ProjectileMap ();
+	~ProjectileMap ();
+	 
+	BOOL NowDrawProjectile  (LPBYTE PixelBits, POINT * AspectSrc);
+};
 
 MappedMap::MappedMap (int Width, int Height)
 {
@@ -761,7 +1172,7 @@ MappedMap::~MappedMap()
 	}
 }
 
-BOOL MappedMap::NowDrawMapped (void)
+BOOL MappedMap::NowDrawMapped (LPBYTE PixelBits, POINT * AspectSrc)
 {
 	if (TAInGame!=DataShare->TAProgress)
 	{
@@ -769,11 +1180,18 @@ BOOL MappedMap::NowDrawMapped (void)
 	}
 	IDDrawSurface::OutptTxt ( "Draw Mapped");
 
-	memset ( MappedBits, 1, Width_m* Height_m);
+	for (int i= 0; i<AspectSrc->y; ++i)
+	{
+		int Line= Width_m* i;
+		int SrcLine= AspectSrc->x* i;
+		for (int j= 0; j<AspectSrc->x; ++j)
+		{
+			MappedBits[Line+ j]= PixelBits[SrcLine+ j];
+		}
+	}
 
 	if (NOMAPPING==(NOMAPPING&((*TAmainStruct_PtrPtr)->LosType)))
 	{//
-		;
 		if (Permanent==(Permanent&((*TAmainStruct_PtrPtr)->LosType)))
 		{// total visual 
 			;
@@ -797,7 +1215,10 @@ BOOL MappedMap::NowDrawMapped (void)
 
 				for	( j= 0, MAPPEDMEM_w= 0.0; j<Width_m; ++j, MAPPEDMEM_w= MAPPEDMEM_w+ XScale)
 				{
-					MappedBits[YOff+ j]= ((1<<PlayerID)& MappedMemory_p[LosBitYOff+ static_cast<int>(MAPPEDMEM_w)])>> PlayerID;
+					if ( 0==(((1<<PlayerID)& MappedMemory_p[LosBitYOff+ static_cast<int>(MAPPEDMEM_w)])>> PlayerID))
+					{
+						MappedBits[YOff+ j]=0;
+					}
 				}
 			}
 
@@ -806,6 +1227,9 @@ BOOL MappedMap::NowDrawMapped (void)
 	}
 	else
 	{
+		
+		LPBYTE TAGrayTABLE_p= (*TAmainStruct_PtrPtr)->TAProgramStruct_Ptr->GRAY_TABLE;
+
 		PlayerStruct * Player_p= &((*TAmainStruct_PtrPtr)->Players[(*TAmainStruct_PtrPtr)->LocalHumanPlayer_PlayerID]);
 		int MapX= Player_p->LOS_Tilewidth;
 		int MapY= Player_p->LOS_Tileheight;
@@ -823,7 +1247,10 @@ BOOL MappedMap::NowDrawMapped (void)
 
 			for	( j= 0, Los_w= 0.0; j<Width_m; ++j, Los_w= Los_w+ XScale)
 			{
-				MappedBits[YOff+ j]= PlayerLosBits[LosBitYOff+ static_cast<int>(Los_w)];
+				if (0==PlayerLosBits[LosBitYOff+ static_cast<int>(Los_w)])
+				{
+					MappedBits[YOff+ j]= TAGrayTABLE_p[MappedBits[YOff+ j]];
+				}
 			}
 		}
 	}

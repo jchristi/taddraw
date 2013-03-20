@@ -75,8 +75,6 @@ HRESULT __stdcall IDDraw::CreateSurface(LPDDSURFACEDESC arg1, LPDIRECTDRAWSURFAC
 	arg1->dwBackBufferCount = 2;
 	HRESULT result = lpDD->CreateSurface(arg1, arg2, arg3);
 	IDDrawSurface *SClass = new IDDrawSurface(*arg2, Windowed, ScreenWidth, ScreenHeight);
-	//SClass->ScreenWidth = ScreenWidth;
-
 	*arg2 = (IDirectDrawSurface*)SClass;
 	return result;
 

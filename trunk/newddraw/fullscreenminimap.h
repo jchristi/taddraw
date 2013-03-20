@@ -17,6 +17,7 @@ public:
 	TNTtoMiniMap * MyMinimap_p;
 	MappedMap* Mapped_p;
 
+	BOOL Flipping;
 public:
 	FullScreenMinimap (BOOL Doit);
 	~FullScreenMinimap (void);

@@ -35,6 +35,7 @@
 // was caused while using this sourcecode in any way.
 //
 
+
 #include <stdio.h>
 #include "pcx.h"
 
@@ -340,10 +341,12 @@ BOOL PCX::Load(const char *filename, BOOL fOnlyHeader)
 
 	HANDLE file = CreateFile(filename, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
-	if(!file)
+	if((!file)
+		||(INVALID_HANDLE_VALUE==file))
 		return FALSE;
 
 	ReadFile(file, &header, sizeof(header), &bw, NULL);
+
 
 	long lFileSize = GetFileSize(file, NULL) - sizeof(header);
 
@@ -352,20 +355,29 @@ BOOL PCX::Load(const char *filename, BOOL fOnlyHeader)
 	long lSize = (long)nWidth * nHeight;
 	lImageSize = lSize;
 	if(lpBuffer)
-		delete[] lpBuffer;
-
+	{
+		Erase();
+	}
 	if(fOnlyHeader)
 	{
 		CloseHandle(file);
+		Erase();
 		return TRUE;
 	}
-
+	//
 	BYTE *tmpbuf = new BYTE[lFileSize];
 	BYTE *svtmpbuf = tmpbuf; // to delete tmpbuf later...
 
-	lpBuffer = new BYTE[lSize];
-	if(lpBuffer == NULL || tmpbuf == NULL)
+	if(tmpbuf == NULL)
 	{
+		CloseHandle(file);
+		return FALSE;
+	}
+
+	lpBuffer = new BYTE[lSize];
+	if (lpBuffer == NULL )
+	{
+		delete [] tmpbuf;
 		CloseHandle(file);
 		return FALSE;
 	}
@@ -389,15 +401,16 @@ BOOL PCX::Load(const char *filename, BOOL fOnlyHeader)
 			lpBuffer[count++] = data;
 		}
 	}
+
 	if(header.num_color_planes == 1)
 	{
 		while(*tmpbuf++ != 0xc); 
 		for(i = 0; i < 256; i++)
 		{
-			TAPalette[i].peRed   = *tmpbuf++;
-			TAPalette[i].peGreen = *tmpbuf++;
-			TAPalette[i].peBlue  = *tmpbuf++;
-			TAPalette[i].peFlags = PC_EXPLICIT;
+			palette[i].peRed   = *tmpbuf++;
+			palette[i].peGreen = *tmpbuf++;
+			palette[i].peBlue  = *tmpbuf++;
+			palette[i].peFlags = PC_EXPLICIT;
 		}
 	}
 	delete[] svtmpbuf;
@@ -487,6 +500,8 @@ BOOL PCX::Load24(const char *filename)
 		tmpbuf = ReadLine24(tmpbuf, i * nWidth, 0);
 	}
 	delete[] svtmpbuf;
+
+	// transformer
 	return TRUE;
 }
 
@@ -519,6 +534,7 @@ BYTE *PCX::WriteLine(BYTE *pbuf, DWORD line)
 			runlen = 1;
 		}
 	}
+
 	if(runlen)
 	{
 		if(runlen > 1 || last > 0xbf)
@@ -618,9 +634,9 @@ BOOL PCX::Save(const char *filename)
 	int ii = 1;
 	for(index = 0; index < 256; index++)
 	{
-		tmppal[ii++] = TAPalette[index].peRed;
-		tmppal[ii++] = TAPalette[index].peGreen;
-		tmppal[ii++] = TAPalette[index].peBlue;
+		tmppal[ii++] = palette[index].peRed;
+		tmppal[ii++] = palette[index].peGreen;
+		tmppal[ii++] = palette[index].peBlue;
 	}
 
 	WriteFile(file, tmppal, 769, &dwWrb, NULL);
@@ -647,8 +663,9 @@ BYTE *PCX::NewBuffer(short w, short h)
 
 void PCX::Erase()
 {
-	//if(lpBuffer)
-	//	delete[] lpBuffer;
+	if(lpBuffer)
+		delete[] lpBuffer;
+	lpBuffer= NULL;
 }
 
 short PCX::Width()

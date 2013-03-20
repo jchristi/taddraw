@@ -49,9 +49,6 @@
     <Filter Include="Source Files\Functions\gaf">
       <UniqueIdentifier>{4c4e6822-3097-40a7-90a0-f5419821fcdd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Functions\misc\Pcx">
-      <UniqueIdentifier>{79d2cdad-260d-43a4-a93c-e32c69f27495}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Functions\externFromChina\GUI">
       <UniqueIdentifier>{b89342c0-2617-49a4-a91d-a5e1a35076e5}</UniqueIdentifier>
     </Filter>
@@ -76,6 +73,9 @@
     <Filter Include="Source Files\Functions\externFromChina\hpi">
       <UniqueIdentifier>{e24ea4b8-5f6c-4912-8164-5a9d309d3a8d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Functions\Pcx">
+      <UniqueIdentifier>{79d2cdad-260d-43a4-a93c-e32c69f27495}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ddraw.cpp">
@@ -94,10 +94,10 @@
       <Filter>Source Files\3dta</Filter>
     </ClCompile>
     <ClCompile Include="PCX.CPP">
-      <Filter>Source Files\Functions\misc\Pcx</Filter>
+      <Filter>Source Files\Functions\Pcx</Filter>
     </ClCompile>
     <ClCompile Include="pcxread.cpp">
-      <Filter>Source Files\Functions\misc\Pcx</Filter>
+      <Filter>Source Files\Functions\Pcx</Filter>
     </ClCompile>
     <ClCompile Include="hook\Hook.cpp">
       <Filter>Source Files\Functions\misc\hook</Filter>
@@ -197,6 +197,9 @@
     </ClCompile>
     <ClCompile Include="ExternQuickKey.cpp">
       <Filter>Source Files\Functions\externFromChina</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitIcon.cpp">
+      <Filter>Source Files\Functions\misc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -317,9 +320,6 @@
     <ClInclude Include="LimitCrack.h">
       <Filter>Header Files\Functions\externFromChina\LimitCrack</Filter>
     </ClInclude>
-    <ClInclude Include="ExternQuickKey.h">
-      <Filter>Header Files\Functions\externFromChina\LimitCrack</Filter>
-    </ClInclude>
     <ClInclude Include="UnitLimit.h">
       <Filter>Header Files\Functions\externFromChina\LimitCrack</Filter>
     </ClInclude>
@@ -355,6 +355,12 @@
     </ClInclude>
     <ClInclude Include="mappedmap.h">
       <Filter>Header Files\Functions\externFromChina\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ExternQuickKey.h">
+      <Filter>Header Files\Functions\externFromChina</Filter>
+    </ClInclude>
+    <ClInclude Include="BMP.h">
+      <Filter>Header Files\others</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -231,6 +231,45 @@ typedef struct _GUIInfo
 	char field_B8[3090];
 	int GUIUpdated_b;
 }GUIInfo;
+typedef struct _RaceSideData
+{
+	char name[30];
+	char nameprefix[4];
+	char commanderUnitName[32];
+	RECT Logo_rect;
+	RECT Energy_rect;
+	RECT EnergyNum_rect;
+	RECT METALBAR_rect;
+	RECT METALNUM_rect;
+	RECT TOTALUNITS_rect;
+	RECT TOTALTIME_rect;
+	RECT ENERGYMAX_rect;
+	RECT METALMAX_rect;
+	RECT ENERGY0_rect;
+	RECT METAL0_rect;
+	RECT ENERGYPRODUCED;
+	RECT ENERGYCONSUMED;
+	RECT METALPRODUCED;
+	RECT METALCONSUMED;
+	RECT LOGO2;
+	RECT UNITNAME;
+	RECT DAMAGEBAR;
+	RECT UNITENERGYMAKE;
+	RECT UNITENERGYUSE;
+	RECT UNITMETALMAKE;
+	RECT UNITMETALUSE;
+	RECT MISSIONTEXT;
+	RECT UNITNAME2;
+	RECT field_1C2;
+	RECT NAME;
+	RECT DESCRIPTION;
+	RECT RELOAD_RaceID;
+	char field_202[32];
+	int energycolor;
+	int metalcolor;
+	DWORD RaceAryIndex ;
+	DWORD Font_File ;
+}RaceSideData, *PRaceSideData;
 
 //settimer 4fb368
 
@@ -322,7 +361,10 @@ struct TAdynmemStruct{
 	RadarUnit_ * RadarUnits;
 	int NumHotUnits; //0x14367
 	int NumHotRadarUnits;
-	char data25[0x2c];
+	char data25[0x20];
+	unsigned int UNITINFOCount;
+	unsigned int UNITINFOCount_SquareRoot;
+	unsigned int LoadedUNITINFOs;
 	UnitDefStruct *UnitDef;  //0x1439b 
 	char data26[0x440];
 	_GAFSequence * radlogo; //0147DF
@@ -339,7 +381,15 @@ struct TAdynmemStruct{
 	int InterfaceType;
 	char data31[0x31];
 	unsigned short SoftwareDebugMode;// 0x37f2f
-	char data32[0xB16];
+	DWORD field_37F31;
+	DWORD Senderror;
+	DWORD RaceCounter;
+	RaceSideData RaceSideDataAry[5];
+	DWORD RandNum_ ;
+	DWORD field_38A3B;
+	DWORD field_38A3F ;
+	DWORD field_38A43 ;
+
 	short int GameTime; //0x38A47
 	short int GameSpeed;
 	char ShotUrl;// 0x38a47+c= TA截图目录的字符串，即TA目录+当前用户名 
@@ -494,7 +544,7 @@ struct UnitDefStruct {
 	unsigned short sortbias     ;
 	unsigned char cruisealt  ;
 	unsigned char data4  ;
-	unsigned short UnitCategoryMask  ;
+	unsigned short  UnitTypeID  ;
 
 	WeaponStruct *ExplodeAs;
 	WeaponStruct *SelfeDestructAs;
@@ -709,45 +759,7 @@ typedef struct _OPENTAFILE
 	char FilePath[256];
 } OPENTAFILE, * POPENTAFILE;
 
-typedef struct _RaceSideData
-{
-	char name[30];
-	char nameprefix[4];
-	char commanderUnitName[32];
-	RECT Logo_rect;
-	RECT Energy_rect;
-	RECT EnergyNum_rect;
-	RECT METALBAR_rect;
-	RECT METALNUM_rect;
-	RECT TOTALUNITS_rect;
-	RECT TOTALTIME_rect;
-	RECT ENERGYMAX_rect;
-	RECT METALMAX_rect;
-	RECT ENERGY0_rect;
-	RECT METAL0_rect;
-	RECT ENERGYPRODUCED;
-	RECT ENERGYCONSUMED;
-	RECT METALPRODUCED;
-	RECT METALCONSUMED;
-	RECT LOGO2;
-	RECT UNITNAME;
-	RECT DAMAGEBAR;
-	RECT UNITENERGYMAKE;
-	RECT UNITENERGYUSE;
-	RECT UNITMETALMAKE;
-	RECT UNITMETALUSE;
-	RECT MISSIONTEXT;
-	RECT UNITNAME2;
-	RECT field_1C2;
-	RECT NAME;
-	RECT DESCRIPTION;
-	RECT RELOAD_RaceID;
-	char field_202[32];
-	int energycolor;
-	int metalcolor;
-	int field_22A;
-	int Font_File;
-}RaceSideData, *PRaceSideData;
+
 
 typedef struct _Shatte
 {
@@ -1235,6 +1247,12 @@ enum SharedStates
 	 SharedLOS        = 8,
 	 SharedMappings   = 0x20,
 	 SharedRadar      = 0x40
+};
+
+enum UNITINFOMASK_0
+{
+	canfly           = 0x800,
+	canhover         = 0x1000
 };
 
 namespace softwaredebugmode

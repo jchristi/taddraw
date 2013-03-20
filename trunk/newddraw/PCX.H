@@ -57,7 +57,9 @@ struct pcx_header
 	char num_color_planes;
 	short bytes_per_line;
 	short palette_type;
-	char padding[58];
+	short hori_res1;
+	short vert_res1;
+	char padding[54];
 };
 
 
@@ -89,6 +91,7 @@ public:
 	BYTE *NewBuffer(short w, short h);
 	void SetPalette(PALETTEENTRY *p);
 	void CopyPalette(PALETTEENTRY *p);
+	long Pitch () {return header.bytes_per_line;}
 };
 
 
