@@ -116,7 +116,6 @@ LRESULT CALLBACK WinProc(HWND winprocwnd, UINT msg, WPARAM wparam, LPARAM lparam
 class IDDrawSurface : public IDirectDrawSurface
 {
 private:
-	int ValidIDrawSurface_i;
 
 	bool FrontSurf;
 	bool Windowed;

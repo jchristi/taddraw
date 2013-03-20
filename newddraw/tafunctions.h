@@ -80,6 +80,14 @@ extern _Index2Frame_InSequence  Index2Frame_InSequence;
  
 typedef	int (__stdcall * _CopyGafToContext)(_OFFSCREEN * OFFSCREN_ptr, _GAFFrame * GafFrame, int Off_X, int Off_Y);
 extern _CopyGafToContext CopyGafToContext;
+
+typedef int (__stdcall * _CheckUnitInPlayerLOS)(PlayerStruct * Player_Ptr, UnitStruct * UnitsInGame_Ptr);
+extern _CheckUnitInPlayerLOS CheckUnitInPlayerLOS;
+
+                                                
+typedef int (__stdcall * _UnitName2ID)(char *Str1);
+extern _UnitName2ID UnitName2ID;
+
 //////////////////////////////////////////////////////////////////////////////////////////
 /// Not working.
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -111,7 +119,9 @@ LPDWORD GetUnitIDMaskAryByCategory (LPSTR CategoryName_cstrp);
 void UpdateSelectUnitEffect (void);
 void ApplySelectUnitMenu_Wapper (void);
 int ChatText (LPSTR str);
-
+bool SetIDMaskInTypeAry (WORD ID, DWORD SelectedUnitTypeIDAry_Dw[]);
+bool CleanIDMaskInTypeAry (WORD ID, DWORD SelectedUnitTypeIDAry_Dw[]);
+bool MatchInTypeAry (WORD ID, DWORD SelectedUnitTypeIDAry_Dw[]);
 
 extern TAProgramStruct * * TAProgramStruct_PtrPtr;
 

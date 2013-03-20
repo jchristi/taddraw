@@ -11,6 +11,15 @@ int __stdcall AddtionRoutine_CircleSelect (PInlineX86StackBuffer X86StrackBuffer
 
 class ExternQuickKey
 {
+public:
+	LPDWORD CommanderMask;
+	LPDWORD MobileWeaponMask;
+	LPDWORD ConstructorMask;
+	LPDWORD FactoryMask;
+	LPDWORD BuildingMask;
+	LPDWORD AirWeaponMask;
+	LPDWORD AirConMask;
+
 private:
 	TAdynmemStruct * TAMainStruct_Ptr;
 	HANDLE Semaphore_OnlyInScreenSameType;
@@ -25,7 +34,7 @@ private:
 
 
 	int VirtualKeyCode;
-
+	int CategroyMaskSize;
 
 	char *Add;
 	char *Sub;
@@ -43,16 +52,17 @@ public:
 	void AddtionInit (void);
 	void AddtionRelease (void);
 
+
 private:
 	int SelectOnlyInScreenSameTypeUnit (BOOL FirstSelect_Flag);
 	int SelectOnlyInScreenWeaponUnit (unsigned int SelectWay_Mask);
-	bool SetIDMaskInTypeAry (WORD ID, DWORD SelectedUnitTypeIDAry_Dw[]);
-	bool MatchInTypeAry (WORD ID, DWORD SelectedUnitTypeIDAry_Dw[]);
 
 	void FindIdelFactory ();
 	void FindIdleConst();
 	void ScrollToCenter(int x, int y);
 
+	int InitExternTypeMask (void);
+	void DestroyExternTypeMask (void);
 };
 
 extern ExternQuickKey * myExternQuickKey;

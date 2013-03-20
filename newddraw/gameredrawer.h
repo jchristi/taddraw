@@ -3,7 +3,7 @@
 class TAGameAreaReDrawer
 {
 public:
-	LPDIRECTDRAWSURFACE OwnGameAreaSurface_ptr;
+	LPDIRECTDRAWSURFACE GameAreaSurfaceFront_ptr;
 
 public:
 	TAGameAreaReDrawer ();
@@ -23,4 +23,11 @@ public:
 
 	HRESULT Lock (  LPRECT lpDestRect, LPDDSURFACEDESC lpDDSurfaceDesc, DWORD dwFlags, HANDLE hEvent);
 	HRESULT Unlock(  LPVOID lpSurfaceData);
+		
+	LPDIRECTDRAWSURFACE Flip (void);
+
+private:
+	LPDIRECTDRAWSURFACE GameAreaSurfaceBack_ptr;
+	LPBYTE DescBuf;
+	
 };

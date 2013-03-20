@@ -31,6 +31,7 @@ extern "C"
 	int getDBCSlen (char * DBCSstr);
 
 	LPSTR vkToStr(int vk, LPSTR Rtn, int Len);
+	char * clean_remark ( char * src, char remarkTag);
 };//extern "C"
 
 #endif //ETC_H56NFRDA

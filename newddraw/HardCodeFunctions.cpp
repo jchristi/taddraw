@@ -87,9 +87,6 @@ int UpdateTAProcess (void)
 	{
 		DataShare->TAProgress= TALobby;
 	}
-	
-	
-
 	return DataShare->TAProgress;
 }
 
@@ -109,6 +106,30 @@ LPDWORD GetUnitIDMaskAryByCategory (LPSTR CategoryName_cstrp)
 		;
 	}
 	return NULL;
+}
+
+
+
+bool SetIDMaskInTypeAry (WORD ID, DWORD SelectedUnitTypeIDAry_Dw[])
+{
+	SelectedUnitTypeIDAry_Dw[ID/ 32]|= (1<< (ID& 0x1f));
+	return true;
+}
+
+bool CleanIDMaskInTypeAry (WORD ID, DWORD SelectedUnitTypeIDAry_Dw[])
+{
+	SelectedUnitTypeIDAry_Dw[ID/ 32]&= ! (1<< (ID& 0x1f));
+	return true;
+}
+
+
+bool MatchInTypeAry (WORD ID, DWORD SelectedUnitTypeIDAry_Dw[])
+{
+	if (0!=(SelectedUnitTypeIDAry_Dw[ID/ 32]& (1<< (ID& 0x1f))))
+	{
+		return true;
+	}
+	return false;
 }
 
 void freeTAMem (LPVOID MemAddress)
@@ -221,6 +242,10 @@ _ChangeGameSpeed ChangeGameSpeed= (_ChangeGameSpeed)0x0490DF0;
 _Index2Frame_InSequence Index2Frame_InSequence= (_Index2Frame_InSequence )0x04B7F30;
 
 _CopyGafToContext CopyGafToContext= (_CopyGafToContext)0x04B7F90;
+
+_CheckUnitInPlayerLOS CheckUnitInPlayerLOS= (_CheckUnitInPlayerLOS)0x00465AC0;
+
+_UnitName2ID UnitName2ID= (_UnitName2ID)0x0488B10;
 //////////////////////////////////////////////////////////////////////////////////////////
 /// Not working.
 //////////////////////////////////////////////////////////////////////////////////////////

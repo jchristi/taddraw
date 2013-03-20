@@ -45,6 +45,7 @@ extern HINSTANCE HInstance;
 short MouseX,MouseY;
 bool StartedInRect;
 
+//#define XPOYDEBG
 
 /*
 IDDrawSurface::~IDDrawSurface()
@@ -75,7 +76,10 @@ IDDrawSurface::IDDrawSurface(LPDIRECTDRAWSURFACE lpTASurf, bool iWindowed, int i
 		GUIExpander->myMinimap->InitSurface ( reinterpret_cast<LPDIRECTDRAW>(LocalShare->TADirectDraw));
 	}
 
+	
 	lpFront = lpTASurf;
+	lpBack= NULL;
+	lpDDClipper= NULL;
 	OutptTxt("IDDrawSurface Created");
 
 	Windowed = iWindowed;
@@ -137,17 +141,6 @@ ULONG __stdcall IDDrawSurface::AddRef()
 
 ULONG __stdcall IDDrawSurface::Release()
 {
-	/* if(lpBattleFieldClipper)
-	{
-	lpBattleFieldClipper->Release();
-	lpBattleFieldClipper = NULL;
-	}
-	if(lpBattleFieldSurf)
-	{
-	lpBattleFieldSurf->Release();
-	lpBattleFieldSurf = NULL;
-	}         */
-
 	OutptTxt("DDrawSurface::Release");
 	if(lpDDClipper)
 	{
@@ -186,10 +179,8 @@ ULONG __stdcall IDDrawSurface::Release()
 		GUIExpander->myMinimap->ReleaseSurface ( );
 	}
 	
-
-	delete this;
-
 	LocalShare->OrgLocalPlayerID= 0xa;
+	delete this;
 	return result;
 }
 
@@ -244,7 +235,6 @@ HRESULT __stdcall IDDrawSurface::EnumOverlayZOrders(DWORD arg1, LPVOID arg2, LPD
 
 HRESULT __stdcall IDDrawSurface::Flip(LPDIRECTDRAWSURFACE arg1, DWORD arg2)
 {
-
 	OutptTxt("Flip");
 	return lpFront->Flip(arg1, arg2);
 }
@@ -252,15 +242,12 @@ HRESULT __stdcall IDDrawSurface::Flip(LPDIRECTDRAWSURFACE arg1, DWORD arg2)
 HRESULT __stdcall IDDrawSurface::GetAttachedSurface(LPDDSCAPS arg1, LPDIRECTDRAWSURFACE FAR *arg2)
 {
 	OutptTxt("GetAttachedSurface");
-
 	HRESULT result = lpFront->GetAttachedSurface(arg1, arg2);
 
 	lpBack = *arg2;
 	LocalShare->TADirectDrawBackSurface = *arg2;
-
-	CreateClipplist();
+	CreateClipplist ( );
 	
-
 	return result;
 }
 
@@ -339,15 +326,18 @@ HRESULT __stdcall IDDrawSurface::IsLost()
 
 HRESULT __stdcall IDDrawSurface::Lock(LPRECT arg1, LPDDSURFACEDESC arg2, DWORD arg3, HANDLE arg4)
 {
+#ifdef XPOYDEBG
+	HRESULT result = lpFront->Lock(arg1, arg2, arg3, arg4);
 
+	return result;
+#endif
 
-	HRESULT result = lpBack->Lock(arg1, arg2, arg3, arg4);
+	
+#ifndef XPOYDEBG
+
+	HRESULT result = lpBack->Lock ( arg1, arg2, arg3, arg4);
 
 	TAHook->TABlit();
-
-#ifdef _DEBUG
-	DDDTA->Moo();
-#endif
 
 	if(result == DD_OK)
 		SurfaceMemory = arg2->lpSurface;
@@ -355,8 +345,10 @@ HRESULT __stdcall IDDrawSurface::Lock(LPRECT arg1, LPDDSURFACEDESC arg2, DWORD a
 		SurfaceMemory = NULL;
 
 	lPitch = arg2->lPitch;
-
+	
 	return result;
+#endif
+
 }
 
 HRESULT __stdcall IDDrawSurface::ReleaseDC(HDC arg1)
@@ -367,8 +359,9 @@ HRESULT __stdcall IDDrawSurface::ReleaseDC(HDC arg1)
 
 HRESULT __stdcall IDDrawSurface::Restore()
 {
+#ifndef XPOYDEBG
 	((CDDDTA*)LocalShare->DDDTA)->FrameUpdate();
-
+#endif
 	return lpFront->Restore();
 }
 
@@ -400,18 +393,16 @@ HRESULT __stdcall IDDrawSurface::SetPalette(LPDIRECTDRAWPALETTE arg1)
 
 HRESULT __stdcall IDDrawSurface::Unlock(LPVOID arg1)
 {
-	/* if(DataShare->UpdateLos == 0)
-	{
-	HRESULT result = lpFront->Unlock(arg1);
-	if(lpFront->Flip(NULL, DDFLIP_DONOTWAIT | DDFLIP_NOVSYNC) != DD_OK)
-	{
-	if(lpFront->Flip(NULL, DDFLIP_NOVSYNC) != DD_OK)
-	lpFront->Flip(NULL, DDFLIP_WAIT);
-	} 
-	return result;
-	}   */
 	OutptTxt("Unlock");
+#ifdef XPOYDEBG
+	HRESULT result = lpFront->Unlock(arg1);
+
+	return result;
+#endif
+#ifndef XPOYDEBG
 	UpdateTAProcess ( );
+
+
 
 	if(PlayingMovie) //deinterlace and flip directly
 	{
@@ -466,7 +457,7 @@ HRESULT __stdcall IDDrawSurface::Unlock(LPVOID arg1)
 		{
 			GUIExpander->myMinimap->Blit ( lpBack);
 		}
-		
+
 
 		//////////////////////////////////////////////////////////////////////////
 		//unicode
@@ -474,37 +465,16 @@ HRESULT __stdcall IDDrawSurface::Unlock(LPVOID arg1)
 		{
 			NowSupportUnicode->Blt ( lpBack);
 		}
-		//////////////////////////////////////////////////////////////////////////
-		//ChangeQueue.Blit(lpBack);
+		if(lpFront->Blt(NULL, lpBack, NULL, DDBLT_ASYNC, NULL)!=DD_OK)
+		{
+			lpFront->Blt(NULL, lpBack, NULL, DDBLT_WAIT, NULL);
+			OutptTxt("lpFront to lpBack Blit failed");
+		}
+		
 	}
 
-	if(VerticalSync)
-	{
-		if(lpFront->Flip(NULL, DDFLIP_DONOTWAIT) != DD_OK)
-		{
-			if(lpFront->Flip(NULL, DDFLIP_WAIT) != DD_OK)
-				if(lpFront->Flip(NULL, DDFLIP_WAIT | DDFLIP_NOVSYNC) != DD_OK)
-				{
-					;
-				}
-		}
-	}
-	else
-	{
-		if(lpFront->Flip(NULL, DDFLIP_DONOTWAIT | DDFLIP_NOVSYNC) != DD_OK)
-		{
-			if(lpFront->Flip(NULL, DDFLIP_NOVSYNC) != DD_OK)
-				lpFront->Flip(NULL, DDFLIP_WAIT);
-		}
-	}
-
-	if(lpBack->Blt(NULL, lpFront, NULL, DDBLT_ASYNC, NULL)!=DD_OK)
-	{
-		lpBack->Blt(NULL, lpFront, NULL, DDBLT_WAIT, NULL);
-		OutptTxt("lpFront to lpBack Blit failed");
-	}
-	//DataShare->UpdateLos = 0;
 	return result;
+#endif
 }
 
 HRESULT __stdcall IDDrawSurface::UpdateOverlay(LPRECT arg1, LPDIRECTDRAWSURFACE arg2, LPRECT arg3, DWORD arg4, LPDDOVERLAYFX arg5)
@@ -559,11 +529,14 @@ void IDDrawSurface::Set(bool EnableVSync)
 
 void IDDrawSurface::CreateClipplist()
 {
-
 	LPDIRECTDRAW TADD = (IDirectDraw*)LocalShare->TADirectDraw;
 	if (lpBack)
 	{
-		TADD->CreateClipper(0,&lpDDClipper,NULL);
+		if (lpDDClipper)
+		{
+			lpDDClipper->Release ( );
+		}
+		TADD->CreateClipper ( 0,&lpDDClipper,NULL);
 
 		ScreenRegion = (LPRGNDATA)new char[sizeof(RGNDATAHEADER)+sizeof(RECT)];
 		BattleFieldRegion = (LPRGNDATA)new char[sizeof(RGNDATAHEADER)+sizeof(RECT)];
@@ -591,7 +564,7 @@ void IDDrawSurface::CreateClipplist()
 		BattleFieldRegion->rdh.rcBound.bottom = ScreenHeight-32;
 
 
-		lpBack->SetClipper(lpDDClipper);
+		lpBack->SetClipper ( lpDDClipper);
 	}
 }
 
