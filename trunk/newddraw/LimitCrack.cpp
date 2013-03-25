@@ -14,7 +14,6 @@ using namespace std;
 #include "WeaponIDLimit.h"
 #include "UnitTypeLimit.h"
 #include "IncreaseCompositeSize.h"
-#include "MixingBuffers.h"
 #include "IncreaseSfxLimit.h"
 #include "SwitchAlt.h"
 #include "MultiGameWeaponID.h"
@@ -39,7 +38,7 @@ LimitCrack* NowCrackLimit;
 LimitCrack::LimitCrack ( void)
 {
 	NowIncreaseAISearchMapEntriesLimit= new IncreaseAISearchMapEntriesLimit ( MyConfig->GetIniInt ( "AISearchMapEntries", 66650));
-	DWORD tmp_i= MyConfig->GetIniInt ( "WeaponType", 0);
+	DWORD tmp_i= MyConfig->GetIniInt ( "WeaponType", 16000);
 	NowIncreaseWeaponTypeLimit= new IncreaseWeaponTypeLimit ( tmp_i);
 	if ((tmp_i* 0x115)<=(*(WeaponAryLen[0])))
 	{
@@ -51,9 +50,9 @@ LimitCrack::LimitCrack ( void)
 	}
 
 	NowIncreaseUnitTypeLimit= new IncreaseUnitTypeLimit ( MyConfig->GetIniInt ( "UnitType", 0) );
-	NowIncreaseCompositeBuf= new IncreaseCompositeBuf ( MyConfig->GetIniInt ( "X_CompositeBuf", 0x500) , MyConfig->GetIniInt ( "Y_CompositeBuf", 0x500));
+	NowIncreaseCompositeBuf= new IncreaseCompositeBuf ( MyConfig->GetIniInt ( "X_CompositeBuf", 1280) , MyConfig->GetIniInt ( "Y_CompositeBuf", 1280));
 
-	NowIncreaseSfxLimit= new IncreaseSfxLimit ( MyConfig->GetIniInt ( "SfxLimit", 0x5000));
+	NowIncreaseSfxLimit= new IncreaseSfxLimit ( MyConfig->GetIniInt ( "SfxLimit", 16000));
 
 	tmp_i= MyConfig->GetIniBool ( "MultiGameWeapon", FALSE);
 	NowModifyWeaponPacket= new ModifyWeaponPacket ( tmp_i);
@@ -68,7 +67,7 @@ LimitCrack::LimitCrack ( void)
 	}
 
 
-	SetUnitLimit= new UnitLimit (  MyConfig->GetIniInt ( "UnitLimit", 1500));
+	SetUnitLimit= new UnitLimit (  MyConfig->GetIniInt ( "UnitLimit", 3663));
 
 	//set the Reg things;
 
@@ -94,8 +93,8 @@ IncreaseAISearchMapEntriesLimit::IncreaseAISearchMapEntriesLimit ()
 {
 	//OrginalLimit= *AISearchMapEntriesLimit;
 	IDDrawSurface::OutptTxt ("IncreaseAISearchMapEntriesLimit");
-	DWORD Const5000= 0x5000;
-	ModifyTheLimit= new SingleHook ( reinterpret_cast<LPBYTE>(AISearchMapEntriesLimit), 4, INLINE_UNPROTECTEVINMENT, reinterpret_cast<LPBYTE>(&Const5000));
+	DWORD Const66650= 66650;
+	ModifyTheLimit= new SingleHook ( reinterpret_cast<LPBYTE>(AISearchMapEntriesLimit), 4, INLINE_UNPROTECTEVINMENT, reinterpret_cast<LPBYTE>(&Const66650));
 };
 
 IncreaseAISearchMapEntriesLimit::IncreaseAISearchMapEntriesLimit (DWORD NewLimit)
@@ -254,7 +253,7 @@ DWORD IDlimitLenAry[IDLIMITARYNUMBER]=
 
 IncreaseWeaponTypeLimit::IncreaseWeaponTypeLimit ()
 {
-	NewLimit (0x22a000);
+	NewLimit (16000* 0x115);
 	//Hooked= TRUE;
 }
 IncreaseWeaponTypeLimit::IncreaseWeaponTypeLimit (DWORD NewLen)
@@ -296,6 +295,8 @@ void IncreaseWeaponTypeLimit::NewLimit (DWORD NewLen)
 
 	if (CurtLen<=OrglLen)
 	{
+		CurtPtr= OrgPtr;
+		CurtLen= OrglLen;
 		return ;
 	}
 	DWORD tempCurtLen= CurtLen+ reinterpret_cast<DWORD>((&(reinterpret_cast<TAdynmemStruct *>(0)->Weapons)))+ sizeof(WeaponStruct);
@@ -412,7 +413,7 @@ void IncreaseWeaponTypeLimit::WeaponType_IdLimit (void)
 IncreaseUnitTypeLimit::IncreaseUnitTypeLimit ()
 {
 
-	WriteNewLimit ( 0x3000);
+	WriteNewLimit ( 16000);
 }
 
 IncreaseUnitTypeLimit::IncreaseUnitTypeLimit ( int Number)
@@ -478,9 +479,15 @@ void IncreaseUnitTypeLimit::WriteNewLimit (DWORD Number)
 	IDDrawSurface::OutptTxt ("WriteNewLimit");
 	//weight func
 	DWORD Orginal= 0x40;
+
+	CurtUnitTypeNum= Number* 8;
+
+	
+
 	DWORD New;
 	New= ((Number/ 8/ 0x40)+ 1)* 0x40;// 0x200 Number== 0x40 New
 
+	
 	Prologue_Weight= NULL;
 	Argc_0_Weight= NULL;
 	Argc_1_Weight= NULL;
@@ -493,10 +500,14 @@ void IncreaseUnitTypeLimit::WriteNewLimit (DWORD Number)
 	Push_FindSpot= NULL;
 	Mov_FindSpot= NULL;
 
-	if (Number<=Orginal)
+	if (Number<=(Orginal* 8))
 	{
+		CurtUnitTypeNum= 0x200;
 		return ;
 	}
+
+	
+
 	DWORD RepsdEcx= New/ 4;
 	
 	BYTE Prologue_Weight_bits[]={0x81 ,0xEC ,0x00 ,0x01 ,0x00 ,0x00};

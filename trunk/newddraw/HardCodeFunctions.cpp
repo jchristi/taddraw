@@ -90,8 +90,58 @@ int UpdateTAProcess (void)
 	return DataShare->TAProgress;
 }
 
+int CountSelectedUnits (void)
+{
+	int Count= 0;
+	TAdynmemStruct * TAmainStruct_Ptr= * TAmainStruct_PtrPtr;
 
+	UnitStruct * Start= TAmainStruct_Ptr->Players[TAmainStruct_Ptr->LocalHumanPlayer_PlayerID].Units;
+	UnitStruct * OwnUnitEnd=  TAmainStruct_Ptr->Players[TAmainStruct_Ptr->LocalHumanPlayer_PlayerID].UnitsAry_End;
 
+	if ((NULL==Start)
+		||(NULL==OwnUnitEnd))
+	{
+		return 0;
+	}
+
+	while (Start<=OwnUnitEnd)
+	{
+		if (Start->UnitID)
+		{
+			if (0!=(0x20& Start->UnitSelected))
+			{
+				if (0.0F==(Start->Nanoframe))
+				{
+					if (0!=(0x10& Start->UnitSelected))
+					{
+						Count++;
+					}
+				}
+			}
+		}
+		Start= &Start[1];
+	}
+
+	return Count;
+}
+
+void SendOrder (unsigned int TAX, unsigned int TAY, unsigned int TAZ, int OrderType, bool Shift)
+{
+	MOUSEEVENT Mevent;
+	Position_Dword Pos;
+
+	Mevent.X= 0;
+	Mevent.Y= 0;
+	Mevent.Msg= WM_NULL;
+	Mevent.PressTime_sec= 0;
+	Mevent.fwKeys= Shift? 1<<2: 0;
+
+	Pos.X= TAX;
+	Pos.Y= TAY;
+	Pos.Z= TAZ;
+
+	MOUSE_EVENT_2UnitOrder_ ( &Mevent, OrderType, 0, &Pos, 0, 0);
+}
 
 LPDWORD GetUnitIDMaskAryByCategory (LPSTR CategoryName_cstrp)
 {
@@ -132,6 +182,44 @@ bool MatchInTypeAry (WORD ID, DWORD SelectedUnitTypeIDAry_Dw[])
 	return false;
 }
 
+int GetMaxScrollX()
+{
+	int *PTR = (int*)0x00511de8;
+	int *MapSizeX = (int*)(*PTR + 0x1422b);
+	return *MapSizeX - (LocalShare->ScreenWidth-128);
+}
+
+int GetMaxScrollY()
+{
+	int *PTR = (int*)0x00511de8;
+	int *MapSizeY = (int*)(*PTR + 0x1422f);
+	return *MapSizeY - (LocalShare->ScreenHeight-64);
+}
+
+void ScrollToCenter(int x, int y)
+{
+	int *PTR = (int*)TAmainStruct_PtrPtr;
+	int *XPointer = (int*)(*PTR + 0x1431f);
+	int *YPointer = (int*)(*PTR + 0x14323);
+
+	x -= (((*TAProgramStruct_PtrPtr)->ScreenWidth)-128)/2;
+	y -= (((*TAProgramStruct_PtrPtr)->ScreenHeight)-64)/2;
+
+	if(x<0)
+		x = 0;
+	if(y<0)
+		y = 0;
+	if(x>GetMaxScrollX())
+		x = GetMaxScrollX();
+	if(y>GetMaxScrollY())
+		y = GetMaxScrollY();
+
+	//*XPointer = x;
+	*(XPointer + 2) = x;
+	//*YPointer = y;
+	*(YPointer + 2)= y;
+}
+
 void freeTAMem (LPVOID MemAddress)
 {
 	__try
@@ -166,20 +254,25 @@ void DeselectUnits(void)
 {
 	//clean selected units
 	TAdynmemStruct *PTR = *((TAdynmemStruct * *)0x00511de8);
-	UnitStruct * Start= PTR->OwnUnitBegin;
+	UnitStruct * Start= PTR->Players[PTR->LocalHumanPlayer_PlayerID].Units;
+	UnitStruct * OwnUnitEnd=  PTR->Players[PTR->LocalHumanPlayer_PlayerID].UnitsAry_End;
 
-	while (Start<=(PTR->OwnUnitEnd))
+
+	while (Start<=OwnUnitEnd)
 	{
-		if (0!=(0x20& Start->UnitSelected))
+		if (Start->UnitID)
 		{
-			if (0.0F==(Start->Nanoframe))
+			if (0!=(0x20& Start->UnitSelected))
 			{
-				Start->UnitSelected= (Start->UnitSelected)& (0xFFFFFFEF);
+				if (0.0F==(Start->Nanoframe))
+				{
+					Start->UnitSelected= (Start->UnitSelected)& (0xFFFFFFEF);
+				}
 			}
 		}
-
 		Start= &Start[1];
 	}
+	PTR->ShowRangeUnitIndex= 0;
 }
 
 int ChatText (LPSTR str)
@@ -246,6 +339,14 @@ _CopyGafToContext CopyGafToContext= (_CopyGafToContext)0x04B7F90;
 _CheckUnitInPlayerLOS CheckUnitInPlayerLOS= (_CheckUnitInPlayerLOS)0x00465AC0;
 
 _UnitName2ID UnitName2ID= (_UnitName2ID)0x0488B10;
+
+_MOUSE_EVENT_2UnitOrder_ MOUSE_EVENT_2UnitOrder_= (_MOUSE_EVENT_2UnitOrder_) 0x0048CF30;
+
+_CorretCursor_InGame CorretCursor_InGame= (_CorretCursor_InGame)0x048D220;
+
+_SetUICursor SetUICursor= (_SetUICursor)0x4AB400;
+
+_SelectAllSelectedUnits SelectAllSelectedUnits= (_SelectAllSelectedUnits)0x0048BE00;
 //////////////////////////////////////////////////////////////////////////////////////////
 /// Not working.
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -264,11 +365,9 @@ _GetIniFileInt GetIniFileInt= (_GetIniFileInt) 0x49F5A0;
 LPDWORD AISearchMapEntriesLimit= (LPDWORD) 0x0040EAD6;
 
 LPBYTE AddrAboutCircleSelect= (LPBYTE)0x48C599;
-//
+LPBYTE AddrUNITINFOInited= (LPBYTE)0x42DB52;
+
 _ApplySelectUnitGUI ApplySelectUnitGUI= (_ApplySelectUnitGUI)0x00495860;
-
-
-
 
 _Init_srand Init_srand= (_Init_srand)0x4B62D0;
 _InitTAPath InitTAPath= (_InitTAPath)0x4BCE10;

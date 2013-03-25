@@ -25,7 +25,8 @@ GUIExpand::GUIExpand ()
 	{
 		myShareDialog = new ShareDialogExpand(TRUE);
 	}
-	myMinimap= new FullScreenMinimap ( MyConfig->GetIniBool ( "FullScreenMinimap", FALSE));
+
+	myMinimap= new FullScreenMinimap ( MyConfig->GetIniBool ( "FullScreenMinimap", FALSE) );
 
 	int i= MyConfig->GetIniInt ( "MenuWidth", 0);
 	if (0!=i)

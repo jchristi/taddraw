@@ -350,10 +350,12 @@ BOOL PCX::Load(const char *filename, BOOL fOnlyHeader)
 
 	long lFileSize = GetFileSize(file, NULL) - sizeof(header);
 
-	long nWidth = header.width + 1;
-	long nHeight = header.height + 1;
-	long lSize = (long)nWidth * nHeight;
+	 nWidth = header.height- header.y+1;
+	 nHeight = header.width- header.x+1;
+	lSize = (nHeight*nWidth);
 	lImageSize = lSize;
+	lSize= (lSize* (header.bits_per_pixel/ 8)/ 1000+ 1)* 1000;
+
 	if(lpBuffer)
 	{
 		Erase();
@@ -365,7 +367,7 @@ BOOL PCX::Load(const char *filename, BOOL fOnlyHeader)
 		return TRUE;
 	}
 	//
-	BYTE *tmpbuf = new BYTE[lFileSize];
+	BYTE *tmpbuf = (BYTE *)malloc (lFileSize);
 	BYTE *svtmpbuf = tmpbuf; // to delete tmpbuf later...
 
 	if(tmpbuf == NULL)
@@ -377,14 +379,14 @@ BOOL PCX::Load(const char *filename, BOOL fOnlyHeader)
 	lpBuffer = new BYTE[lSize];
 	if (lpBuffer == NULL )
 	{
-		delete [] tmpbuf;
+		delete [] svtmpbuf;
 		CloseHandle(file);
 		return FALSE;
 	}
-	ReadFile(file, tmpbuf, lFileSize, &bw, NULL);
+	ReadFile ( file, tmpbuf, lFileSize, &bw, NULL);
 	CloseHandle(file);
 	count = 0;
-	while(count < lSize)
+	while(count < lImageSize)
 	{
 		data = *tmpbuf++;
 		if((data >= 192) && (data <= 255))
@@ -413,7 +415,7 @@ BOOL PCX::Load(const char *filename, BOOL fOnlyHeader)
 			palette[i].peFlags = PC_EXPLICIT;
 		}
 	}
-	delete[] svtmpbuf;
+	free (svtmpbuf);
 	return TRUE;
 }
 
@@ -668,15 +670,15 @@ void PCX::Erase()
 	lpBuffer= NULL;
 }
 
-short PCX::Width()
+long PCX::Width()
 {
 	// note that this function returns the width in pixels, not in bytes!
-	return header.width + 1;
+	return nWidth;
 }
 
-short PCX::Height()
+long PCX::Height()
 {
-	return header.height + 1;
+	return nHeight;
 }
 
 

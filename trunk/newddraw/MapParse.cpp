@@ -244,8 +244,11 @@ MiniMapPicture::~MiniMapPicture ()
 
 LPBYTE MiniMapPicture::StretchTATNTDataToMiniMap (PTNTHeaderStruct TATNT_PTNTH)
 {
-	int MapDataWidth_I= TATNT_PTNTH->Width;
-	int MapDataHeight_I= TATNT_PTNTH->Height;
+
+	
+	int MapDataPitch_I= TATNT_PTNTH->Width;
+	int MapDataWidth_I= MapDataPitch_I- 1;
+	int MapDataHeight_I= TATNT_PTNTH->Height- 4;
 	float XInterval_I;
 	float YInterval_I;
 	float MiniMapScale= static_cast<float>(Width)/ static_cast<float>(Height);
@@ -271,7 +274,7 @@ LPBYTE MiniMapPicture::StretchTATNTDataToMiniMap (PTNTHeaderStruct TATNT_PTNTH)
 			Width= Height;
 		}
 	}
-	XInterval_I= static_cast<float>(MapDataWidth_I)* 32.0f;
+	XInterval_I= static_cast<float>(MapDataPitch_I)* 32.0f;
 	XInterval_I= XInterval_I/ Width;
 	YInterval_I= static_cast<float>(MapDataHeight_I)* 32.0f;
 	YInterval_I= YInterval_I/ Height;
@@ -299,7 +302,7 @@ LPBYTE MiniMapPicture::StretchTATNTDataToMiniMap (PTNTHeaderStruct TATNT_PTNTH)
 	for (int YPos= 0, YInTrue= 0; YPos<Height; YPos++, YInTrue= static_cast<int> (YPos* YInterval_I))
 	{	//Y
 		int MiniMapPixelYStart= YPos* Width;
-		int MiniMapTileIndexYoffset= (YInTrue/ 32)* (MapDataWidth_I);
+		int MiniMapTileIndexYoffset= (YInTrue/ 32)* (MapDataPitch_I);
 		int MiniMapTileYOffset= (YInTrue% 32)* 32;
 
 		// what's the hell wrong.

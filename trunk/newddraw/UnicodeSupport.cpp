@@ -1189,7 +1189,7 @@ void CopyToContextScreenMem (OFFSCREEN * OFFSCREEN_Ptr, PSpecScreenSurface SrcSp
 	int SrclPitch= SrcSpecScreenSurface->lPitch;
 	LPBYTE Desc= static_cast<LPBYTE>(OFFSCREEN_Ptr->lpSurface);
 	LPBYTE Src= static_cast<LPBYTE>(SrcSpecScreenSurface->SurfaceMem_Pvoid);
-	for (unsigned int i= 0; i<(OFFSCREEN_Ptr->Height- 2); ++i)
+	for (int i= 0; i<(OFFSCREEN_Ptr->Height- 2); ++i)
 	{
 		memcpy_s ( Desc+ (i* DesclPitch), DesclPitch, Src+ (i* SrclPitch),  DesclPitch);
 	}
@@ -1202,7 +1202,7 @@ void CopyToSpecSurfaceMem (PSpecScreenSurface SrcSpecScreenSurface, OFFSCREEN * 
 	int DesclPitch= SrcSpecScreenSurface->lPitch;
 	LPBYTE Src= static_cast<LPBYTE>(OFFSCREEN_Ptr->lpSurface);
 	LPBYTE Desc= static_cast<LPBYTE>(SrcSpecScreenSurface->SurfaceMem_Pvoid);
-	for (unsigned int i= 0; i<(OFFSCREEN_Ptr->Height- 2); ++i)
+	for (int i= 0; i<(OFFSCREEN_Ptr->Height- 2); ++i)
 	{
 		memcpy_s ( Desc+ (i* DesclPitch), DesclPitch, Src+ (i* SrclPitch),  DesclPitch);
 	}

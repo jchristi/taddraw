@@ -21,9 +21,14 @@ public:
 	{
 		return Bits;
 	}
+	long BufSize ()
+	{
+		return lSize;
+	}
 private:
 	BITMAPFILEHEADER BMPFileHeader;
 	LPBITMAPINFO BMPInfo_p;
 	LPBYTE Bits;
 	LOGPALETTE * TAPalette_p;
+	long lSize;
 };

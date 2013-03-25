@@ -56,6 +56,8 @@ struct _GUI9IDControl;
 struct _TAProgramStruct ;
 struct _GAFSequence;
 struct RadarUnit_ ;
+struct _MOUSEEVENT ;
+struct _Position_Dword ;
 struct Point3{
 	int x;
 	int y;
@@ -228,7 +230,9 @@ typedef struct _GUIInfo
 	int field_74;
 	int field_78;
 	char field_7C[60];
-	char field_B8[3090];
+	char  field_B8[2042];
+	char RadarObjecColor[16];
+	char field_8C2[1032];
 	int GUIUpdated_b;
 }GUIInfo;
 typedef struct _RaceSideData
@@ -271,6 +275,15 @@ typedef struct _RaceSideData
 	DWORD Font_File ;
 }RaceSideData, *PRaceSideData;
 
+typedef struct _Position_Dword 
+{
+	unsigned short x_;
+	unsigned short X;
+	unsigned short z_;
+	unsigned short Z;
+	unsigned short y_;
+	unsigned short Y;
+} Position_Dword;
 //settimer 4fb368
 
 struct TAdynmemStruct{
@@ -281,7 +294,7 @@ struct TAdynmemStruct{
 	_GUIInfo desktopGUI;
 	char data3[0x97C];
 	PlayerStruct Players[10];	//0x1B63 , end at 0x2851
-
+	
 	char data4[331];
 	unsigned int data5;
 	unsigned int AllyStruct_Ptr;
@@ -304,14 +317,20 @@ struct TAdynmemStruct{
 	int unk1;
 	int Height2;
 
-	char data8[0x6];
+	char data8[0x4];
 
-	short MouseMapPosX;  //0x2CAC
-	char data9[6];
-	short MouseMapPosY;  //0x2CB4
+	_Position_Dword MouseMapPos; // 0x02CAA
+
+
 	char data10[4];
-	unsigned short MouseOverUnit; //0x2CBA
-	char data11[0x8];
+	unsigned short MouseOverUnit; 
+	unsigned short MouseOverFeature ;
+	unsigned char CurrentCursora_Index;
+	unsigned char field_2CBF;
+	unsigned char field_2CC0;
+	unsigned short field_2CC1;
+	unsigned char PrepareOrder_Type;
+
 	short BuildNum;  //0x2CC4,  unitindex for selected OwnUnitBegin to build
 	char BuildSpotState; //0x40=notoktobuild
 	char data12[0x2C];
@@ -322,19 +341,22 @@ struct TAdynmemStruct{
 	ProjectileStruct *Projectiles; //0x141F7
 	char data13[0x10];
 	WreckageInfoStruct *WreckageInfo; //0x1420B
-	char data14[0x1c];
+	char data14[0x14];
+	int RealMapSizeX;
+	int RealMapSizeY;
 	int MapSizeX;
 	int MapSizeY;
-	int FeatureMapSizeX; //0x14233
+	int FeatureMapSizeX; //0x14233  
 	int FeatureMapSizeY; //0x14237
 	char data15[0x18];
 	int NumFeatureDefs;
 	char data16[0x18];
 	FeatureDefStruct *FeatureDef; //0x1426F
 	unsigned short * MAPPED_MEMORY_p;
-	DWORD LastZPos;
-	LPVOID	*EyeBallMemory;  //0x1427B
-	char data18[2];
+	unsigned int LastZPos;
+	unsigned short * MinimapMEMORY_p;
+	unsigned char SeaLevel ;
+	unsigned char field_85;
 	unsigned short LosType;// 0x14281
 	char data19[4];
 	FeatureStruct *Features; //0x14287
@@ -347,10 +369,10 @@ struct TAdynmemStruct{
 	short RadarPicSizeX;  //0x142EB
 	short RadarPicSizeY;  //0x142ED
 	char data22[4];
-	int CirclePointer;//0x142F3 //used in drawcircle funktion
+	int CameraToUnit;//0x142F3 //used in drawcircle funktion
 	char data23[0x28];
-	int MapX;	//0x1431f
-	int MapY;   //0x14323
+	int EyeBallMapXPos;	//0x1431f
+	int EyeBallMapYPos;   //0x14323
 	int MapXScrollingTo; //0x14327
 	int MapYScrollingTo; //0x1432B
 	char data24[0x24];
@@ -368,16 +390,20 @@ struct TAdynmemStruct{
 	UnitDefStruct *UnitDef;  //0x1439b 
 	char data26[0x440];
 	_GAFSequence * radlogo; //0147DF
-	char data26_[0xE8];
-	_GAFSequence * CurcosNormal;//0x148CB
-	char data27[0x4c];
+	char data26_[0x9C];
+	_GAFSequence * cursor_ary [0x15];//0x1487F
+	char data27[0x48];
 	int NumExplosions; //0x1491B
 	//char data9[0x6270];
 	ExplosionStruct Explosions[300]; //0x1491F
 	LPVOID data28; //0x1AB8F
 	char data29[0x1D294]; //0x1AB93
 	RECT GameSreen_Rect; //0x37E27 
-	char data30[0xC3];
+	DWORD GameScreenWidth;
+	DWORD GameScreenHeight;
+	char data30[0x5d];
+	unsigned short ShowRangeUnitIndex;
+	char data30_[0x5C];
 	int InterfaceType;
 	char data31[0x31];
 	unsigned short SoftwareDebugMode;// 0x37f2f
@@ -430,9 +456,12 @@ struct FeatureDefStruct {
 
 struct ProjectileStruct {
 	WeaponStruct *Weapon;
-	int XPos;
-	int ZPos;
-	int YPos;
+	short int data0_1;
+	short int XPos;
+	short int data0_2;
+	short int ZPos;
+	short int data0_3;
+	short int YPos;
 	int XPosStart;
 	int ZPosStart;
 	int YPosStart;
@@ -443,7 +472,10 @@ struct ProjectileStruct {
 	short XTurn;
 	short ZTurn;
 	short YTurn;
-	char data2[45];
+	char data2[42];
+	char myLos_PlayerID;
+	short int field_67;;
+
 	struct {
 		bool unk1 : 1;
 		bool Inactive : 1;
@@ -782,9 +814,9 @@ typedef struct _Vertices
 
 typedef struct _OFFSCREEN
 {
-	unsigned int  Width ;
-	unsigned int  Height ;
-	unsigned int  lPitch  ;
+	int  Width ;
+	int  Height ;
+	int  lPitch  ;
 	LPVOID  lpSurface ;
 	unsigned int  field_10 ;
 	unsigned int  field_14 ;
@@ -1207,6 +1239,18 @@ typedef struct _TAProgramStruct
 	char field_728;
 }TAProgramStruct;
 
+typedef struct _MOUSEEVENT 
+{
+	DWORD  X ;
+		DWORD Y ;
+		DWORD fwKeys ;
+		DWORD PressTime_sec ;
+		DWORD Msg  ;
+		DWORD DblClick ;
+}MOUSEEVENT ;
+
+
+
 
 enum PlayerPropertyMask
 {
@@ -1251,9 +1295,31 @@ enum SharedStates
 
 enum UNITINFOMASK_0
 {
+	canmove          = 1,
+	canfire          = 2,
+	downloadable     = 0x20,
+	builder          = 0x40,
 	canfly           = 0x800,
 	canhover         = 0x1000
 };
+namespace ordertype
+{
+	enum ORDERTYPE
+	{
+		STOP             = 1,
+		MOVE             = 2,
+		ATTACK           = 3,
+		BLAST            = 4,
+		LOAD             = 5,
+		UNLOAD           = 6,
+		DEFEND           = 7,
+		REPAIR           = 8,
+		PATROL           = 9,
+		RECLAIM          = 0xC,
+		CAPTURE          = 0xD,
+		NOACTION         = 0xE
+	};
+}
 
 namespace softwaredebugmode
 {
@@ -1268,6 +1334,35 @@ namespace softwaredebugmode
 		Radar            = 0x200,
 		Shootall         = 0x400
 	};
+};
+
+enum CURSORINDEX
+{
+	cursorattack = 1   ,
+	cursorairstrike ,
+	cursortoofar    ,
+	cursorcapture   ,
+	cursordefend    ,
+	cursorrepair    ,
+	cursorpatrol    ,
+	cursorpickup    ,
+	cursorteleport  ,
+	cursorrevive    ,
+	cursorreclamate ,
+	cursorload      ,
+	cursorunload    ,
+	cursormove      ,
+	cursorselect    ,
+	cursorfindsite  ,
+	cursorred       ,
+	cursorgrn       ,
+	cursornormal    ,
+	cursorhourglass ,
+};
+
+enum MOUSESPOTSTATE
+{
+	 CIRCLESELECTING  = 8
 };
 
 #define PLAYERNUM (10)

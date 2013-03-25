@@ -150,9 +150,6 @@
     <ClCompile Include="rings.cpp">
       <Filter>Source Files\Functions\OrginalTadr</Filter>
     </ClCompile>
-    <ClCompile Include="gaf.cpp">
-      <Filter>Source Files\Functions\gaf</Filter>
-    </ClCompile>
     <ClCompile Include="TAConfig.cpp">
       <Filter>Source Files\Functions\externFromChina\Config</Filter>
     </ClCompile>
@@ -200,6 +197,21 @@
     </ClCompile>
     <ClCompile Include="UnitIcon.cpp">
       <Filter>Source Files\Functions\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitMinimap.cpp">
+      <Filter>Source Files\Functions\externFromChina\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjectileMap.cpp">
+      <Filter>Source Files\Functions\externFromChina\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="MappedMAP.cpp">
+      <Filter>Source Files\Functions\externFromChina\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="MegamapControl.cpp">
+      <Filter>Source Files\Functions\externFromChina\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="gaf.cpp">
+      <Filter>Source Files\Functions\gaf</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -274,9 +286,6 @@
     </ClInclude>
     <ClInclude Include="unitrotate.h">
       <Filter>Header Files\Functions\OrginalTadr</Filter>
-    </ClInclude>
-    <ClInclude Include="taunitdrawer.h">
-      <Filter>Header Files\Functions\externFromChina</Filter>
     </ClInclude>
     <ClInclude Include="minimaphandler.h">
       <Filter>Header Files\Functions\OrginalTadr</Filter>
@@ -361,6 +370,12 @@
     </ClInclude>
     <ClInclude Include="BMP.h">
       <Filter>Header Files\others</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectilesMap.h">
+      <Filter>Header Files\Functions\externFromChina\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="MegamapControl.h">
+      <Filter>Header Files\Functions\OrginalTadr</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -66,9 +66,12 @@ struct pcx_header
 class PCX
 {
 private:
+	long nWidth;
+	long nHeight;
 	pcx_header header;
 	PALETTEENTRY *palette;
 	long lImageSize;
+	long lSize;
 	BYTE *lpBuffer;
 	BYTE *WriteLine(BYTE *pbuf, DWORD line);
 	BYTE *ReadLine24(BYTE *pbuf, DWORD line, short sv);
@@ -78,9 +81,10 @@ public:
 	BOOL Load(const char *fname, BOOL fOnlyHeader = FALSE);
 	BOOL Load24(const char *fname);
 	BOOL Save(const char *fname);
-	short Width();
-	short Height();
+	long Width();
+	long Height();
 	long Size() {return lImageSize;}
+	long BufSize() {return lSize;}
 	pcx_header& Info() {return header;}
 	void Erase();
 	operator BYTE *() {return lpBuffer;}
@@ -93,6 +97,6 @@ public:
 	void CopyPalette(PALETTEENTRY *p);
 	long Pitch () {return header.bytes_per_line;}
 };
-
+extern PALETTEENTRY TAPalette[];
 
 #endif

@@ -71,8 +71,6 @@ int __stdcall AddtionInit (PInlineX86StackBuffer X86StrackBuffer)
 
 	FixTABug= new TABugFixing;
 
-	myExternQuickKey= new ExternQuickKey ;
-
 	GUIExpander= new GUIExpand;
 
 	return 0;
@@ -108,6 +106,7 @@ int __stdcall AddtionInitAfterDDraw (PInlineX86StackBuffer X86StrackBuffer)
 		NowSupportUnicode= new UnicodeSupport ( );
 	}
 
+	myExternQuickKey= new ExternQuickKey ;
  
  	LocalShare->TAWndProc = (WNDPROC)SetWindowLong ( (*TAProgramStruct_PtrPtr)->TAClass_Hwnd, GWL_WNDPROC, (long)WinProc);
 

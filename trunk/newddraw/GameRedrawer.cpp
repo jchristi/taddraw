@@ -10,6 +10,7 @@ TAGameAreaReDrawer::TAGameAreaReDrawer()
 {
 	GameAreaSurfaceFront_ptr= NULL;
 	GameAreaSurfaceBack_ptr= NULL;
+	
 }
 
 LPDIRECTDRAWSURFACE TAGameAreaReDrawer::InitOwnSurface (LPDIRECTDRAW TADD)
@@ -42,8 +43,9 @@ LPDIRECTDRAWSURFACE TAGameAreaReDrawer::InitOwnSurface (LPDIRECTDRAW TADD)
 
 		TADD->CreateSurface( &ddsd, &GameAreaSurfaceFront_ptr, NULL);
 		TADD->CreateSurface( &ddsd, &GameAreaSurfaceBack_ptr, NULL);
-
-
+		
+	
+		Cls ( );
 	}
 	
 	return GameAreaSurfaceFront_ptr;
@@ -63,6 +65,26 @@ TAGameAreaReDrawer::~TAGameAreaReDrawer()
 	}
 }
 
+void TAGameAreaReDrawer::Cls (void)
+{
+	if (NULL!=GameAreaSurfaceBack_ptr)
+	{
+		if ( DD_OK!=GameAreaSurfaceBack_ptr->IsLost ( ))
+		{
+			GameAreaSurfaceBack_ptr->Restore ( );
+		}
+
+		DDBLTFX ddbltfx;
+		DDRAW_INIT_STRUCT(ddbltfx);
+		ddbltfx.dwFillColor= 245;
+
+		if(GameAreaSurfaceBack_ptr->Blt ( NULL, NULL, NULL, DDBLT_ASYNC| DDBLT_COLORFILL, &ddbltfx)!=DD_OK)
+		{
+			GameAreaSurfaceBack_ptr->Blt ( NULL, NULL, NULL, DDBLT_WAIT| DDBLT_COLORFILL , &ddbltfx);
+		}
+	}
+
+}
 void TAGameAreaReDrawer::BlitTAGameArea(LPDIRECTDRAWSURFACE DestSurf)
 {
 	if (NULL!=GameAreaSurfaceFront_ptr)
@@ -74,14 +96,13 @@ void TAGameAreaReDrawer::BlitTAGameArea(LPDIRECTDRAWSURFACE DestSurf)
 		DDBLTFX ddbltfx;
 		DDRAW_INIT_STRUCT(ddbltfx);
 
-		ddbltfx.ddckSrcColorkey.dwColorSpaceLowValue= 0xffff;
-		ddbltfx.ddckSrcColorkey.dwColorSpaceHighValue= 0xffff;
+
 		RECT GameScreen;
 		TAWGameAreaRect ( &GameScreen);
 
-		if(DestSurf->Blt ( &GameScreen, GameAreaSurfaceFront_ptr, NULL, DDBLT_ASYNC | DDBLT_KEYSRCOVERRIDE , &ddbltfx)!=DD_OK)
+		if(DestSurf->Blt ( &GameScreen, GameAreaSurfaceFront_ptr, NULL, DDBLT_ASYNC  , &ddbltfx)!=DD_OK)
 		{
-			DestSurf->Blt ( &GameScreen, GameAreaSurfaceFront_ptr, NULL, DDBLT_WAIT | DDBLT_KEYSRCOVERRIDE , &ddbltfx);
+			DestSurf->Blt ( &GameScreen, GameAreaSurfaceFront_ptr, NULL, DDBLT_WAIT  , &ddbltfx);
 		}
 	}
 }
@@ -249,7 +270,7 @@ BOOL TAGameAreaReDrawer::MixBitsInBlit (LPRECT DescRect, LPBYTE SrcBits, LPPOINT
 	return Rtn_B;
 }
 
-BOOL TAGameAreaReDrawer::MixDSufInBlit (LPRECT DescRect, LPDIRECTDRAWSURFACE Src_DDrawSurface, LPRECT SrcScope, DWORD Background_Color)
+BOOL TAGameAreaReDrawer::MixDSufInBlit (LPRECT DescRect, LPDIRECTDRAWSURFACE Src_DDrawSurface, LPRECT SrcScope)
 {
 	BOOL Rtn_B= TRUE;
 
@@ -263,11 +284,9 @@ BOOL TAGameAreaReDrawer::MixDSufInBlit (LPRECT DescRect, LPDIRECTDRAWSURFACE Src
 		DDBLTFX ddbltfx;
 		DDRAW_INIT_STRUCT(ddbltfx);
 
-		ddbltfx.ddckSrcColorkey.dwColorSpaceHighValue= Background_Color& 0xffff;
-		ddbltfx.ddckSrcColorkey.dwColorSpaceLowValue= Background_Color>> 16;
-		if(GameAreaSurfaceBack_ptr->Blt ( DescRect, Src_DDrawSurface, SrcScope, DDBLT_ASYNC | DDBLT_KEYSRCOVERRIDE, &ddbltfx)!=DD_OK)
+		if(GameAreaSurfaceBack_ptr->Blt ( DescRect, Src_DDrawSurface, SrcScope, DDBLT_ASYNC, &ddbltfx)!=DD_OK)
 		{
-			if (GameAreaSurfaceBack_ptr->Blt ( DescRect, Src_DDrawSurface, SrcScope, DDBLT_WAIT | DDBLT_KEYSRCOVERRIDE, &ddbltfx)!=DD_OK)
+			if (GameAreaSurfaceBack_ptr->Blt ( DescRect, Src_DDrawSurface, SrcScope, DDBLT_WAIT , &ddbltfx)!=DD_OK)
 			{
 				Rtn_B= FALSE;
 			}
@@ -457,15 +476,24 @@ LPRECT TAGameAreaReDrawer::TAWGameAreaRect (LPRECT Out_Rect)
 
 	memcpy ( Out_Rect, &(*TAmainStruct_PtrPtr)->GameSreen_Rect, sizeof(RECT));
 
+	Out_Rect->right= Out_Rect->left+ (*TAmainStruct_PtrPtr)->GameScreenWidth;
+	Out_Rect->bottom= Out_Rect->top+ (*TAmainStruct_PtrPtr)->GameScreenHeight;
+
 	return Out_Rect;
 }
 
 LPDIRECTDRAWSURFACE TAGameAreaReDrawer::Flip (void)
 {
-	LPDIRECTDRAWSURFACE GameAreaSurface_ptr= GameAreaSurfaceFront_ptr;
+// 	if(GameAreaSurfaceFront_ptr->Blt ( NULL, GameAreaSurfaceBack_ptr, NULL, DDBLT_ASYNC, NULL)!=DD_OK)
+// 	{
+// 		GameAreaSurfaceFront_ptr->Blt ( NULL, GameAreaSurfaceBack_ptr, NULL, DDBLT_WAIT, NULL);
+// 	}
 
+	LPDIRECTDRAWSURFACE GameAreaSurface_ptr= GameAreaSurfaceFront_ptr;
 	GameAreaSurfaceFront_ptr= GameAreaSurfaceBack_ptr;
 	GameAreaSurfaceBack_ptr= GameAreaSurface_ptr;
+
+
 
 	return GameAreaSurfaceFront_ptr;
 }

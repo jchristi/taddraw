@@ -57,6 +57,13 @@
 #define SetVisiblePosX 35
 #define SetVisiblePosY 115
 
+#define MegaMapKey (11)
+#define MegaMapKeyPosX (20)
+#define MegaMapKeyPoxY (137)
+#define MegamapKeyWidth (60)
+#define MegamapKeyHeight (15)
+
+
 extern HINSTANCE HInstance;
 struct tagInlineX86StackBuffer;
 typedef struct tagInlineX86StackBuffer * PInlineX86StackBuffer;
@@ -119,6 +126,9 @@ class Dialog
     int VirtualWhiteboardKey;
     bool WhiteboardKeyFocus;
 
+	int VirtualMegamap;
+	bool MegmapFocus;
+
     bool SetVisiblePushed;
     
     bool Inside(int x, int y, int Control);
@@ -135,6 +145,8 @@ class Dialog
     void DrawDelay();
     void DrawWhiteboardKey();
     void DrawVisibleButton();
+
+	void DrawMegaMapKey ();
 
     void SetAll();
     void ReadRegistry();

@@ -345,7 +345,8 @@ HRESULT __stdcall IDDrawSurface::Lock(LPRECT arg1, LPDDSURFACEDESC arg2, DWORD a
 		SurfaceMemory = NULL;
 
 	lPitch = arg2->lPitch;
-	
+	dwHeight= arg2->dwHeight;
+	dwWidth= arg2->dwWidth;
 	return result;
 #endif
 
@@ -402,8 +403,6 @@ HRESULT __stdcall IDDrawSurface::Unlock(LPVOID arg1)
 #ifndef XPOYDEBG
 	UpdateTAProcess ( );
 
-
-
 	if(PlayingMovie) //deinterlace and flip directly
 	{
 		if(!DisableDeInterlace)
@@ -443,21 +442,22 @@ HRESULT __stdcall IDDrawSurface::Unlock(LPVOID arg1)
 
 		DDDTA->Blit(lpBack);
 
-		lpDDClipper->SetClipList(BattleFieldRegion,0);
+		lpDDClipper->SetClipList ( BattleFieldRegion,0);
 		WhiteBoard->Blit(lpBack);
-		TAHook->Blit(lpBack);
-
-		lpDDClipper->SetClipList(ScreenRegion,0);
-		//SharedRect.Blit(lpBack);
-		Income->BlitIncome(lpBack);
+		//TAHook->Blit(lpBack);
 		CommanderWarp->Blit(lpBack);
-		SettingsDialog->BlitDialog(lpBack);
+
 		if ((GUIExpander)
 			&&(GUIExpander->myMinimap))
 		{
 			GUIExpander->myMinimap->Blit ( lpBack);
 		}
 
+		SettingsDialog->BlitDialog(lpBack);
+		Income->BlitIncome(lpBack);
+
+
+		lpDDClipper->SetClipList(ScreenRegion,0);
 
 		//////////////////////////////////////////////////////////////////////////
 		//unicode
@@ -465,12 +465,12 @@ HRESULT __stdcall IDDrawSurface::Unlock(LPVOID arg1)
 		{
 			NowSupportUnicode->Blt ( lpBack);
 		}
+
 		if(lpFront->Blt(NULL, lpBack, NULL, DDBLT_ASYNC, NULL)!=DD_OK)
 		{
 			lpFront->Blt(NULL, lpBack, NULL, DDBLT_WAIT, NULL);
-			OutptTxt("lpFront to lpBack Blit failed");
+			OutptTxt("lpBack to lpFront Blit failed");
 		}
-		
 	}
 
 	return result;
@@ -603,7 +603,7 @@ void IDDrawSurface::ScreenShot()
 
 		PCXScreen.NewBuffer(LocalShare->ScreenWidth, LocalShare->ScreenHeight);
 		PCXScreen.SetBuffer((UCHAR*)Buff);
-
+		PCXScreen.CopyPalette ( TAPalette);
 		if(PCXScreen.Save(ScreenShotName) == false)
 			OutptTxt("error writing screenshot");
 

@@ -101,10 +101,10 @@ BOOL TABugFixing::AntiCheat (void)
 
 	if (TRUE!=*IsCheating)
 	{
-// 		(*TAmainStruct_PtrPtr)->SoftwareDebugMode|= 2;
-// 	}
-// 	else
-// 	{
+		(*TAmainStruct_PtrPtr)->SoftwareDebugMode|= 2;
+	}
+	else
+	{
 		(*TAmainStruct_PtrPtr)->SoftwareDebugMode= ((*TAmainStruct_PtrPtr)->SoftwareDebugMode)& (~ 2);
 	}
 
