@@ -13,6 +13,11 @@ private:
 
 	SingleHook * GUIErrorLengthHookAry[GUIERRORCOUNT];
 
+	SingleHook * CDMusic_TAB;
+
+	InlineSingleHook * CDMusic_Menu_Pause;
+	InlineSingleHook * CDMusic_Victory_Pause;
+
 public:
 	TABugFixing ();
 	~TABugFixing ();
@@ -22,3 +27,6 @@ public:
 extern TABugFixing * FixTABug;;
 
 int __stdcall BadModelHunter (PInlineX86StackBuffer X86StrackBuffer);
+
+int __stdcall CDMusic_VictoryProc (PInlineX86StackBuffer X86StrackBuffer);
+int __stdcall CDMusic_MenuProc (PInlineX86StackBuffer X86StrackBuffer);

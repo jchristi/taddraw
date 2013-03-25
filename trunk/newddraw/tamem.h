@@ -16,7 +16,7 @@ struct PlayerInfoStruct;
 struct UnitStruct;
 struct UnitOrdersStruct;
 struct WeaponStruct;
-struct MapFileStruct;
+struct GameingState;
 struct UnitDefStruct;
 struct GafAnimStruct;
 struct Object3doStruct;
@@ -311,13 +311,13 @@ struct TAdynmemStruct{
 	char data7_[0x10];  //
 	short BuildPosX; //0x2C8E
 	short BuildPosY;
-	int BuildPosRealX; //0x2C92
-	int Height;
-	int BuildPosRealY;
-	int unk1;
-	int Height2;
+	unsigned int CircleSelect_Pos1TAx;
+	unsigned int CircleSelect_Pos1TAz;
+	unsigned int CircleSelect_Pos1TAy;
+	unsigned int CircleSelect_Pos2TAx;
+	unsigned int CircleSelect_Pos2TAz;
+	unsigned int CircleSelect_Pos2TAy;
 
-	char data8[0x4];
 
 	_Position_Dword MouseMapPos; // 0x02CAA
 
@@ -416,13 +416,19 @@ struct TAdynmemStruct{
 	DWORD field_38A3F ;
 	DWORD field_38A43 ;
 
-	short int GameTime; //0x38A47
+	int GameTime; //0x38A47
 	short int GameSpeed;
-	char ShotUrl;// 0x38a47+c= TA截图目录的字符串，即TA目录+当前用户名 
-	char data33[0x792];
-	MapFileStruct *MapFile; //0x391E9
+	short int GameSpeed_Init;
+	short int field_38A4F;
+	bool IsGamePaused;
+	unsigned char field_38A52;
+
+	char  Image_Output_Dir[256];  // 0x38a47+c= TA截图目录的字符串，即TA目录+当前用户名 
+	char  Movie_Shot_Output_Dir[256];
+	char data_33[0x596];
+
+	GameingState *GameingState_Ptr; //0x391E9
 	int data34;
-	char data_35[11];
 	int State_GUI_CallBack;//0x0391F1
 	LPVOID GUI_CallBack;
 };
@@ -484,8 +490,10 @@ struct ProjectileStruct {
 	char data3[1];
 }; //0x6B
 
-struct MapFileStruct{
-	char data[0x204];
+
+struct GameingState{
+	DWORD State;
+	char data[0x200];
 	char TNTFile[MAX_PATH];
 };
 
@@ -1242,11 +1250,11 @@ typedef struct _TAProgramStruct
 typedef struct _MOUSEEVENT 
 {
 	DWORD  X ;
-		DWORD Y ;
-		DWORD fwKeys ;
-		DWORD PressTime_sec ;
-		DWORD Msg  ;
-		DWORD DblClick ;
+	DWORD Y ;
+	DWORD fwKeys ;
+	DWORD PressTime_sec ;
+	DWORD Msg  ;
+	DWORD DblClick ;
 }MOUSEEVENT ;
 
 
@@ -1317,7 +1325,7 @@ namespace ordertype
 		PATROL           = 9,
 		RECLAIM          = 0xC,
 		CAPTURE          = 0xD,
-		NOACTION         = 0xE
+		BUILD         = 0xE
 	};
 }
 
@@ -1364,6 +1372,17 @@ enum MOUSESPOTSTATE
 {
 	 CIRCLESELECTING  = 8
 };
+namespace gameingstate
+{
+	enum GAMINGTYPE
+	{
+		MENU,
+		CAMPAIGN,
+		SKIRMISH,
+		MULTI
+	};
+}
+
 
 #define PLAYERNUM (10)
 

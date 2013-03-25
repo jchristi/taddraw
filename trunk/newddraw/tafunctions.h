@@ -104,6 +104,11 @@ extern _SetUICursor SetUICursor;
 typedef int (__cdecl * _SelectAllSelectedUnits)(void);
 extern _SelectAllSelectedUnits SelectAllSelectedUnits;
 
+
+typedef int (__stdcall* _GetPosition_Dword)(int X, int Y, int out_p);
+extern _GetPosition_Dword GetPosition_Dword;
+
+
 //////////////////////////////////////////////////////////////////////////////////////////
 /// Not working.
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -143,6 +148,7 @@ int GetMaxScrollX();
 void ScrollToCenter(int x, int y);
 
 int CountSelectedUnits (void);
+int PauseCDMusic();
 
 extern TAProgramStruct * * TAProgramStruct_PtrPtr;
 

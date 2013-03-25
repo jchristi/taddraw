@@ -43,7 +43,12 @@ unsigned int GUIErrorLengthAry[GUIERRORCOUNT]=
 };
 BYTE GUIErrorLengthBits[]= {0x80};
 
-unsigned int AppHelpDdrawCreate_addr= 0x049F710;
+unsigned int CDMusic_TABAddr= 0x00460E0D;
+BYTE CDMusic_TABBits[]= {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
+
+unsigned int CDMusic_Menu_PauseAddr= 0x00490B30;
+unsigned int CDMusic_Victory_PauseAddr= 0x4996DF;
+
 TABugFixing::TABugFixing ()
 {
 	NullUnitDeathVictim= new SingleHook ( NullUnitDeathVictimAddr, sizeof(NullUnitDeathVictimBits), INLINE_UNPROTECTEVINMENT, NullUnitDeathVictimBits);
@@ -60,8 +65,14 @@ TABugFixing::TABugFixing ()
 		GUIErrorLengthHookAry[i]= new SingleHook ( GUIErrorLengthAry[i], sizeof(GUIErrorLengthBits), INLINE_UNPROTECTEVINMENT, GUIErrorLengthBits);
 	}
 
+	HMODULE Audiere_hm= GetModuleHandleA ( "audiere.dll");
 
-
+	if (NULL!=Audiere_hm)
+	{// install music cd hook
+		CDMusic_TAB= new SingleHook ( CDMusic_TABAddr, sizeof(CDMusic_TABBits), INLINE_UNPROTECTEVINMENT, CDMusic_TABBits);
+		CDMusic_Menu_Pause= new InlineSingleHook ( CDMusic_Menu_PauseAddr, 5, INLINE_5BYTESLAGGERJMP, CDMusic_MenuProc);
+		CDMusic_Victory_Pause= new InlineSingleHook ( CDMusic_Victory_PauseAddr, 5, INLINE_5BYTESLAGGERJMP, CDMusic_VictoryProc);
+	}
 }
 
 TABugFixing::~TABugFixing ()
@@ -92,7 +103,20 @@ TABugFixing::~TABugFixing ()
 		
 	}
 
-
+	if (CDMusic_TAB)
+	{
+		delete CDMusic_TAB;
+	}
+	if (CDMusic_Menu_Pause)
+	{
+		delete CDMusic_Menu_Pause;
+	}
+	if (CDMusic_Victory_Pause)
+	{
+		delete CDMusic_Victory_Pause;
+	}
+	
+	
 }
 
 BOOL TABugFixing::AntiCheat (void)
@@ -150,3 +174,18 @@ int __stdcall BadModelHunter (PInlineX86StackBuffer X86StrackBuffer)
 	return 0;
 }
 
+int __stdcall CDMusic_MenuProc (PInlineX86StackBuffer X86StrackBuffer)
+{
+	if (1==*(DWORD * )(X86StrackBuffer->Esp+ 4))
+	{
+		PauseCDMusic ( );
+	}
+
+	return 0;
+}
+
+int __stdcall CDMusic_VictoryProc (PInlineX86StackBuffer X86StrackBuffer)
+{
+	PauseCDMusic ( );
+	return 0;
+}

@@ -274,6 +274,29 @@ void DeselectUnits(void)
 	}
 	PTR->ShowRangeUnitIndex= 0;
 }
+int PauseCDMusic()
+{
+
+//  	typedef  int (*_TAPauseMusic)(int Pause_B);
+//  	_TAPauseMusic TAPauseMusic= (_TAPauseMusic)0x004CE910;
+// 		int Rtn;
+// // 
+// 	__asm
+// 	{
+// 		push Pause_b;
+// 		mov ecx, [TAmainStruct_PtrPtr];
+// 		mov ecx, [ecx];
+// 		mov ecx, [ecx+ 0x10];
+// 		call TAPauseMusic;
+// 		mov Rtn, eax;
+// 	}
+typedef  MCIERROR  (WINAPI * _mciSendStringA)(  LPCSTR lpstrCommand,  LPSTR lpstrReturnString,  UINT uReturnLength,  HWND hwndCallback);
+	_mciSendStringA TAmciSendStringA= *(_mciSendStringA *)0x4FC3D8;
+	
+	
+	return TAmciSendStringA ( "pause cdaudio", NULL, 0, (*TAProgramStruct_PtrPtr)->TAClass_Hwnd);
+
+}
 
 int ChatText (LPSTR str)
 {
@@ -347,6 +370,8 @@ _CorretCursor_InGame CorretCursor_InGame= (_CorretCursor_InGame)0x048D220;
 _SetUICursor SetUICursor= (_SetUICursor)0x4AB400;
 
 _SelectAllSelectedUnits SelectAllSelectedUnits= (_SelectAllSelectedUnits)0x0048BE00;
+_GetPosition_Dword GetPosition_Dword=(_GetPosition_Dword)0x0484B50;
+
 //////////////////////////////////////////////////////////////////////////////////////////
 /// Not working.
 //////////////////////////////////////////////////////////////////////////////////////////

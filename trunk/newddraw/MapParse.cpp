@@ -121,44 +121,7 @@ void TNTtoMiniMap::MapFromTNTInMem (LPVOID Argc_PTNTH)
 	ParseMyTNTHeader ( static_cast<PTNTHeaderStruct>(Argc_PTNTH));
 	MapFromValidTNTHeader ( &TNTHeader);
 }
-/*
 
-void SaveToLagBmp (int a_Height, int b_Width,LPVOID MapPixelBytes_PB, LPTSTR FilePath= _T("c:\\temp.bmp"))
-{
-	BITMAPFILEHEADER Header;
-	BITMAPINFOHEADER InfoHeader;
-	memset ( &Header, 0, sizeof(BITMAPFILEHEADER));
-	memset ( &InfoHeader, 0, sizeof(BITMAPINFOHEADER));
-	//In_Cbitmap->
-	InfoHeader.biHeight= 0- a_Height;
-	InfoHeader.biWidth=  b_Width;
-	InfoHeader.biPlanes= 1;
-	InfoHeader.biSize= sizeof(BITMAPINFOHEADER);
-	InfoHeader.biCompression= BI_RGB;
-
-	InfoHeader.biXPelsPerMeter=  b_Width;
-	InfoHeader.biYPelsPerMeter= a_Height;
-
-	InfoHeader.biBitCount= 8;
-	Header.bfSize= sizeof(BITMAPFILEHEADER)+ InfoHeader.biSize+ sizeof(RGBQUAD)* 256+ InfoHeader.biSizeImage;
-	Header.bfOffBits= sizeof(BITMAPFILEHEADER)+ InfoHeader.biSize+ sizeof(RGBQUAD)* 256;
-
-	InfoHeader.biSizeImage= InfoHeader.biYPelsPerMeter* InfoHeader.biWidth* (InfoHeader.biBitCount/ 8);
-	Header.bfType= 'MB';
-
-	//忘掉怎么让Cbitmap可以用调色板,直接用TA的。
-	CString BullShit_Cstring( FilePath);
-
-	CFile BitmapFile_Cfile ( BullShit_Cstring, CFile::modeRead| CFile::modeCreate| CFile::modeWrite);
-
-	BitmapFile_Cfile.SeekToBegin();
-	BitmapFile_Cfile.Write ( &Header, sizeof(BITMAPFILEHEADER));
-	BitmapFile_Cfile.Write ( &InfoHeader, sizeof(BITMAPINFOHEADER));
-	BitmapFile_Cfile.Write ( TNTtoMiniMap::TALogPalette_Ptr->palPalEntry, sizeof(RGBQUAD)* 256);
-	int BitmapBitCount= InfoHeader.biSizeImage;
-	BitmapFile_Cfile.Write ( MapPixelBytes_PB, BitmapBitCount);
-}
-*/
 
 void TNTtoMiniMap::MapFromValidTNTHeader (PTNTHeaderStruct Argc_PTNTH)
 {
