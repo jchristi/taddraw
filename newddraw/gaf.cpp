@@ -186,7 +186,6 @@ void CopyGafToBits (LPBYTE PixelBits, POINT * Aspect, unsigned int X, unsigned i
 		int xcount;
 		int ycount;
 		int y;
-		COLORREF *color;
 
 		int xofs = X - GafFrame->xPosition;
 		int yofs = Y - GafFrame->yPosition;

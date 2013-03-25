@@ -212,12 +212,12 @@ void Dialog::RestoreCursor ()
 		lpCursor->Lock(NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
 
 		unsigned char *SurfPTR = (unsigned char*)ddsd.lpSurface;
+		CursorBackground= GafFrame->Background;
 		POINT Aspect= { ddsd.lPitch, ddsd.dwHeight};
+		memset ( SurfPTR, CursorBackground, ddsd.lPitch* ddsd.dwHeight );
 		CopyGafToBits ( SurfPTR, &Aspect, 0, 0, GafFrame);
 
 		lpCursor->Unlock ( NULL);
-		
-		CursorBackground= GafFrame->Background;
 	}
 	else
 	{
@@ -799,7 +799,7 @@ void Dialog::SetAll()
 	IDDrawSurface *SurfClass = (IDDrawSurface*)LocalShare->DDrawSurfClass;
 	if (SurfClass)
 	{
-		SurfClass->Set(FALSE!=VSync);
+		SurfClass->Set ( FALSE!=VSyncEnabled);
 	}
 	
 
@@ -1350,6 +1350,7 @@ int __stdcall EnterOption (PInlineX86StackBuffer X86StrackBuffer)
 
 int __stdcall PressInOption (PInlineX86StackBuffer X86StrackBuffer)
 {
+	((Dialog*)LocalShare->Dialog)->SetAll ( );
 	((Dialog*)LocalShare->Dialog)->HideDialog ( );
 	return 0;
 }

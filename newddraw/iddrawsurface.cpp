@@ -92,9 +92,13 @@ IDDrawSurface::IDDrawSurface(LPDIRECTDRAWSURFACE lpTASurf, bool iWindowed, int i
 	LocalShare->DDrawSurfClass = this;
 	LocalShare->TADirectDrawFrontSurface = lpTASurf;
 
+
+	
 	DataShare->IsRunning = 10;
 
 	VerticalSync = true;
+
+	SettingsDialog->SetAll  ( );
 
 	//check if version is 3.1 standar
 	if((*((unsigned char*)0x4ad494))==0x00 && (*((unsigned char*)0x4ad495))==0x55 && (*((unsigned char*)0x4ad496))==0xe8)
@@ -395,87 +399,210 @@ HRESULT __stdcall IDDrawSurface::SetPalette(LPDIRECTDRAWPALETTE arg1)
 HRESULT __stdcall IDDrawSurface::Unlock(LPVOID arg1)
 {
 	OutptTxt("Unlock");
-#ifdef XPOYDEBG
-	HRESULT result = lpFront->Unlock(arg1);
-
-	return result;
-#endif
-#ifndef XPOYDEBG
+	HRESULT result;
 	UpdateTAProcess ( );
 
-	if(PlayingMovie) //deinterlace and flip directly
+	GameingState * GameingState_P= (*TAmainStruct_PtrPtr)->GameingState_Ptr;
+
+	if(VerticalSync)
 	{
-		if(!DisableDeInterlace)
+		if(PlayingMovie) //deinterlace and flip directly
 		{
-			DeInterlace();
-			HRESULT result = lpBack->Unlock(arg1);
-			if(lpFront->Flip(NULL, DDFLIP_DONOTWAIT | DDFLIP_NOVSYNC) != DD_OK)
+			if(!DisableDeInterlace)
 			{
-				if(lpFront->Flip(NULL, DDFLIP_NOVSYNC) != DD_OK)
-					lpFront->Flip(NULL, DDFLIP_WAIT);
+				DeInterlace();
+				result = lpBack->Unlock(arg1);
+
+				if(lpFront->Blt(NULL, lpBack, NULL, DDBLT_ASYNC, NULL)!=DD_OK)
+				{
+					lpFront->Blt(NULL, lpBack, NULL, DDBLT_WAIT, NULL);
+					OutptTxt("lpBack to lpFront Blit failed");
+				}
+
+				return result;
 			}
-			return result;
+			else
+				PlayingMovie = false;
+		}
+
+		if(DataShare->ehaOff == 1 && !DataShare->PlayingDemo) //disable everything
+		{//just unlock flip and return
+			lpDDClipper->SetClipList ( ScreenRegion,0);
+			result = lpBack->Unlock ( arg1);
+			if(result!=DD_OK)
+				return result;
 		}
 		else
-			PlayingMovie = false;
-	}
+		{
+			if(SurfaceMemory!=NULL)
+			{
+				WhiteBoard->LockBlit ( (char*)SurfaceMemory, lPitch);
 
-	HRESULT result;
-	if(DataShare->ehaOff == 1 && !DataShare->PlayingDemo) //disable everything
-	{//just unlock flip and return
-		lpDDClipper->SetClipList ( ScreenRegion,0);
-		result = lpBack->Unlock ( arg1);
-		if(result!=DD_OK)
-			return result;
+				if (GameingState_P
+					&&(gameingstate::MULTI==GameingState_P->State))
+				{
+					SharedRect->LockBlit ( (char*)SurfaceMemory, lPitch);
+				}
+				
+			}
+
+			result = lpBack->Unlock ( arg1);
+			if(result!=DD_OK)
+				return result;
+
+			DDDTA->Blit(lpBack);
+
+			lpDDClipper->SetClipList ( BattleFieldRegion,0);
+			WhiteBoard->Blit(lpBack);
+
+
+			if (GameingState_P
+				&&(gameingstate::MULTI==GameingState_P->State))
+			{
+				CommanderWarp->Blit(lpBack);
+			}
+
+			
+
+			if ((GUIExpander)
+				&&(GUIExpander->myMinimap))
+			{
+				GUIExpander->myMinimap->Blit ( lpBack);
+			}
+
+			SettingsDialog->BlitDialog(lpBack);
+
+
+			if (GameingState_P
+				&&(gameingstate::MULTI==GameingState_P->State))
+			{
+				Income->BlitIncome(lpBack);
+			}
+			
+
+
+			lpDDClipper->SetClipList(ScreenRegion,0);
+
+			//////////////////////////////////////////////////////////////////////////
+			//unicode
+			if (NULL!=NowSupportUnicode)
+			{
+				NowSupportUnicode->Blt ( lpBack);
+			}
+
+			if(lpFront->Blt(NULL, lpBack, NULL, DDBLT_ASYNC, NULL)!=DD_OK)
+			{
+				lpFront->Blt(NULL, lpBack, NULL, DDBLT_WAIT, NULL);
+				OutptTxt("lpBack to lpFront Blit failed");
+			}
+		}
+
+		return result;
 	}
 	else
 	{
-		if(SurfaceMemory!=NULL)
+		if(PlayingMovie) //deinterlace and flip directly
 		{
-			WhiteBoard->LockBlit ( (char*)SurfaceMemory, lPitch);
-			SharedRect->LockBlit ( (char*)SurfaceMemory, lPitch);
+			if(!DisableDeInterlace)
+			{
+				DeInterlace();
+				HRESULT result = lpBack->Unlock(arg1);
+				if(lpFront->Flip(NULL, DDFLIP_DONOTWAIT | DDFLIP_NOVSYNC) != DD_OK)
+				{
+					if(lpFront->Flip(NULL, DDFLIP_NOVSYNC) != DD_OK)
+						lpFront->Flip(NULL, DDFLIP_WAIT);
+				}
+				return result;
+			}
+			else
+				PlayingMovie = false;
 		}
 
-		result = lpBack->Unlock ( arg1);
-		if(result!=DD_OK)
-			return result;
-
-		DDDTA->Blit(lpBack);
-
-		lpDDClipper->SetClipList ( BattleFieldRegion,0);
-		WhiteBoard->Blit(lpBack);
-		//TAHook->Blit(lpBack);
-		CommanderWarp->Blit(lpBack);
-
-		if ((GUIExpander)
-			&&(GUIExpander->myMinimap))
+		
+		if(DataShare->ehaOff == 1 && !DataShare->PlayingDemo) //disable everything
+		{//just unlock flip and return
+			lpDDClipper->SetClipList ( ScreenRegion,0);
+			result = lpBack->Unlock ( arg1);
+			if(result!=DD_OK)
+				return result;
+		}
+		else
 		{
-			GUIExpander->myMinimap->Blit ( lpBack);
+			if(SurfaceMemory!=NULL)
+			{
+				WhiteBoard->LockBlit ( (char*)SurfaceMemory, lPitch);
+
+				if (GameingState_P
+					&&(gameingstate::MULTI==GameingState_P->State))
+				{
+					SharedRect->LockBlit ( (char*)SurfaceMemory, lPitch);
+				}
+
+			}
+
+			result = lpBack->Unlock ( arg1);
+			if(result!=DD_OK)
+				return result;
+
+			DDDTA->Blit(lpBack);
+
+			lpDDClipper->SetClipList ( BattleFieldRegion,0);
+			WhiteBoard->Blit(lpBack);
+
+
+
+			if (GameingState_P
+				&&(gameingstate::MULTI==GameingState_P->State))
+			{
+				CommanderWarp->Blit(lpBack);
+			}
+
+
+
+			if ((GUIExpander)
+				&&(GUIExpander->myMinimap))
+			{
+				GUIExpander->myMinimap->Blit ( lpBack);
+			}
+
+			SettingsDialog->BlitDialog(lpBack);
+
+
+			if (GameingState_P
+				&&(gameingstate::MULTI==GameingState_P->State))
+			{
+				Income->BlitIncome(lpBack);
+			}
+
+
+
+			lpDDClipper->SetClipList(ScreenRegion,0);
+
+			//////////////////////////////////////////////////////////////////////////
+			//unicode
+			if (NULL!=NowSupportUnicode)
+			{
+				NowSupportUnicode->Blt ( lpBack);
+			}
 		}
 
-		SettingsDialog->BlitDialog(lpBack);
-		Income->BlitIncome(lpBack);
 
-
-		lpDDClipper->SetClipList(ScreenRegion,0);
-
-		//////////////////////////////////////////////////////////////////////////
-		//unicode
-		if (NULL!=NowSupportUnicode)
+		if(lpFront->Flip(NULL, DDFLIP_DONOTWAIT) != DD_OK)
 		{
-			NowSupportUnicode->Blt ( lpBack);
+			lpFront->Flip(NULL, DDFLIP_WAIT);
 		}
 
-		if(lpFront->Blt(NULL, lpBack, NULL, DDBLT_ASYNC, NULL)!=DD_OK)
+
+		if(lpBack->Blt(NULL, lpFront, NULL, DDBLT_ASYNC, NULL)!=DD_OK)
 		{
-			lpFront->Blt(NULL, lpBack, NULL, DDBLT_WAIT, NULL);
-			OutptTxt("lpBack to lpFront Blit failed");
+			lpBack->Blt(NULL, lpFront, NULL, DDBLT_WAIT, NULL);
+			OutptTxt("lpFront to lpBack Blit failed");
 		}
 	}
 
 	return result;
-#endif
 }
+
 
 HRESULT __stdcall IDDrawSurface::UpdateOverlay(LPRECT arg1, LPDIRECTDRAWSURFACE arg2, LPRECT arg3, DWORD arg4, LPDDOVERLAYFX arg5)
 {

@@ -200,7 +200,7 @@ void CDDDTA::InitDDDTA()
 
 
 
-	lstrcpyA(DDDSharedMem->mapname, TAdynmem->MapFile->TNTFile);
+	lstrcpyA(DDDSharedMem->mapname, TAdynmem->GameingState_Ptr->TNTFile);
 
 	if(!DataShare->MaxUnits)
 		DataShare->MaxUnits = 500;

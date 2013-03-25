@@ -59,6 +59,7 @@ private:
 	TAdynmemStruct * TAmainStruct_Ptr;
 
 	InlineSingleHook*  FindMouseUnitHook;
+	InlineSingleHook * GetPosition_DwordHook;
 
 	int SelectedCount;
 	BOOL InControl;
@@ -67,6 +68,9 @@ private:
 
 
 	int OrderType;
+
+	int LastDblXPos;
+	int LastDblYpos;
 
 	int HalfMaxIconWidth_TAPos;
 	int HalfMaxIconHeight_TAPos;

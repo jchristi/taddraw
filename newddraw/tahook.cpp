@@ -10,6 +10,12 @@
 #include "hook\hook.h"
 #include "tahook.h"
 
+#include "GUIExpand.h"
+#include "fullscreenminimap.h"
+#include "MegamapControl.h"
+#include "tamem.h"
+#include "tafunctions.h"
+
 #ifdef WM_MOUSEWHEEL//vs2010
 #undef WM_MOUSEWHEEL
 #endif
@@ -93,10 +99,29 @@ CTAHook::~CTAHook()
 
 }
 
+
+
+
 bool CTAHook::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 	__try
 	{
+		if (GUIExpander
+			&&GUIExpander->myMinimap
+			&&GUIExpander->myMinimap->Controler)
+		{
+			if (GUIExpander->myMinimap->Controler->IsBliting ( ))
+			{// do not 
+				if (WriteLine)
+				{
+					WriteLine = false;
+					EnableTABuildRect();
+				}
+				RingWrite = false;
+				
+				return false;
+			}
+		}
 		if (TAInGame==DataShare->TAProgress)
 		{
 				switch(Msg)
@@ -162,7 +187,7 @@ bool CTAHook::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 					FootPrintY = 1;
 
 				EndX = (LOWORD(lParam)-128) + TAdynmem->EyeBallMapXPos;
-				EndY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->Height/2;
+				EndY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->CircleSelect_Pos1TAz/2;
 				/*if(ScrollEnabled)
 				WriteScrollDTLine();
 				else
@@ -170,7 +195,7 @@ bool CTAHook::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 				WriteDTLine();
 
 				StartX = (LOWORD(lParam)-128) + TAdynmem->EyeBallMapXPos;
-				StartY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->Height/2;
+				StartY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->CircleSelect_Pos1TAz/2;
 				/*if(ScrollEnabled)
 				{
 				StartMapX = *MapX;
@@ -180,7 +205,8 @@ bool CTAHook::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 				YMatrix[0]=-1;
 				return true;
 			}
-			else if((GetAsyncKeyState(VirtualKeyCode)&0x8000)>0 && LOWORD(lParam)>127)
+			else if((ordertype::BUILD==(*TAmainStruct_PtrPtr)->PrepareOrder_Type)
+				&&(GetAsyncKeyState(VirtualKeyCode)&0x8000)>0 && LOWORD(lParam)>127)
 			{
 				FootPrintX = GetFootX();
 				if(FootPrintX == 0)
@@ -194,9 +220,9 @@ bool CTAHook::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 				DisableTABuildRect();
 
 				StartX = (LOWORD(lParam)-128) + TAdynmem->EyeBallMapXPos;
-				StartY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->Height/2;
+				StartY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->CircleSelect_Pos1TAz/2;
 				EndX = (LOWORD(lParam)-128) + TAdynmem->EyeBallMapXPos;
-				EndY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->Height/2;
+				EndY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->CircleSelect_Pos1TAz/2;
 				XMatrix[0]=-1;
 				YMatrix[0]=-1;
 
@@ -243,12 +269,13 @@ bool CTAHook::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 				//EndY = HIWORD(lParam);
 				//if(VisualizeDTRows)
 				EndX = (LOWORD(lParam)-128) + TAdynmem->EyeBallMapXPos;
-				EndY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->Height/2;
+				EndY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->CircleSelect_Pos1TAz/2;
 				CalculateLine();
 			}
-			else if((GetAsyncKeyState(VirtualKeyCode)&0x8000)>0)
+			else if((ordertype::BUILD==(*TAmainStruct_PtrPtr)->PrepareOrder_Type)
+				&&(GetAsyncKeyState(VirtualKeyCode)&0x8000)>0)
 			{
-				MouseOverUnit = FindMouseUnit();
+				MouseOverUnit = FindMouseUnit ( );
 				if(MouseOverUnit)
 				{
 					CalculateRing();
@@ -676,8 +703,8 @@ void CTAHook::VisualizeRow()
 
 		TestBuildSpot();
 		int color = TAdynmem->BuildSpotState==70 ? 234 : 214; 
-		DrawBuildRect( (TAdynmem->BuildPosRealX - TAdynmem->EyeBallMapXPos) + 128,
-			(TAdynmem->BuildPosRealY - TAdynmem->EyeBallMapYPos) + 32 - (TAdynmem->Height/2),
+		DrawBuildRect( (TAdynmem->CircleSelect_Pos1TAx - TAdynmem->EyeBallMapXPos) + 128,
+			(TAdynmem->CircleSelect_Pos1TAy - TAdynmem->EyeBallMapYPos) + 32 - (TAdynmem->CircleSelect_Pos1TAz/2),
 			GetFootX()*16,
 			GetFootY()*16,
 			color);

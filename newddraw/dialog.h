@@ -148,7 +148,7 @@ class Dialog
 
 	void DrawMegaMapKey ();
 
-    void SetAll();
+    
     void ReadRegistry();
     void WriteRegistry();
 
@@ -169,6 +169,8 @@ class Dialog
     void HideDialog();
     void BlitDialog(LPDIRECTDRAWSURFACE DestSurf);
     bool Message(HWND WinProchWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
+
+	void SetAll();
 
     void DrawText(LPDIRECTDRAWSURFACE DestSurf, int x, int y, char *Text);
     void DrawSmallText(LPDIRECTDRAWSURFACE DestSurf, int x, int y, char *Text);
