@@ -147,6 +147,13 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="MappedMAP.cpp" />
+    <ClCompile Include="MegamapControl.cpp" />
+    <ClCompile Include="ProjectileMap.cpp" />
+    <ClInclude Include="MegamapControl.h" />
+    <ClInclude Include="ProjectilesMap.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
     <ClCompile Include="UnitIcon.cpp" />
     <ClCompile Include="ddraw.cpp">
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -221,6 +228,7 @@
     </ClCompile>
     <ClCompile Include="UnicodeSupport.cpp" />
     <ClCompile Include="LimitCrack.cpp" />
+    <ClCompile Include="UnitMinimap.cpp" />
     <ClCompile Include="unitrotate.cpp">
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -294,7 +302,6 @@
     <ClInclude Include="tahook.h" />
     <ClInclude Include="taHPI.h" />
     <ClInclude Include="tamem.h" />
-    <ClInclude Include="taunitdrawer.h" />
     <ClInclude Include="AiSeardchMapEntriesLimit.h" />
     <ClInclude Include="UnicodeSupport.h" />
     <ClInclude Include="UnitDrawer.h" />

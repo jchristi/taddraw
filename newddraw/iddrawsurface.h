@@ -121,6 +121,8 @@ private:
 	bool Windowed;
 	LPVOID SurfaceMemory;
 	int lPitch;
+	int dwWidth;
+	int dwHeight;
 	AlliesWhiteboard * WhiteBoard;
 	CIncome * Income;
 	CTAHook * TAHook;

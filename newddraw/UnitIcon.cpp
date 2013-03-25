@@ -123,7 +123,7 @@ UnitIcon::UnitIcon (char * FileName)
 	pcx= NULL;
 	Use= USEBAD;
 
-	int NameEnd= strlen(FileName_var);
+	int NameEnd= strlen ( FileName_var);
 
 // 	if (0==strcmp ( &FileName_var[NameEnd- 3], "bmp"))
 // 	{
@@ -134,13 +134,17 @@ UnitIcon::UnitIcon (char * FileName)
 	if (0==strcmp ( &FileName_var[NameEnd- 3], "pcx"))
 	{
 		pcx= new PCX;
-		pcx->Load ( FileName_var, FALSE);
-		Use= USEPCX;
+		if (pcx)
+		{
+			if (pcx->Load ( FileName_var, FALSE))
+			{
+				Use= USEPCX;
+			}
+		}
 	}
 }
 UnitIcon::~UnitIcon ()
 {
-
 	Use= USEBAD;
 	if (bmp	)
 	{
@@ -161,7 +165,7 @@ LONG UnitIcon::Width ()
 	}
 	if (USEPCX==Use)
 	{
-		return pcx->Pitch();
+		return pcx->Width();
 	}
 	return 0;
 	
@@ -187,6 +191,19 @@ LPBYTE UnitIcon::Data ()
 	if (USEPCX==Use)
 	{
 		return pcx->PCXData();
+	}
+
+	return NULL;
+}
+long UnitIcon::BufSize ()
+{
+	if (USEBMP==Use)
+	{
+		return bmp->BufSize();
+	}
+	if (USEPCX==Use)
+	{
+		return pcx->BufSize();
 	}
 
 	return NULL;

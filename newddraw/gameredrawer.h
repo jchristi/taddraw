@@ -11,7 +11,7 @@ public:
 
 	void BlitTAGameArea (LPDIRECTDRAWSURFACE DestSurf);
 
-	BOOL MixDSufInBlit (LPRECT DescRect, LPDIRECTDRAWSURFACE Src_DDrawSurface, LPRECT SrcScope, DWORD Background_Color);
+	BOOL MixDSufInBlit (LPRECT DescRect, LPDIRECTDRAWSURFACE Src_DDrawSurface, LPRECT SrcScope);
 	BOOL MixBitsInBlit (LPRECT DescRect, LPBYTE SrcBits, LPPOINT SrcAspect, LPRECT SrcScope);
 	BOOL GrayBlitOfBits (LPRECT DescRect, LPBYTE SrcBits, LPPOINT SrcAspect, LPRECT SrcScope, BOOL NoMapped);
 
@@ -25,9 +25,9 @@ public:
 	HRESULT Unlock(  LPVOID lpSurfaceData);
 		
 	LPDIRECTDRAWSURFACE Flip (void);
-
+	void Cls (void);
 private:
 	LPDIRECTDRAWSURFACE GameAreaSurfaceBack_ptr;
 	LPBYTE DescBuf;
-	
+	RECT DescRect_Buf;
 };

@@ -17,6 +17,7 @@ public:
 	LONG Width ();
 	LONG Height ();
 	LPBYTE Data ();
+	long BufSize ();
 private:
 	TABMP * bmp;
 	PCX * pcx;
@@ -45,27 +46,35 @@ public:
 	LPDIRECTDRAWSURFACE GetSurface (void);
 	void NowDrawUnits ( LPBYTE PixelBitsBack, POINT * AspectSrc);
 
+	LPBYTE UnitPicture (UnitStruct * unitPtr, int PlayerID, LPBYTE * PixelBits_pp,  POINT * Aspect);
+
 	void LoadUnitPicture ( void);
 	void FreeUnitPicture ( void);
 private:
 	void DrawUnit ( LPBYTE PixelBits, POINT * Aspect, UnitStruct * unitPtr);
 
-	LPBYTE UnitPicture (UnitStruct * unitPtr, int PlayerID, LPBYTE * PixelBits_pp,  POINT * Aspect);
+	
 	void InitPicturePlayerColors (int PlayeyColor, int FillColor, LPBYTE * * PPCptr);
+	void InitUnSelectedPicturePlayerColors (int PlayeyColor, int FillColor, int UnSelectedColor,int TransparentColor,  
+		LPBYTE * * PPCptr);
 private:
 	LPDIRECTDRAWSURFACE UnitsMapSfc;
-
 //	HANDLE Syncetux;
-
+	
 	HANDLE Thd_h;
 	LPDWORD * MaskAry;
 	UnitIcon * * PicturesBits;
 	LPBYTE * PicturesPlayerColors[PLAYERNUM];
+	LPBYTE * UnSelectedPicturesPlayerColors[PLAYERNUM];
 
 	int MaskNum;
 	int UnknowMaskIndex;
+	int NothingMaskIndex;
+
 	int FillColor;
-	int TransportColor;
+	int TransparentColor;
+	int UnSelectedColor;
+
 	BOOL UseDefaultIcon;
 // 	InlineSingleHook * Clean_hook;
 // 	InlineSingleHook * DrawUnit_hook;
@@ -74,7 +83,23 @@ private:
 	BYTE PlayerColros[PLAYERNUM];
 	LPBYTE  PlayerBits[PLAYERNUM];
 	POINT PlayerAspect[PLAYERNUM];
+
+	BOOL Inited;
 };
 
 #define DEFAULTFILLCOLOR (0)
-#define DEFAULTTRANSPORTCOLOR (9)
+#define DEFAULTTRANSPARENTCOLOR (9)
+#define DEFAULTUNSELECTEDCOLOR (89)
+
+#define COMMICON ( "COMMANDER.PCX")
+#define MOBILEICON ("MOBILECOMBAT.PCX")
+#define CONICON ("CONS.PCX")
+#define FCTYICON ("FACTORY.PCX")
+#define BLDGICON ("BUILDING.PCX")
+#define AIRICON ("AIRCRAFTCOMBAT.PCX")
+#define AIRCONICON ( "AIRCONS.PCX")
+#define NOTHINGICON  ("NONE.PCX")
+#define UNKNOWICON ("UNKNOWN.PCX")
+
+#define ICONMAXWIDTH (32)
+#define ICONMAXHEIGHT (32)

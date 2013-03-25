@@ -30,7 +30,7 @@ typedef int (__stdcall *_SendText)(char *Text, int Type);
 extern _SendText SendText;
 typedef void (__stdcall *_ShowText)(PlayerStruct *Player, char *Text, int Unk1, int Unk2);
 extern _ShowText ShowText;
-typedef void (__stdcall *_TADrawRect)(char *Context, tagRECT *rect, int color);
+typedef void (__stdcall *_TADrawRect)(OFFSCREEN * Context, tagRECT *rect, int color);
 extern _TADrawRect TADrawRect;
 typedef void (__cdecl *_TADrawLine)(char *Context, int x1,int y1,int x2,int y2,int color);
 extern _TADrawLine TADrawLine; 
@@ -85,8 +85,24 @@ typedef int (__stdcall * _CheckUnitInPlayerLOS)(PlayerStruct * Player_Ptr, UnitS
 extern _CheckUnitInPlayerLOS CheckUnitInPlayerLOS;
 
                                                 
-typedef int (__stdcall * _UnitName2ID)(char *Str1);
+typedef int (__stdcall * _UnitName2ID)(char * Str1);
 extern _UnitName2ID UnitName2ID;
+
+
+                                                     
+typedef int (__stdcall * _MOUSE_EVENT_2UnitOrder_) (_MOUSEEVENT * MouseEvent_ptr, int ActionType, unsigned char ActionIndex, _Position_Dword * Position_DWORD_p, int unk, int unk1);
+extern _MOUSE_EVENT_2UnitOrder_ MOUSE_EVENT_2UnitOrder_;
+
+
+     
+typedef int (__stdcall * _CorretCursor_InGame)(char PrepareOrder);
+extern _CorretCursor_InGame CorretCursor_InGame;
+    
+
+typedef int (__stdcall * _SetUICursor)(GUIInfo * TAGUIInfo, _GAFSequence * CursorGafSqe_Ptr);
+extern _SetUICursor SetUICursor;
+typedef int (__cdecl * _SelectAllSelectedUnits)(void);
+extern _SelectAllSelectedUnits SelectAllSelectedUnits;
 
 //////////////////////////////////////////////////////////////////////////////////////////
 /// Not working.
@@ -112,8 +128,8 @@ extern _Init_srand Init_srand;
 
 int ViewPlayerLos_Replay (int PlayerAryIndex, BOOL HaveControl= FALSE);
 int UpdateTAProcess (void);
+void SendOrder (unsigned int TAX, unsigned int TAY, unsigned int TAZ, int OrderType, bool Shift);
 void DeselectUnits(void);
-void UpdateSelectUnitEffect (void);
 void freeTAMem (LPVOID MemAddress);
 LPDWORD GetUnitIDMaskAryByCategory (LPSTR CategoryName_cstrp);
 void UpdateSelectUnitEffect (void);
@@ -122,12 +138,18 @@ int ChatText (LPSTR str);
 bool SetIDMaskInTypeAry (WORD ID, DWORD SelectedUnitTypeIDAry_Dw[]);
 bool CleanIDMaskInTypeAry (WORD ID, DWORD SelectedUnitTypeIDAry_Dw[]);
 bool MatchInTypeAry (WORD ID, DWORD SelectedUnitTypeIDAry_Dw[]);
+int GetMaxScrollY();
+int GetMaxScrollX();
+void ScrollToCenter(int x, int y);
+
+int CountSelectedUnits (void);
 
 extern TAProgramStruct * * TAProgramStruct_PtrPtr;
 
 extern TAdynmemStruct * * TAmainStruct_PtrPtr;
 
 extern LPBYTE AddrAboutCircleSelect;
+extern LPBYTE AddrUNITINFOInited;
 
 extern LPDWORD AISearchMapEntriesLimit;
 extern DWORD Sfx_mallocBufSizeAddr;

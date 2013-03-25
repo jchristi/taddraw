@@ -97,8 +97,9 @@ bool CTAHook::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 	__try
 	{
-
-		switch(Msg)
+		if (TAInGame==DataShare->TAProgress)
+		{
+				switch(Msg)
 		{
 		case WM_KEYDOWN:
 			switch((int)wParam)
@@ -160,16 +161,16 @@ bool CTAHook::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 				if(FootPrintY == 0)
 					FootPrintY = 1;
 
-				EndX = (LOWORD(lParam)-128) + TAdynmem->MapX;
-				EndY = (HIWORD(lParam)) + TAdynmem->MapY - 32 + TAdynmem->Height/2;
+				EndX = (LOWORD(lParam)-128) + TAdynmem->EyeBallMapXPos;
+				EndY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->Height/2;
 				/*if(ScrollEnabled)
 				WriteScrollDTLine();
 				else
 				WriteDTLine();*/
 				WriteDTLine();
 
-				StartX = (LOWORD(lParam)-128) + TAdynmem->MapX;
-				StartY = (HIWORD(lParam)) + TAdynmem->MapY - 32 + TAdynmem->Height/2;
+				StartX = (LOWORD(lParam)-128) + TAdynmem->EyeBallMapXPos;
+				StartY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->Height/2;
 				/*if(ScrollEnabled)
 				{
 				StartMapX = *MapX;
@@ -192,10 +193,10 @@ bool CTAHook::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
 				DisableTABuildRect();
 
-				StartX = (LOWORD(lParam)-128) + TAdynmem->MapX;
-				StartY = (HIWORD(lParam)) + TAdynmem->MapY - 32 + TAdynmem->Height/2;
-				EndX = (LOWORD(lParam)-128) + TAdynmem->MapX;
-				EndY = (HIWORD(lParam)) + TAdynmem->MapY - 32 + TAdynmem->Height/2;
+				StartX = (LOWORD(lParam)-128) + TAdynmem->EyeBallMapXPos;
+				StartY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->Height/2;
+				EndX = (LOWORD(lParam)-128) + TAdynmem->EyeBallMapXPos;
+				EndY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->Height/2;
 				XMatrix[0]=-1;
 				YMatrix[0]=-1;
 
@@ -241,8 +242,8 @@ bool CTAHook::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 				//EndX = LOWORD(lParam);
 				//EndY = HIWORD(lParam);
 				//if(VisualizeDTRows)
-				EndX = (LOWORD(lParam)-128) + TAdynmem->MapX;
-				EndY = (HIWORD(lParam)) + TAdynmem->MapY - 32 + TAdynmem->Height/2;
+				EndX = (LOWORD(lParam)-128) + TAdynmem->EyeBallMapXPos;
+				EndY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->Height/2;
 				CalculateLine();
 			}
 			else if((GetAsyncKeyState(VirtualKeyCode)&0x8000)>0)
@@ -298,6 +299,9 @@ bool CTAHook::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 			}   
 			break;
 		}
+		}
+
+	
 	}
 	__except(EXCEPTION_EXECUTE_HANDLER)
 	{
@@ -665,15 +669,15 @@ void CTAHook::VisualizeRow()
 
 	while(XMatrix[i] != -1 && YMatrix[i]!=-1)
 	{
-		TAdynmem->MouseMapPosX = XMatrix[i];
-		TAdynmem->MouseMapPosY = YMatrix[i];
+		TAdynmem->MouseMapPos.X = XMatrix[i];
+		TAdynmem->MouseMapPos.Y = YMatrix[i];
 
 		TAdynmem->BuildSpotState=70;
 
 		TestBuildSpot();
 		int color = TAdynmem->BuildSpotState==70 ? 234 : 214; 
-		DrawBuildRect( (TAdynmem->BuildPosRealX - TAdynmem->MapX) + 128,
-			(TAdynmem->BuildPosRealY - TAdynmem->MapY) + 32 - (TAdynmem->Height/2),
+		DrawBuildRect( (TAdynmem->BuildPosRealX - TAdynmem->EyeBallMapXPos) + 128,
+			(TAdynmem->BuildPosRealY - TAdynmem->EyeBallMapYPos) + 32 - (TAdynmem->Height/2),
 			GetFootX()*16,
 			GetFootY()*16,
 			color);
@@ -843,19 +847,7 @@ void CTAHook::WriteScrollDTLine()
 	*/
 }
 
-int CTAHook::GetMaxScrollX()
-{
-	int *PTR = (int*)0x00511de8;
-	int *MapSizeX = (int*)(*PTR + 0x1422b);
-	return *MapSizeX - (LocalShare->ScreenWidth-128);
-}
 
-int CTAHook::GetMaxScrollY()
-{
-	int *PTR = (int*)0x00511de8;
-	int *MapSizeY = (int*)(*PTR + 0x1422f);
-	return *MapSizeY - (LocalShare->ScreenHeight-64);
-}
 
 void CTAHook::CalculateRing()
 {
@@ -886,8 +878,8 @@ void CTAHook::FindConnectedSquare(int &x1, int &y1, int &x2, int &y2, char *unit
 	int i=0;
 	while(XMatrix[i]!=-1 && YMatrix[i]!=-1)
 	{
-		TAdynmem->MouseMapPosX = XMatrix[i];
-		TAdynmem->MouseMapPosY = YMatrix[i];
+		TAdynmem->MouseMapPos.X = XMatrix[i];
+		TAdynmem->MouseMapPos.Y = YMatrix[i];
 
 		int building = FindMouseUnit();
 		if(unittested[building-1]==0)
@@ -988,8 +980,8 @@ void CTAHook::ClickBuilding(int Xpos, int Ypos)
 	msgstruct mu;
 	mu.shiftstatus = 5;
 
-	TAdynmem->MouseMapPosX = (short)Xpos;
-	TAdynmem->MouseMapPosY = (short)Ypos;
+	TAdynmem->MouseMapPos.X = (short)Xpos;
+	TAdynmem->MouseMapPos.Y = (short)Ypos;
 
 	TestBuildSpot();
 

@@ -3,7 +3,8 @@
 #include "iddrawsurface.h"
 #include "whiteboard.h"
 
-#include "tahook.h"
+#include "tamem.h"
+#include "tafunctions.h"
 #include "dialog.h"
 
 #include "pcxread.h"
@@ -871,10 +872,10 @@ void AlliesWhiteboard::ScrollToCenter(int x, int y)
 		x = 0;
 	if(y<0)
 		y = 0;
-	if(x>CTAHook::GetMaxScrollX())
-		x = CTAHook::GetMaxScrollX();
-	if(y>CTAHook::GetMaxScrollY())
-		y = CTAHook::GetMaxScrollY();
+	if(x>GetMaxScrollX())
+		x = GetMaxScrollX();
+	if(y>GetMaxScrollY())
+		y = GetMaxScrollY();
 
 	//*XPointer = x;
 	*(XPointer + 2) = x;

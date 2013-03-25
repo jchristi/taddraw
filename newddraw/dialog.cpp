@@ -16,9 +16,13 @@
 #include "hook\etc.h"
 #include "hook\hook.h"
 
+#include "GUIExpand.h"
+#include "fullscreenminimap.h"
+#include "MegamapControl.h"
+
+
 Dialog::Dialog()
 {
-
 	lpCursor= NULL;
 	CursorBackground= -1;
 	CursorPosX = -1;
@@ -46,13 +50,17 @@ Dialog::Dialog()
 
 	lpBackground = CreateSurfPCXResource(2, false);
 	lpUCFont = CreateSurfPCXResource(3, true);
-	PGAFSequence CursorSequence= (*TAmainStruct_PtrPtr)->CurcosNormal;
+	PGAFSequence CursorSequence= (*TAmainStruct_PtrPtr)->cursor_ary[cursornormal];
 
 	if (NULL!=CursorSequence)
 	{
-		PGAFFrame GafFrame= CursorSequence->PtrFrameAry;
-		lpCursor= CreateSurfByGafFrame ( GafFrame, true);
+		PGAFFrame GafFrame= CursorSequence->PtrFrameAry[0].PtrFrame;
+		lpCursor= CreateSurfByGafFrame ( TADD, GafFrame, true);
 		CursorBackground= GafFrame->Background;
+	}
+	else
+	{
+		lpCursor=  CreateSurfPCXResource(4, true);
 	}
 	
 	lpOKButton = CreateSurfPCXResource(5, false);
@@ -153,31 +161,35 @@ void Dialog::BlitDialog(LPDIRECTDRAWSURFACE DestSurf)
 		SetAll();
 		First = false;
 	}
-
-	if(lpDialogSurf->IsLost() != DD_OK)
+	if (DialogVisible)
 	{
-		RestoreAll();
-	}
-
-	if(!DialogVisible)
-		return;
 
 
-	RECT Dest;
-	Dest.left = posX;
-	Dest.top = posY;
-	Dest.right = posX + DialogWidth;
-	Dest.bottom = posY + DialogHeight;
+		if(lpDialogSurf->IsLost() != DD_OK)
+		{
+			RestoreAll();
+		}
 
-	if(DestSurf->Blt(&Dest, lpDialogSurf, NULL, DDBLT_ASYNC, NULL)!=DD_OK)
-	{
-		DestSurf->Blt(&Dest, lpDialogSurf, NULL, DDBLT_WAIT, NULL);
-	}
+		if(!DialogVisible)
+			return;
 
-	
-	if(CursorPosX!=-1 && CursorPosY!=-1)
-	{
-		BlitCursor(DestSurf, CursorPosX, CursorPosY);
+
+		RECT Dest;
+		Dest.left = posX;
+		Dest.top = posY;
+		Dest.right = posX + DialogWidth;
+		Dest.bottom = posY + DialogHeight;
+
+		if(DestSurf->Blt(&Dest, lpDialogSurf, NULL, DDBLT_ASYNC, NULL)!=DD_OK)
+		{
+			DestSurf->Blt(&Dest, lpDialogSurf, NULL, DDBLT_WAIT, NULL);
+		}
+
+
+		if(CursorPosX!=-1 && CursorPosY!=-1)
+		{
+			BlitCursor(DestSurf, CursorPosX, CursorPosY);
+		}
 	}
 }
 
@@ -186,21 +198,30 @@ void Dialog::RestoreCursor ()
 	if (NULL!=lpCursor)
 	{
 		lpCursor->Restore ( );
-		lpCursor= NULL;
 	}
 
-	PGAFSequence CursorSequence= (*TAmainStruct_PtrPtr)->CurcosNormal;
+	PGAFSequence CursorSequence= (*TAmainStruct_PtrPtr)->cursor_ary[cursornormal];
 
 	if (NULL!=CursorSequence)
 	{
-		PGAFFrame GafFrame= CursorSequence->PtrFrameAry;
-		lpCursor= CreateSurfByGafFrame ( GafFrame, true);
+		PGAFFrame GafFrame= CursorSequence->PtrFrameAry[0].PtrFrame;
+
+		DDSURFACEDESC ddsd;
+		DDRAW_INIT_STRUCT(ddsd);
+
+		lpCursor->Lock(NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
+
+		unsigned char *SurfPTR = (unsigned char*)ddsd.lpSurface;
+		POINT Aspect= { ddsd.lPitch, ddsd.dwHeight};
+		CopyGafToBits ( SurfPTR, &Aspect, 0, 0, GafFrame);
+
+		lpCursor->Unlock ( NULL);
+		
 		CursorBackground= GafFrame->Background;
-		if (NULL==lpCursor)
-		{
-			lpCursor = CreateSurfPCXResource(4, false);
-			CursorBackground= 0x5b005b;
-		}
+	}
+	else
+	{
+		RestoreFromPCX(4, lpCursor);
 	}
 }
 
@@ -239,7 +260,6 @@ bool Dialog::Message(HWND WinProchWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 	__try
 	{
-
 		if(!DialogVisible)
 		{
 			if(Msg == WM_KEYDOWN)
@@ -280,6 +300,11 @@ bool Dialog::Message(HWND WinProchWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 			if(AutoClickDelayFocus)
 			{
 				AutoClickDelayFocus = false;
+				RenderDialog();
+			}
+			if (MegmapFocus)
+			{
+				MegmapFocus= false;
 				RenderDialog();
 			}
 			if(LOWORD(lParam)>posX && LOWORD(lParam)<(posX+DialogWidth) && HIWORD(lParam)>posY && HIWORD(lParam)<(posY+DialogHeight))
@@ -335,6 +360,11 @@ bool Dialog::Message(HWND WinProchWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 				else if(Inside(LOWORD(lParam), HIWORD(lParam), FullRings))
 				{
 					StartedIn = FullRings;
+				}				
+				else if(Inside(LOWORD(lParam), HIWORD(lParam), MegaMapKey))
+				{
+					MegmapFocus = true;
+					RenderDialog();
 				}
 				else  //only move if outside button
 				{
@@ -496,6 +526,13 @@ bool Dialog::Message(HWND WinProchWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 				RenderDialog();
 				return true;
 			}
+
+			if(MegmapFocus)
+			{
+				VirtualMegamap = (int)wParam;
+				RenderDialog();
+				return true;
+			}
 			break;
 		case WM_CHAR:
 			if(KeyCodeFocus)
@@ -503,6 +540,10 @@ bool Dialog::Message(HWND WinProchWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 				return true;
 			}
 			if(WhiteboardKeyFocus)
+			{
+				return true;
+			}
+			if(MegmapFocus)
 			{
 				return true;
 			}
@@ -592,7 +633,7 @@ void Dialog::RenderDialog()
 	//DrawDelay();
 	DrawWhiteboardKey();
 	//DrawVisibleButton();
-
+	DrawMegaMapKey ( );
 }
 
 bool Dialog::Inside(int x, int y, int Control)
@@ -649,6 +690,11 @@ bool Dialog::Inside(int x, int y, int Control)
 			return false;
 	case SetVisible:
 		if(x>=SetVisiblePosX && x<SetVisiblePosX+SetVisibleWidth && y>=SetVisiblePosY && y<SetVisiblePosY+SetVisibleHeight)
+			return true;
+		else
+			return false;
+	case MegaMapKey:
+		if(x>=MegaMapKeyPosX && x<MegaMapKeyPosX+MegamapKeyWidth && y>=MegaMapKeyPoxY && y<MegaMapKeyPoxY+MegamapKeyHeight)
 			return true;
 		else
 			return false;
@@ -751,7 +797,11 @@ void Dialog::SetAll()
 	Income->Set(StagedButton3State);
 
 	IDDrawSurface *SurfClass = (IDDrawSurface*)LocalShare->DDrawSurfClass;
-	SurfClass->Set(FALSE!=VSync);
+	if (SurfClass)
+	{
+		SurfClass->Set(FALSE!=VSync);
+	}
+	
 
 	CTAHook *TAHook = (CTAHook*)LocalShare->TAHook;
 	int Delay = atoi(cAutoClickDelay);
@@ -761,6 +811,13 @@ void Dialog::SetAll()
 
 	AlliesWhiteboard *WB = (AlliesWhiteboard*)LocalShare->Whiteboard;
 	WB->Set(VirtualWhiteboardKey);
+	
+	if (GUIExpander
+		&&GUIExpander->myMinimap)
+	{
+		GUIExpander->myMinimap->Set ( VirtualMegamap);
+	}
+
 }
 
 //reads dialog position from registry
@@ -796,6 +853,8 @@ void Dialog::WriteSettings()
 	RegSetValueEx(hKey, "ShareText", NULL, REG_SZ, (unsigned char*)ShareText, strlen(ShareText));
 	RegSetValueEx(hKey, "Delay", NULL, REG_SZ, (unsigned char*)cAutoClickDelay, strlen(cAutoClickDelay));
 	RegSetValueEx(hKey, "WhiteboardKey", NULL, REG_DWORD, (unsigned char*)&VirtualWhiteboardKey, sizeof(int));
+	RegSetValueEx(hKey, "MegamapKey", NULL, REG_DWORD, (unsigned char*)&VirtualMegamap, sizeof(int));
+
 	RegCloseKey(hKey);
 	RegCloseKey(hKey1);
 }
@@ -851,6 +910,13 @@ void Dialog::ReadSettings()
 	{
 		VirtualWhiteboardKey = 220;
 	}
+
+	Size = sizeof(int);
+	if(RegQueryValueEx(hKey, "MegamapKey", NULL, NULL, (unsigned char*)&VirtualMegamap, &Size) != ERROR_SUCCESS)
+	{
+		VirtualMegamap = VK_F4;
+	}
+
 	RegCloseKey(hKey);
 }
 
@@ -1159,6 +1225,31 @@ void Dialog::DrawDelay()
 	}
 }
 
+void Dialog::DrawMegaMapKey ()
+{
+
+	DrawSmallText(lpDialogSurf, MegaMapKeyPosX, MegaMapKeyPoxY- 13, "Megamap Key");
+
+	DDSURFACEDESC ddsd;
+	DDRAW_INIT_STRUCT(ddsd);
+	if(lpDialogSurf->Lock(NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT , NULL)==DD_OK)
+	{
+		SurfaceMemory = ddsd.lpSurface;
+		lPitch = ddsd.lPitch;
+
+		FillRect ( MegaMapKeyPosX, MegaMapKeyPoxY, MegaMapKeyPosX+MegamapKeyWidth, MegaMapKeyPoxY+MegamapKeyHeight, 0);
+
+		char String[20];
+		vkToStr ( VirtualMegamap, String, 20);
+
+		if(MegmapFocus)
+			DrawTinyText (String, static_cast<int>(MegaMapKeyPosX + 2), static_cast<int>(MegaMapKeyPoxY + 3), 255U);
+		else
+			DrawTinyText (String, static_cast<int>(MegaMapKeyPosX + 2), static_cast<int>(MegaMapKeyPoxY + 3), 208U);
+
+		lpDialogSurf->Unlock(NULL);
+	}
+}
 void Dialog::DrawWhiteboardKey()
 {
 	DrawSmallText(lpDialogSurf, WhiteboardKeyPosX, WhiteboardKeyPosY-13, "Whiteboard Key");
@@ -1226,12 +1317,10 @@ void Dialog::BlitCursor(LPDIRECTDRAWSURFACE DestSurf, int x, int y)
 
 
 	lpCursor->GetSurfaceDesc ( &ddsc);
-
+// 0xc0dcc0
 	ddbltfx.ddckSrcColorkey.dwColorSpaceLowValue = CursorBackground& 0xffff;
-	ddbltfx.ddckSrcColorkey.dwColorSpaceHighValue = CursorBackground> 16;
+	ddbltfx.ddckSrcColorkey.dwColorSpaceHighValue = CursorBackground>> 16;
 
-	//ddbltfx.ddckSrcColorkey.dwColorSpaceLowValue = CursorBackground;
-	
 	RECT Dest;
 	Dest.left = x;
 	Dest.top = y;

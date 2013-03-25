@@ -6,7 +6,8 @@
 #include <windows.h>
 #include <dsound.h>
 #include "whiteboard.h"
-#include "tahook.h"
+#include "tamem.h"
+#include "tafunctions.h"
 
 #define OutptTxt IDDrawSurface::OutptTxt
 char* __cdecl ChatStrnCpy(char *strDest, const char *strSource, size_t count );
@@ -279,7 +280,7 @@ void CDDDTA::Moo()
 	int onk = 0;
 
 	if(GetContext(buf))
-		TADrawCircle(buf, &TAdynmem->CirclePointer, (posstruct*)&TAdynmem->Players[0].Units[0].XPos , 150, 0xc2, "Moo", 1);
+		TADrawCircle(buf, &TAdynmem->CameraToUnit, (posstruct*)&TAdynmem->Players[0].Units[0].XPos , 150, 0xc2, "Moo", 1);
 
 	//TADrawCircle(TAdynmem->RadarMapped, 10, 20, 15, 25, 0xC2);
 	//TADrawCircle(TAdynmem->RadarPicture, 10, 20, 15, 25, 0xC2);
@@ -445,13 +446,13 @@ void CDDDTA::FrameUpdate()
 	TAdynmem->MapXScrollingTo = static_cast<int>(DDDSharedMem->camX);
 	if(TAdynmem->MapXScrollingTo<0)
 		TAdynmem->MapXScrollingTo = 0;
-	if(TAdynmem->MapXScrollingTo>CTAHook::GetMaxScrollX())
-		TAdynmem->MapXScrollingTo = CTAHook::GetMaxScrollX();
+	if(TAdynmem->MapXScrollingTo>GetMaxScrollX())
+		TAdynmem->MapXScrollingTo = GetMaxScrollX();
 	TAdynmem->MapYScrollingTo = static_cast<int>(DDDSharedMem->camY);
 	if(TAdynmem->MapYScrollingTo<0)
 		TAdynmem->MapYScrollingTo = 0;
-	if(TAdynmem->MapYScrollingTo>CTAHook::GetMaxScrollY())
-		TAdynmem->MapYScrollingTo = CTAHook::GetMaxScrollY();
+	if(TAdynmem->MapYScrollingTo>GetMaxScrollY())
+		TAdynmem->MapYScrollingTo = GetMaxScrollY();
 
 
 

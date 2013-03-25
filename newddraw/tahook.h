@@ -105,9 +105,6 @@ class CTAHook
     void Blit(LPDIRECTDRAWSURFACE DestSurf);
 	void TABlit();
 
-    static int GetMaxScrollX();
-    static int GetMaxScrollY();
-
 //addtion
 	public:
 		HWND TAhWnd;
