@@ -272,6 +272,8 @@ BOOL TAGameAreaReDrawer::MixBitsInBlit (LPRECT DescRect, LPBYTE SrcBits, LPPOINT
 
 BOOL TAGameAreaReDrawer::MixDSufInBlit (LPRECT DescRect, LPDIRECTDRAWSURFACE Src_DDrawSurface, LPRECT SrcScope)
 {
+
+	Cls ( );
 	BOOL Rtn_B= TRUE;
 
 	if (NULL!=GameAreaSurfaceBack_ptr)
@@ -280,6 +282,8 @@ BOOL TAGameAreaReDrawer::MixDSufInBlit (LPRECT DescRect, LPDIRECTDRAWSURFACE Src
 		{
 			GameAreaSurfaceBack_ptr->Restore ( );
 		}
+
+		
 
 		DDBLTFX ddbltfx;
 		DDRAW_INIT_STRUCT(ddbltfx);

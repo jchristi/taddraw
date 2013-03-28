@@ -132,6 +132,7 @@ void Dialog::ShowDialog()
 	WhiteboardKeyFocus= false;
 	KeyCodeFocus= false;
 	ShareBoxFocus= false;
+	MegmapFocus= false;
 
 	posX= 640- DialogWidth;
 	posY= 30;
@@ -139,6 +140,8 @@ void Dialog::ShowDialog()
 
 	OKButtonPushed = false;
 	StartedIn = None;
+
+	RestoreAll ( );
 
 	RenderDialog();
 	DialogVisible = true;
@@ -198,31 +201,33 @@ void Dialog::RestoreCursor ()
 	if (NULL!=lpCursor)
 	{
 		lpCursor->Restore ( );
+
+
+		PGAFSequence CursorSequence= (*TAmainStruct_PtrPtr)->cursor_ary[cursornormal];
+
+		if (NULL!=CursorSequence)
+		{
+			PGAFFrame GafFrame= CursorSequence->PtrFrameAry[0].PtrFrame;
+
+			DDSURFACEDESC ddsd;
+			DDRAW_INIT_STRUCT(ddsd);
+
+			lpCursor->Lock(NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
+
+			unsigned char *SurfPTR = (unsigned char*)ddsd.lpSurface;
+			CursorBackground= GafFrame->Background;
+			POINT Aspect= { ddsd.lPitch, ddsd.dwHeight};
+			memset ( SurfPTR, CursorBackground, ddsd.lPitch* ddsd.dwHeight );
+			CopyGafToBits ( SurfPTR, &Aspect, 0, 0, GafFrame);
+
+			lpCursor->Unlock ( NULL);
+		}
+		else
+		{
+			RestoreFromPCX(4, lpCursor);
+		}
 	}
 
-	PGAFSequence CursorSequence= (*TAmainStruct_PtrPtr)->cursor_ary[cursornormal];
-
-	if (NULL!=CursorSequence)
-	{
-		PGAFFrame GafFrame= CursorSequence->PtrFrameAry[0].PtrFrame;
-
-		DDSURFACEDESC ddsd;
-		DDRAW_INIT_STRUCT(ddsd);
-
-		lpCursor->Lock(NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
-
-		unsigned char *SurfPTR = (unsigned char*)ddsd.lpSurface;
-		CursorBackground= GafFrame->Background;
-		POINT Aspect= { ddsd.lPitch, ddsd.dwHeight};
-		memset ( SurfPTR, CursorBackground, ddsd.lPitch* ddsd.dwHeight );
-		CopyGafToBits ( SurfPTR, &Aspect, 0, 0, GafFrame);
-
-		lpCursor->Unlock ( NULL);
-	}
-	else
-	{
-		RestoreFromPCX(4, lpCursor);
-	}
 }
 
 void Dialog::RestoreAll()

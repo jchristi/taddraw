@@ -53,4 +53,14 @@ private:
 	RECT TAMAPTAPos;
 
 	int MegamapVirtualKey;
+
+
+
+	BOOL DrawBackground;
+	BOOL DrawMapped;
+	BOOL DrawProjectile;
+	BOOL DrawUnits;
+	BOOL DrawMegamapRect;
+	BOOL DrawSelectRect;
+	BOOL DrawMegamapCursor;
 };

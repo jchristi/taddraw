@@ -34,7 +34,7 @@ int  __stdcall  GetPosition_DwordRounte (PInlineX86StackBuffer X86StrackBuffer)
 {
 	if (((MegaMapControl *)(X86StrackBuffer->myInlineHookClass_Pish->ParamOfHook))->IsInControl ())
 	{
-		X86StrackBuffer->Eax= (*TAmainStruct_PtrPtr)->MouseOverUnit;
+		
 		X86StrackBuffer->rtnAddr_Pvoid= (LPVOID)0x484CD4 ;
 		return X86STRACKBUFFERCHANGE;
 	}
@@ -42,7 +42,19 @@ int  __stdcall  GetPosition_DwordRounte (PInlineX86StackBuffer X86StrackBuffer)
 	return 0;
 }
 
-MegaMapControl::MegaMapControl (FullScreenMinimap * parent_p, RECT * MegaMapScreen_p, RECT * TAMap_p,
+int  __stdcall  GetGridPosFeatureRounte (PInlineX86StackBuffer X86StrackBuffer)
+{
+	if (((MegaMapControl *)(X86StrackBuffer->myInlineHookClass_Pish->ParamOfHook))->IsInControl ())
+	{
+		X86StrackBuffer->Eax= 0xffff;
+		X86StrackBuffer->rtnAddr_Pvoid= (LPVOID)0x421EA0 ;
+		return X86STRACKBUFFERCHANGE;
+	}
+
+	return 0;
+}
+
+MegaMapControl::MegaMapControl (FullScreenMinimap * parent_p, RECT * MegaMapScreen_p, RECT * TAMap_p, RECT * GameScreen_p,
 	int MaxIconWidth, int MaxIconHeight, int MegaMapVirtulKey_arg)
 {
 	FindMouseUnitHook= new InlineSingleHook ( (unsigned int)FindMouseUnit, 5, INLINE_5BYTESLAGGERJMP, FindMouseUnitRounte);
@@ -53,13 +65,16 @@ MegaMapControl::MegaMapControl (FullScreenMinimap * parent_p, RECT * MegaMapScre
 	GetPosition_DwordHook->SetParamOfHook ( (LPVOID)this);
 
 
+	GetGridPosFeatureHook= new InlineSingleHook ( (unsigned int)GetGridPosFeature, 5, INLINE_5BYTESLAGGERJMP, GetGridPosFeatureRounte);
+	GetGridPosFeatureHook->SetParamOfHook ( (LPVOID)this);
+
 	
 	for (int i= 0; i<0x15; ++i)
 	{
-		Cursor_SurfcAry[i]= NULL;
+		Cursor_Surfc= NULL;
 	}
 
-	Init ( parent_p, MegaMapScreen_p, TAMap_p,  MaxIconWidth, MaxIconHeight, MegaMapVirtulKey_arg);
+	Init ( parent_p, MegaMapScreen_p, TAMap_p, GameScreen_p, MaxIconWidth, MaxIconHeight, MegaMapVirtulKey_arg);
 }
 
 
@@ -73,10 +88,15 @@ MegaMapControl::~ MegaMapControl()
 	{
 		delete GetPosition_DwordHook;
 	}
+
+	if (GetGridPosFeatureHook)
+	{
+		delete GetGridPosFeatureHook;
+	}
 	return ;
 }
 
-void MegaMapControl::Init (FullScreenMinimap * parent_p, RECT * MegaMapScreen_p, RECT * TAMap_p,
+void MegaMapControl::Init (FullScreenMinimap * parent_p, RECT * MegaMapScreen_p, RECT * TAMap_p, RECT * GameScreen_p,
 	int MaxIconWidth, int MaxIconHeight, int MegaMapVirtulKey_arg)
 {
 	parent= parent_p;
@@ -98,6 +118,11 @@ void MegaMapControl::Init (FullScreenMinimap * parent_p, RECT * MegaMapScreen_p,
 	Screen2MapWidthScale= static_cast<float>(MegaMapWidth)/ static_cast<float>(TAMapWidth);
 	Screen2MapHeightScale= static_cast<float>(MegaMapHeight)/ static_cast<float>(TAMapHeight);
 
+
+	memcpy ( &TAGameScreen, GameScreen_p, sizeof(RECT));
+
+
+
 	Position_Dword temp;
 
 	ScreenPos2TAPos ( &temp, MaxIconWidth, MaxIconHeight);
@@ -105,43 +130,68 @@ void MegaMapControl::Init (FullScreenMinimap * parent_p, RECT * MegaMapScreen_p,
 	HalfMaxIconWidth_TAPos= temp.X/ 2;
 	HalfMaxIconHeight_TAPos= temp.Y/ 2;
 
-	QuitMegaMap ( );
+	InControl= FALSE;
+	InMap= FALSE;
 }
 
 
 void MegaMapControl::InitSurface ( LPDIRECTDRAW TADD)
 {
 	ReleaseSurface ( );
-	for (int i= 0; i<0x15; ++i)
+
+	LastCursor_GAFp= (*TAProgramStruct_PtrPtr)->Cursor;
+
+	if (NULL==LastCursor_GAFp)
 	{
-		GAFSequence * Cursor_Seq= (*TAmainStruct_PtrPtr) ->cursor_ary[i];
-		if (Cursor_Seq)
-		{
-			Cursor_SurfcAry[i]= CreateSurfByGafSequence ( TADD, Cursor_Seq, true);
-			DDSURFACEDESC ddsc;
-			DDRAW_INIT_STRUCT(ddsc);
-
-
-			Cursor_SurfcAry[i]->GetSurfaceDesc ( &ddsc);
-			Cursor_AspectAry[i].x= ddsc.dwWidth;
-			Cursor_AspectAry[i].y= ddsc.dwHeight;
-		}
+		LastCursor_GAFp= TAmainStruct_Ptr->cursor_ary[cursornormal]->PtrFrameAry[0].PtrFrame;
 	}
+
+	if (LastCursor_GAFp)
+	{
+
+		POINT GafSize={0, 0};
+		int Width= 0x30;
+		int Height= 0x30;
+
+		DDSURFACEDESC ddsd;
+		DDRAW_INIT_STRUCT(ddsd);
+		ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
+
+		ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_VIDEOMEMORY;
+
+		ddsd.dwWidth = Width;
+		ddsd.dwHeight = Height;
+
+		TADD->CreateSurface ( &ddsd, &Cursor_Surfc, NULL);
+
+		DDRAW_INIT_STRUCT(ddsd);
+
+		Cursor_Surfc->Lock(NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
+
+
+		GafSize.x= ddsd.lPitch;
+		GafSize.y= ddsd.dwHeight;
+
+
+		memset ( (ddsd.lpSurface), LastCursor_GAFp->Background, ddsd.lPitch* ddsd.dwHeight);
+		CopyGafToBits ( (LPBYTE)(ddsd.lpSurface), &GafSize, 0, 0, LastCursor_GAFp);
+
+		Cursor_Surfc->Unlock(NULL);
+
+	}
+
 }
 
 void MegaMapControl::ReleaseSurface (void) 
 {
-	for (int i= 0; i<0x15; ++i)
-	{
-		if (NULL!=Cursor_SurfcAry[i])
-		{
-			Cursor_SurfcAry[i]->Release ( );
-			Cursor_SurfcAry[i]= NULL;
 
-			Cursor_AspectAry[i].x= 0;
-			Cursor_AspectAry[i].y= 0;
-		}
+	if (NULL!=Cursor_Surfc)
+	{
+		Cursor_Surfc->Release ( );
+		Cursor_Surfc= NULL;
+
 	}
+	
 }
 
 /*
@@ -151,15 +201,30 @@ DrawSelectRect ()
 }*/
 void MegaMapControl::DrawCursor (LPDIRECTDRAWSURFACE DestSurf, unsigned int X, unsigned int Y)
 {
-	GAFSequence * Cursor_Seq= TAmainStruct_Ptr->cursor_ary[TAmainStruct_Ptr->CurrentCursora_Index];
+	GAFFrame * Cursor_GafP= (*TAProgramStruct_PtrPtr)->Cursor;
+	X= (*TAProgramStruct_PtrPtr)->CursorX;//= X;
+	Y= (*TAProgramStruct_PtrPtr)->CursorY;//= Y;
+	BOOL Update_B= FALSE;;
 
-	if (NULL!=Cursor_SurfcAry[TAmainStruct_Ptr->CurrentCursora_Index])
+	
+	if (Cursor_Surfc)
 	{
-		LPDIRECTDRAWSURFACE SrcSurf= Cursor_SurfcAry[TAmainStruct_Ptr->CurrentCursora_Index];
-		if (SrcSurf->IsLost ( ))
+		if (LastCursor_GAFp!=Cursor_GafP)
 		{
-			SrcSurf->Restore ( );
+			Update_B= TRUE;
+		}
 
+		LPDIRECTDRAWSURFACE SrcSurf= Cursor_Surfc;
+		HRESULT LostResult;
+
+		if ((DD_OK!=(LostResult= SrcSurf->IsLost ( )))
+			||Update_B)
+		{
+			if (DD_OK!=LostResult)
+			{
+				SrcSurf->Restore ( );
+			}
+			
 
 			DDSURFACEDESC ddsd;
 			DDRAW_INIT_STRUCT(ddsd);
@@ -170,24 +235,39 @@ void MegaMapControl::DrawCursor (LPDIRECTDRAWSURFACE DestSurf, unsigned int X, u
 
 				Aspect.x= ddsd.lPitch;
 				Aspect.y= ddsd.dwHeight;
-				CopyGafSequenceToBits ( SurfPTR, &Aspect, Cursor_Seq, 0);
+
+				memset ( SurfPTR, Cursor_GafP->Background, ddsd.lPitch* ddsd.dwHeight);
+				CopyGafToBits ( SurfPTR, &Aspect, Cursor_GafP->xPosition, Cursor_GafP->yPosition, Cursor_GafP);
+
 				SrcSurf->Unlock(NULL);
+
+				LastCursor_GAFp= Cursor_GafP;
 			}
+
 		}
+	
 		DDBLTFX ddbltfx;
 		DDRAW_INIT_STRUCT(ddbltfx);
 		RECT Dest;
+
+		RECT Src;
+
 		Dest.left = X;
 		Dest.top = Y;
-		Dest.right = X + Cursor_AspectAry[TAmainStruct_Ptr->CurrentCursora_Index].x;
-		Dest.bottom = Y + Cursor_AspectAry[TAmainStruct_Ptr->CurrentCursora_Index].y;
+		Dest.right = Dest.left+ LastCursor_GAFp->Width;
+		Dest.bottom = Dest.top + LastCursor_GAFp->Height;
 
-		ddbltfx.ddckSrcColorkey.dwColorSpaceLowValue= Cursor_Seq->PtrFrameAry[0].PtrFrame->Background;
+		Src.left= 0;
+		Src.top= 0;
+		Src.right= LastCursor_GAFp->Width;
+		Src.bottom= LastCursor_GAFp->Height;
+
+		ddbltfx.ddckSrcColorkey.dwColorSpaceLowValue= LastCursor_GAFp->Background;
 		ddbltfx.ddckSrcColorkey.dwColorSpaceHighValue= 0;
 
-		if(DestSurf->Blt(&Dest, SrcSurf, NULL, DDBLT_ASYNC| DDBLT_KEYSRCOVERRIDE, &ddbltfx)!=DD_OK)
+		if(DestSurf->Blt(&Dest, SrcSurf, &Src, DDBLT_ASYNC| DDBLT_KEYSRCOVERRIDE, &ddbltfx)!=DD_OK)
 		{
-			DestSurf->Blt(&Dest, SrcSurf, NULL, DDBLT_WAIT| DDBLT_KEYSRCOVERRIDE, &ddbltfx);
+			DestSurf->Blt(&Dest, SrcSurf, &Src, DDBLT_WAIT| DDBLT_KEYSRCOVERRIDE, &ddbltfx);
 		}
 	}
 	else
@@ -220,31 +300,45 @@ Position_Dword * MegaMapControl::ScreenPos2TAPos (Position_Dword * TAPos, int x,
 	}
 	TAPos->X= static_cast<int>(static_cast<float>(x)/ Screen2MapWidthScale);
 	TAPos->Y= static_cast<int>(static_cast<float>(y)/ Screen2MapHeightScale);
-	TAPos->Z= TAmainStruct_Ptr->SeaLevel;
+// 	if (TAmainStruct_Ptr->Features)
+// 	{
+// 		TAPos->Z= GetPosHeight ( TAPos);
+// 	}
+// 	else
+	{
+		TAPos->Z= TAmainStruct_Ptr->SeaLevel;
+	}
 
+
+	//GetPosition_Dword ( TAPos->X, TAPos->Y, TAPos);
 	return TAPos;
 }
 
 
 void MegaMapControl::EnterMegaMap ()
 {
+	PlaySound_Effect ( "Options", 0);
+
 	parent->EnterMegaMap ( );
 
 	// init those megamap control's data
 	InControl= FALSE;
+	InMap= FALSE;
 
 	SelectState= selectbuttom::none;
 	SelectedCount= CountSelectedUnits ( );
 	TAmainStruct_Ptr->MouseOverUnit= 0;
 	LastDblXPos= 0;
 	LastDblYpos= 0;
-	//TAmainStruct_Ptr->BuildSpotState&= !CIRCLESELECTING;
+	TAmainStruct_Ptr->BuildSpotState&= !CIRCLESELECTING;
 }
 
 void MegaMapControl::QuitMegaMap ( )
 {
+	PlaySound_Effect ( "Previous", 0);
 	parent->QuitMegaMap ( );
 	InControl= FALSE;
+	InMap= FALSE;
 	SelectState= selectbuttom::none;
 	TAmainStruct_Ptr->MouseOverUnit= 0;
 }
@@ -257,6 +351,12 @@ void MegaMapControl::Set (int VirtualKey)
 bool MegaMapControl::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 	IDDrawSurface::OutptTxt( "MapControl Message");
+
+	bool LBMD;
+	int zDelta;
+	int xPos;
+	int yPos;
+	bool shift;
 	switch(Msg)
 	{
 	case WM_KEYUP:
@@ -280,37 +380,20 @@ bool MegaMapControl::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 
 		break;
 	case WM_MOUSEWHEEL:
-		int zDelta;
+		
 		zDelta= (short) HIWORD(wParam);    // wheel rotation
 
+		xPos= LOWORD(lParam);  // horizontal position of cursor 
+		
+		yPos= HIWORD(lParam);  // vertical position of cursor 
 		if (zDelta<0)
 		{
-			if (! IsBliting())
-			{
-				EnterMegaMap ();
-			}
-			
+
+			WheelBack ( xPos, yPos);
 		}
 		else if (0<zDelta)
 		{//
-			if (IsBliting())
-			{
-				int xPos;
-				xPos= LOWORD(lParam);  // horizontal position of cursor 
-				int yPos;
-				yPos= HIWORD(lParam);  // vertical position of cursor 
-
-				xPos= xPos- MegaMapScreen.left;
-				yPos= yPos- MegaMapScreen.top;
-
-				TAmainStruct_Ptr->CameraToUnit= 0; 
-				ScreenPos2TAPos ( &TAmainStruct_Ptr->MouseMapPos, xPos, yPos);
-				MoveScreen ( TAmainStruct_Ptr->MouseMapPos.X, TAmainStruct_Ptr->MouseMapPos.Y, TAmainStruct_Ptr->MouseMapPos.Z);
-
-
-				QuitMegaMap ( );
-			}
-			
+			WheelFont ( xPos, yPos);
 		}
 		break;
 
@@ -323,106 +406,80 @@ bool MegaMapControl::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 	case WM_MOUSEMOVE:
 		if ( IsBliting ())
 		{
-			int xPos = LOWORD(lParam);  // horizontal position of cursor 
-			int yPos = HIWORD(lParam);  // vertical position of cursor 
+			 xPos = LOWORD(lParam);  // horizontal position of cursor 
+			 yPos = HIWORD(lParam);  // vertical position of cursor 
 
-			if ((xPos<MegaMapScreen.right)
-				&&(MegaMapScreen.left<xPos)
-				&&(yPos<MegaMapScreen.bottom)
-				&&(MegaMapScreen.top<yPos))
-			{// in control
+			 LBMD= MK_LBUTTON==(MK_LBUTTON& wParam);
+			 shift= MK_SHIFT==(MK_SHIFT& wParam);
+
+			if ((xPos<TAGameScreen.right)
+				&&(TAGameScreen.left<xPos)
+				&&(yPos<TAGameScreen.bottom)
+				&&(TAGameScreen.top<yPos))
+			{
 				InControl= TRUE;
-				bool shift= MK_SHIFT==(MK_SHIFT& wParam);
-				xPos= xPos- MegaMapScreen.left;
-				yPos= yPos- MegaMapScreen.top;
-				if (0==TAmainStruct_Ptr->InterfaceType)
-				{// L
-					switch (Msg)
-					{
-					case WM_LBUTTONDOWN:
-						if (! SelectDown ( xPos, yPos, false))
-						{
-							LeftDown ( xPos, yPos, shift);
-						}
-						
-						
-						break;
-					case WM_LBUTTONDBLCLK:
-						LeftDoubleClick ( xPos, yPos, shift);
-						break;
-					case WM_LBUTTONUP:
-						if (!SelectUp ( xPos, yPos, false))
-						{
-							LeftUp ( xPos, yPos, shift);
-						}
-						
-						break;
-					case WM_RBUTTONDOWN:
-						RightDown( xPos, yPos, shift);
-						break;
-					case WM_RBUTTONUP:
-						RightUp ( xPos, yPos, shift);
-						break;
-					case WM_RBUTTONDBLCLK: 
-						RightDoubleClick ( xPos, yPos, shift);
-						break;
-					case WM_MOUSEMOVE:
-						if (! SelectMove ( xPos, yPos, false))
-						{
-							MouseMove ( xPos, yPos);
-						}
-						
-						break;
-					}
-				}
-				else
-				{//R
-
-					switch (Msg)
-					{
-					case WM_LBUTTONDOWN:
-						if (! SelectDown ( xPos, yPos, false))
-						{
-							RightDown( xPos, yPos, shift);
-						}
-						
-						break;
-					case WM_LBUTTONDBLCLK:
-						RightDoubleClick ( xPos, yPos, shift);
-						break;
-					case WM_LBUTTONUP:
-						if (!SelectUp ( xPos, yPos, false))
-						{
-							RightUp ( xPos, yPos, shift);
-						}
-						
-						break;
-					case WM_RBUTTONDOWN:
-						LeftDown ( xPos, yPos, shift);
-						
-						break;
-					case WM_RBUTTONUP:
-						
-						LeftUp ( xPos, yPos, shift);
-						break;
-					case WM_RBUTTONDBLCLK: 
-						LeftDoubleClick ( xPos, yPos, shift);
-						
-						break;
-					case WM_MOUSEMOVE:
-						if (! SelectMove ( xPos, yPos, false))
-						{
-							MouseMove ( xPos, yPos);
-						}
-						break;
-					}
-				}
-				return TRUE;
 			}
 			else
-			{// out of control
-
+			{
 				InControl= FALSE;
+			}
+
+			if ((xPos<(MegaMapScreen.right))
+				&&(MegaMapScreen.left<xPos)
+				&&(yPos<(MegaMapScreen.bottom))
+				&&(MegaMapScreen.top<yPos))
+			{// in map
+				
+				InMap= TRUE;
+				
+				
+				xPos= xPos- MegaMapScreen.left;
+				yPos= yPos- MegaMapScreen.top;
+
+				switch (Msg)
+				{
+				case WM_LBUTTONDOWN:
+					if (! SelectDown ( xPos, yPos, false))
+					{
+						LeftDown ( xPos, yPos, shift);
+					}
+						
+						
+					break;
+				case WM_LBUTTONDBLCLK:
+					DoubleClick ( xPos, yPos, shift);
+					break;
+				case WM_LBUTTONUP:
+					SelectedCount= CountSelectedUnits ( );
+					if (!SelectUp ( xPos, yPos, false, shift))
+					{
+						LeftUp ( xPos, yPos, shift);
+					}
+						
+					break;
+				case WM_RBUTTONDOWN:
+					RightDown( xPos, yPos, shift);
+					break;
+				case WM_RBUTTONUP:
+					SelectedCount= CountSelectedUnits ( );
+					RightUp ( xPos, yPos, shift);
+					break;
+				case WM_RBUTTONDBLCLK: 
+					//RightDoubleClick ( xPos, yPos, shift);
+					break;
+				case WM_MOUSEMOVE:
+					if (! SelectMove ( xPos, yPos, false, LBMD))
+					{
+						MouseMove ( xPos, yPos);
+					}
+						
+					break;
+				}
+				
+			}
+			else
+			{// out of map
+				InMap= FALSE;
 				xPos= xPos- MegaMapScreen.left;
 				yPos= yPos- MegaMapScreen.top;
 				switch (Msg)
@@ -431,17 +488,25 @@ bool MegaMapControl::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 						 SelectDown ( xPos, yPos, true);
 						break;
 					case WM_LBUTTONUP:
-						 SelectUp ( xPos, yPos, true);
+						 SelectedCount= CountSelectedUnits ( );
+						 SelectUp ( xPos, yPos, true, shift);
 						break;
 					case WM_MOUSEMOVE:
-						 SelectMove ( xPos, yPos, true);
+						 SelectMove ( xPos, yPos, true, LBMD);
 						break;
 				}
 				
 			}
+
+			if (IsInControl ())
+			{
+				return TRUE;
+			}
 		}
 		break;
 	}
+
+	
 
 	return FALSE;
 }
@@ -453,24 +518,42 @@ BOOL MegaMapControl::RightDown (int x, int y, bool shift)
 }
 BOOL MegaMapControl::RightUp (int x, int y, bool shift)
 {
-	TAmainStruct_Ptr->CameraToUnit= 0; 
-	ScreenPos2TAPos ( &TAmainStruct_Ptr->MouseMapPos, x, y);
-	MoveScreen ( TAmainStruct_Ptr->MouseMapPos.X, TAmainStruct_Ptr->MouseMapPos.Y, TAmainStruct_Ptr->MouseMapPos.Z);
+	if (0!=TAmainStruct_Ptr->InterfaceType)
+	{// R
+		if (0<SelectedCount)
+		{//
+			if (cursorselect!=TAmainStruct_Ptr->CurrentCursora_Index)
+			{
+				if (BUILD!=TAmainStruct_Ptr->PrepareOrder_Type)
+				{
+					SendOrder ( TAmainStruct_Ptr->MouseMapPos.X, TAmainStruct_Ptr->MouseMapPos.Y, TAmainStruct_Ptr->MouseMapPos.Z, TAmainStruct_Ptr->PrepareOrder_Type, shift);
+				}
 
-
-	if (0<SelectedCount)
-	{
-		SelectedCount= 0;
-		DeselectUnits ();
-
-		UpdateSelectUnitEffect ( ) ;
-		ApplySelectUnitMenu_Wapper ( );
-
+				UpdateSelectUnitEffect ( );
+				ApplySelectUnitMenu_Wapper  ( );
+			}
+		}
 	}
 	else
 	{
-		QuitMegaMap ( );
+		if (0<SelectedCount)
+		{
+			SelectedCount= 0;
+			DeselectUnits ();
+
+			UpdateSelectUnitEffect ( ) ;
+			ApplySelectUnitMenu_Wapper ( );
+		}
 	}
+
+
+// 	else
+// 	{
+// 		TAmainStruct_Ptr->CameraToUnit= 0; 
+// 		ScreenPos2TAPos ( &TAmainStruct_Ptr->MouseMapPos, x, y);
+// 		MoveScreen ( TAmainStruct_Ptr->MouseMapPos.X, TAmainStruct_Ptr->MouseMapPos.Y, TAmainStruct_Ptr->MouseMapPos.Z);
+// 		QuitMegaMap ( );
+// 	}
 
 	
 	return TRUE;
@@ -479,89 +562,87 @@ BOOL MegaMapControl::RightUp (int x, int y, bool shift)
 
 BOOL MegaMapControl::LeftDown (int x, int y, bool shift)
 {			
-	
 
 	return TRUE;
 }
 
 BOOL MegaMapControl::LeftUp (int x, int y, bool shift)
 {
+
 	UnitStruct * Begin= TAmainStruct_Ptr->OwnUnitBegin;
 	int MouseUnit= TAmainStruct_Ptr->MouseOverUnit;
 
-	TAmainStruct_Ptr->CameraToUnit= 0; 
+	if (MouseUnit)
+	{
+		if ((x!=LastDblXPos)
+			||(y!=LastDblYpos))
+		{// no double clicked
 
-	SelectedCount= CountSelectedUnits ( );
-
-	ScreenPos2TAPos ( &TAmainStruct_Ptr->MouseMapPos, x, y);
-
-	if (0<SelectedCount)
-	{//
-		if (cursorselect!=TAmainStruct_Ptr->CurrentCursora_Index)
-		{
-			MOUSEEVENT MEvent;
-			MEvent.fwKeys= shift? 4: 0;
-			TAMapClick ( &MEvent);
-			//SendOrder ( TAmainStruct_Ptr->MouseMapPos.X, TAmainStruct_Ptr->MouseMapPos.Y, TAmainStruct_Ptr->MouseMapPos.Z, TAmainStruct_Ptr->PrepareOrder_Type, shift);
-			MoveScreen ( TAmainStruct_Ptr->MouseMapPos.X, TAmainStruct_Ptr->MouseMapPos.Y, TAmainStruct_Ptr->MouseMapPos.Z);
-
-			UpdateSelectUnitEffect ( );
-			ApplySelectUnitMenu_Wapper  ( );
-		}
-		else
-		{
-			if (MouseUnit)
+			if (TAmainStruct_Ptr->Players[TAmainStruct_Ptr->LocalHumanPlayer_PlayerID].PlayerAryIndex==(TAmainStruct_Ptr->OwnUnitBegin[MouseUnit].Owner_PlayerPtr0->PlayerAryIndex))
 			{
-				if ((x==LastDblXPos)
-					&&(y==LastDblYpos))
-				{// double clicked
-					return TRUE;
-				}
 				DeselectUnits ( );
+				Begin[MouseUnit].UnitSelected|= 0x10;
+				SelectedCount= 1;
+
 				UpdateSelectUnitEffect ();
 				ApplySelectUnitMenu_Wapper ( );
 			}
-
 		}
 	}
-
-	if (MouseUnit)
+	else if (0<SelectedCount)
 	{
-		if (TAmainStruct_Ptr->Players[TAmainStruct_Ptr->LocalHumanPlayer_PlayerID].PlayerAryIndex==(TAmainStruct_Ptr->OwnUnitBegin[MouseUnit].Owner_PlayerPtr0->PlayerAryIndex))
-		{
-			Begin[MouseUnit].UnitSelected|= 0x10;
+		if (0==TAmainStruct_Ptr->InterfaceType)
+		{// L
+				if (cursorselect!=TAmainStruct_Ptr->CurrentCursora_Index)
+				{
+					if (BUILD!=TAmainStruct_Ptr->PrepareOrder_Type)
+					{
+						SendOrder ( TAmainStruct_Ptr->MouseMapPos.X, TAmainStruct_Ptr->MouseMapPos.Y, TAmainStruct_Ptr->MouseMapPos.Z, TAmainStruct_Ptr->PrepareOrder_Type, shift);
+					}
 
-			UpdateSelectUnitEffect ();
+					UpdateSelectUnitEffect ( );
+					ApplySelectUnitMenu_Wapper  ( );
+				}
+		}
+		else if ((x!=LastDblXPos)
+			||(y!=LastDblYpos))
+		{// R 
+
+			DeselectUnits ();
+			SelectedCount= 0;
+
+			UpdateSelectUnitEffect ( ) ;
 			ApplySelectUnitMenu_Wapper ( );
-			SelectedCount= 1;
 		}
 	}
 	return TRUE;
-}
 
-BOOL MegaMapControl::RightDoubleClick (int x, int y, bool shift)
-{
-	return TRUE;
 }
 
 
-BOOL MegaMapControl::LeftDoubleClick (int x, int y, bool shift)
+
+
+
+	
+
+
+
+
+BOOL MegaMapControl::DoubleClick (int x, int y, bool shift)
 {
 	if (myExternQuickKey->DoubleClick)
 	{
-
-
-
 		LastDblXPos= x;
 		LastDblYpos= y;
 
 		int SelectedUnit= TAmainStruct_Ptr->MouseOverUnit;
 
-		//DeselectUnits ();
-		//SelectedCount= 0;
 		if (0!= SelectedUnit)
 		{
 			UnitStruct * Begin= TAmainStruct_Ptr->OwnUnitBegin;
+
+			//DeselectUnits ( );
+			SelectedCount= 0;
 
 			if (TAmainStruct_Ptr->Players[TAmainStruct_Ptr->LocalHumanPlayer_PlayerID].PlayerAryIndex==(TAmainStruct_Ptr->OwnUnitBegin[SelectedUnit].Owner_PlayerPtr0->PlayerAryIndex))
 			{
@@ -577,6 +658,52 @@ BOOL MegaMapControl::LeftDoubleClick (int x, int y, bool shift)
 	return TRUE;
 }
 
+
+
+BOOL MegaMapControl::WheelFont (int xPos, int yPos)
+{
+	if (IsBliting())
+	{
+		TAmainStruct_Ptr->CameraToUnit= 0; 
+
+		if (MegaMapScreen.right<xPos)
+		{
+			xPos=MegaMapScreen.right;
+		}
+		if (xPos<MegaMapScreen.left)
+		{
+			xPos= MegaMapScreen.left;
+		}
+		if (MegaMapScreen.bottom<yPos)
+		{
+			yPos=MegaMapScreen.bottom;
+		}
+		if (yPos<MegaMapScreen.top)
+		{
+			yPos= MegaMapScreen.top;
+		}
+
+
+		xPos= xPos- MegaMapScreen.left;
+		yPos= yPos- MegaMapScreen.top;
+		
+		ScreenPos2TAPos ( &TAmainStruct_Ptr->MouseMapPos, xPos, yPos);
+
+		MoveScreen ( TAmainStruct_Ptr->MouseMapPos.X, TAmainStruct_Ptr->MouseMapPos.Y, TAmainStruct_Ptr->MouseMapPos.Z);
+
+		QuitMegaMap ( );
+	}
+	return TRUE;
+}
+
+BOOL MegaMapControl::WheelBack (int xPos, int yPos)
+{
+	if (! IsBliting())
+	{
+		EnterMegaMap ();
+	}
+	return TRUE;
+}
 BOOL MegaMapControl::IsBliting(void)
 {
 	return parent->IsBliting();
@@ -587,67 +714,66 @@ BOOL MegaMapControl::IsInControl(void)
 	
 	return InControl;
 }
+BOOL MegaMapControl::IsInMap(void)
+{
+
+	return InMap;
+}
 
 
 BOOL MegaMapControl::MouseMove (int x, int y)
 {
-	ScreenPos2TAPos ( &TAmainStruct_Ptr->MouseMapPos, x+ 5, y+ 5);
-
-	RECT MouseRect;
-	MouseRect.left= TAmainStruct_Ptr->MouseMapPos.X- HalfMaxIconWidth_TAPos;
-	MouseRect.right= TAmainStruct_Ptr->MouseMapPos.X+ HalfMaxIconWidth_TAPos;
-	MouseRect.top= TAmainStruct_Ptr->MouseMapPos.Y- HalfMaxIconHeight_TAPos;
-	MouseRect.bottom= TAmainStruct_Ptr->MouseMapPos.Y+ HalfMaxIconHeight_TAPos;
-
-	int Count= TAmainStruct_Ptr->NumHotRadarUnits;
-
-	RadarUnit_ * RadarUnits_v= (*TAmainStruct_PtrPtr)->RadarUnits;
-	UnitStruct * Begin= TAmainStruct_Ptr->OwnUnitBegin;
-
-	UnitStruct * unitPtr;
-
-	BOOL UnitUnderMouse= FALSE;
-	for (int i= 0; i<Count; ++i)
+	if (IsInMap ( ))
 	{
-		unitPtr=  &Begin[RadarUnits_v[i].ID];
-		if ((MouseRect.left<static_cast<int>(unitPtr->XPos))
-			&&(static_cast<int>(unitPtr->XPos)<MouseRect.right)
-			&&(MouseRect.top<static_cast<int>(unitPtr->YPos))
-			&&(static_cast<int>(unitPtr->YPos)<MouseRect.bottom))
+		ScreenPos2TAPos ( &TAmainStruct_Ptr->MouseMapPos, x+ 5, y+ 5);
+
+		RECT MouseRect;
+		MouseRect.left= TAmainStruct_Ptr->MouseMapPos.X- HalfMaxIconWidth_TAPos;
+		MouseRect.right= TAmainStruct_Ptr->MouseMapPos.X+ HalfMaxIconWidth_TAPos;
+		MouseRect.top= TAmainStruct_Ptr->MouseMapPos.Y- HalfMaxIconHeight_TAPos;
+		MouseRect.bottom= TAmainStruct_Ptr->MouseMapPos.Y+ HalfMaxIconHeight_TAPos;
+
+		int Count= TAmainStruct_Ptr->NumHotRadarUnits;
+
+		RadarUnit_ * RadarUnits_v= (*TAmainStruct_PtrPtr)->RadarUnits;
+		UnitStruct * Begin= TAmainStruct_Ptr->OwnUnitBegin;
+
+		UnitStruct * unitPtr;
+
+		BOOL UnitUnderMouse= FALSE;
+		for (int i= 0; i<Count; ++i)
 		{
-// 			POINT IconSize;
-// 
-// 			parent->UnitsMap->UnitPicture ( unitPtr, unitPtr->myLos_PlayerID, NULL, &IconSize);
-// 			IconSize.x= IconSize.x/ 2+ 5;
-// 			IconSize.y= IconSize.y/ 2+ 5;
-// 
-// 			if (((TAmainStruct_Ptr->MouseMapPos.X- IconSize.x)< static_cast<int>(unitPtr->XPos))
-// 				&&(static_cast<int>(unitPtr->XPos)< (TAmainStruct_Ptr->MouseMapPos.X+ IconSize.x))
-// 				&&((TAmainStruct_Ptr->MouseMapPos.Y- IconSize.y)<static_cast<int>(unitPtr->YPos))
-// 				&&(static_cast<int>(unitPtr->YPos)<(TAmainStruct_Ptr->MouseMapPos.Y+ IconSize.y)))
-// 			{
+			unitPtr=  &Begin[RadarUnits_v[i].ID];
+			if ((MouseRect.left<static_cast<int>(unitPtr->XPos))
+				&&(static_cast<int>(unitPtr->XPos)<MouseRect.right)
+				&&(MouseRect.top<static_cast<int>(unitPtr->YPos))
+				&&(static_cast<int>(unitPtr->YPos)<MouseRect.bottom))
+			{
 				TAmainStruct_Ptr->MouseOverUnit= RadarUnits_v[i].ID;
 				UnitUnderMouse= TRUE;
 				break;
-//			}
+			}
 		}
-	}
-	if (!UnitUnderMouse)
-	{
-		TAmainStruct_Ptr->MouseOverUnit= 0;
-	}
-	if (0!=TAmainStruct_Ptr->MouseOverUnit)
-	{
-		int NewCursorIndex= CorretCursor_InGame ( TAmainStruct_Ptr->PrepareOrder_Type);
 
-		if (NewCursorIndex!=TAmainStruct_Ptr->CurrentCursora_Index)
+		if (!UnitUnderMouse)
 		{
-			TAmainStruct_Ptr->CurrentCursora_Index= NewCursorIndex;
-			SetUICursor ( &(TAmainStruct_Ptr->desktopGUI), TAmainStruct_Ptr->cursor_ary[NewCursorIndex]);
+			TAmainStruct_Ptr->MouseOverUnit= 0;
+		}
+		if (0!=TAmainStruct_Ptr->MouseOverUnit)
+		{
+			if (BUILD!=TAmainStruct_Ptr->PrepareOrder_Type)
+			{
+				int NewCursorIndex= CorretCursor_InGame ( TAmainStruct_Ptr->PrepareOrder_Type);
+
+				if (NewCursorIndex!=TAmainStruct_Ptr->CurrentCursora_Index)
+				{
+					TAmainStruct_Ptr->CurrentCursora_Index= NewCursorIndex;
+					SetUICursor ( &(TAmainStruct_Ptr->desktopGUI), TAmainStruct_Ptr->cursor_ary[NewCursorIndex]);
+				}
+			}
 		}
 	}
 
-	
 	return TRUE;
 }
 
@@ -659,34 +785,44 @@ BOOL MegaMapControl::SelectDown (int x, int y, bool out)
 
 		SelectScreenRect.left= x;
 		SelectScreenRect.top= y;
+
+		SelectTick= GetTickCount ( );
 	}
 	return FALSE;
 }
 
-BOOL MegaMapControl::SelectUp (int x, int y, bool out)
+BOOL MegaMapControl::SelectUp (int x, int y, bool out, bool shift)
 {
 	BOOL Rtn_b= FALSE;
 
-		if (selectbuttom::select==SelectState)
+	UnitStruct * Begin= TAmainStruct_Ptr->OwnUnitBegin;
+
+
+	if (selectbuttom::select==SelectState)
+	{
+		SelectState= selectbuttom::up;
+		// do select
+		LONG Tmp;
+		Position_Dword TmpPos;
+		if (SelectScreenRect.right<SelectScreenRect.left)
 		{
-			SelectState= selectbuttom::up;
-			// do select
-			LONG Tmp;
-			Position_Dword TmpPos;
-			if (SelectScreenRect.right<SelectScreenRect.left)
-			{
-				Tmp= SelectScreenRect.left;
-				SelectScreenRect.left= SelectScreenRect.right;
-				SelectScreenRect.right= Tmp;
-			}
+			Tmp= SelectScreenRect.left;
+			SelectScreenRect.left= SelectScreenRect.right;
+			SelectScreenRect.right= Tmp;
+		}
 
-			if (SelectScreenRect.bottom<SelectScreenRect.top)
-			{
-				Tmp= SelectScreenRect.top;
-				SelectScreenRect.top= SelectScreenRect.bottom;
-				SelectScreenRect.bottom= Tmp;
-			}
+		if (SelectScreenRect.bottom<SelectScreenRect.top)
+		{
+			Tmp= SelectScreenRect.top;
+			SelectScreenRect.top= SelectScreenRect.bottom;
+			SelectScreenRect.bottom= Tmp;
+		}
 
+
+		if ((32<(SelectScreenRect.bottom- SelectScreenRect.top))
+			&&(32<(SelectScreenRect.right- SelectScreenRect.left))
+			&&((SelectTick/ 1000)<= (GetTickCount ( )/ 1000)))
+		{
 			ScreenPos2TAPos ( &TmpPos, SelectScreenRect.left, SelectScreenRect.top);
 			SelectScreenRect.left= TmpPos.X;
 			SelectScreenRect.top= TmpPos.Y;
@@ -700,45 +836,63 @@ BOOL MegaMapControl::SelectUp (int x, int y, bool out)
 
 			Rtn_b= TRUE;
 		}
+	}
+	else if ((! out)
+		&&(0<SelectedCount))
+	{
+		if (STOP!=TAmainStruct_Ptr->PrepareOrder_Type)
+		{
+			MOUSEEVENT MEvent;
+			MEvent.fwKeys= shift? 4: 0;
+			TAMapClick ( &MEvent);
+
+			Rtn_b= TRUE;
+		}
+	}
+
 
 	SelectState= selectbuttom::none;
 	return Rtn_b;
 }
-BOOL MegaMapControl::SelectMove (int x, int y, bool Out_b)
+BOOL MegaMapControl::SelectMove (int x, int y, bool Out_b, bool LBMD)
 {
-	if ( selectbuttom::down==SelectState
-		||selectbuttom::select==SelectState)
+	if (LBMD)
 	{
-		SelectState= selectbuttom::select;
-		if (Out_b)
+		if (selectbuttom::down==SelectState
+			||selectbuttom::select==SelectState)
 		{
-			if (x<0)
-			{
-				x= 0;
-			}
-			if (MegaMapWidth<x)
-			{
-				x= MegaMapWidth;
-			}
+			SelectState= selectbuttom::select;
 
-			if (y<0)
+			if (Out_b)
 			{
-				y= 0;
+				if (x<0)
+				{
+					x= 0;
+				}
+				if (MegaMapWidth<x)
+				{
+					x= MegaMapWidth;
+				}
+
+				if (y<0)
+				{
+					y= 0;
+				}
+				if (MegaMapHeight<y)
+				{
+					y= MegaMapHeight;
+				}
 			}
-			if (MegaMapHeight<y)
-			{
-				y= MegaMapHeight;
-			}
+			SelectScreenRect.right= x;
+			SelectScreenRect.bottom= y;
+			return TRUE;
 		}
-
-		
-
-		SelectScreenRect.right= x;
-		SelectScreenRect.bottom= y;
-
-
-		return TRUE;
 	}
+	else
+	{
+		SelectState= selectbuttom::none;
+	}
+
 
 	return FALSE;
 }
@@ -748,10 +902,14 @@ void MegaMapControl::BlitSelect (LPDIRECTDRAWSURFACE DestSurf)
 	DDSURFACEDESC ddsd;
 	DDRAW_INIT_STRUCT(ddsd);
 
-	if (DD_OK==DestSurf->Lock(NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL))
+	if ((selectbuttom::select==SelectState)
+		||(BUILD==TAmainStruct_Ptr->PrepareOrder_Type))
 	{
-		LockBlit ( ddsd.lpSurface, ddsd.dwWidth, ddsd.dwHeight, ddsd.lPitch);
-		DestSurf->Unlock ( NULL);
+		if (DD_OK==DestSurf->Lock(NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL))
+		{
+			LockBlit ( ddsd.lpSurface, ddsd.dwWidth, ddsd.dwHeight, ddsd.lPitch);
+			DestSurf->Unlock ( NULL);
+		}
 	}
 }
 void MegaMapControl::LockBlit (LPVOID lpSurfaceMem, int dwWidth, int dwHeight, int lPitch)
@@ -788,7 +946,7 @@ void MegaMapControl::LockBlit (LPVOID lpSurfaceMem, int dwWidth, int dwHeight, i
 		else if (BUILD==TAmainStruct_Ptr->PrepareOrder_Type)
 		{// draw build rect
 
-			if (! IsInControl ( ))
+			if (! IsInMap ( ))
 			{
 				return ;
 			}
@@ -836,9 +994,34 @@ void MegaMapControl::LockBlit (LPVOID lpSurfaceMem, int dwWidth, int dwHeight, i
 
 }
 
-void MegaMapControl::MoveScreen (unsigned int TAX, unsigned int TAY, unsigned int TAZ)
+void MegaMapControl::MoveScreen ( int TAX,  int TAY,  int TAZ)
 {
-	ScrollToCenter ( TAX, TAY);
+	//ScrollToCenter ( TAX, TAY- TAZ/ 2);
+
+	int *PTR = (int*)TAmainStruct_PtrPtr;
+	int *XPointer = (int*)(*PTR + 0x1431f);
+	int *YPointer = (int*)(*PTR + 0x14323);
+	
+ 	TAX -= (((*TAProgramStruct_PtrPtr)->ScreenWidth)-(*TAmainStruct_PtrPtr)->GameSreen_Rect.left)/2;
+ 	TAY -= (((*TAProgramStruct_PtrPtr)->ScreenHeight)-(*TAmainStruct_PtrPtr)->GameSreen_Rect.top)/2;
+
+	if(TAX<0)
+		TAX = 0;
+	if(TAY<0)
+		TAY = 0;
+	if(TAX>(GetMaxScrollX()))
+		TAX = (GetMaxScrollX());
+	if(TAY>(GetMaxScrollY()))
+		TAY = (GetMaxScrollY());
+
+	(*TAmainStruct_PtrPtr)->EyeBallMapXPos= TAX;
+	(*TAmainStruct_PtrPtr)->EyeBallMapYPos= TAY;
+	(*TAmainStruct_PtrPtr)->MapXScrollingTo= TAX;
+	(*TAmainStruct_PtrPtr)->MapYScrollingTo= TAY;
+
+	UpdateLosState ( 0);
+	//ScrollMinimap ( );
+	//041C3C0
 }
 
 
