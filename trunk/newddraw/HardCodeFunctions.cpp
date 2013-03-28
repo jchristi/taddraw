@@ -201,7 +201,7 @@ void ScrollToCenter(int x, int y)
 	int *PTR = (int*)TAmainStruct_PtrPtr;
 	int *XPointer = (int*)(*PTR + 0x1431f);
 	int *YPointer = (int*)(*PTR + 0x14323);
-
+	
 	x -= (((*TAProgramStruct_PtrPtr)->ScreenWidth)-128)/2;
 	y -= (((*TAProgramStruct_PtrPtr)->ScreenHeight)-64)/2;
 
@@ -219,6 +219,7 @@ void ScrollToCenter(int x, int y)
 	//*YPointer = y;
 	*(YPointer + 2)= y;
 }
+
 
 void freeTAMem (LPVOID MemAddress)
 {
@@ -298,6 +299,43 @@ typedef  MCIERROR  (WINAPI * _mciSendStringA)(  LPCSTR lpstrCommand,  LPSTR lpst
 
 }
 
+int DrawCircle (LPBYTE Bits, POINT * Aspect, int CenterX, int CenterY, int Radius, int color)
+{
+	OFFSCREEN OffScreen;
+
+	memset ( &OffScreen, 0, sizeof(OFFSCREEN));
+	OffScreen.Height=Aspect->y;
+	OffScreen.Width= Aspect->x;
+	OffScreen.lPitch= Aspect->x;
+	OffScreen.lpSurface= Bits;
+
+	OffScreen.ScreenRect.left= 0;
+	OffScreen.ScreenRect.right=  Aspect->x;;
+
+	OffScreen.ScreenRect.top= 0;
+	OffScreen.ScreenRect.bottom= Aspect->y;
+
+	return TARadarDrawCircle ( &OffScreen,  CenterX,  CenterY,  Radius,  color);
+}
+
+int DrawDotteCircle (LPBYTE Bits, POINT * Aspect, int CenterX, int CenterY, int Radius, int color, int Spacing, int Dotte_b)
+{
+	OFFSCREEN OffScreen;
+
+	memset ( &OffScreen, 0, sizeof(OFFSCREEN));
+	OffScreen.Height=Aspect->y;
+	OffScreen.Width= Aspect->x;
+	OffScreen.lPitch= Aspect->x;
+	OffScreen.lpSurface= Bits;
+
+	OffScreen.ScreenRect.left= 0;
+	OffScreen.ScreenRect.right=  Aspect->x;;
+
+	OffScreen.ScreenRect.top= 0;
+	OffScreen.ScreenRect.bottom= Aspect->y;
+
+	return TADrawDotteCircle ( &OffScreen,  CenterX,  CenterY,  Radius,  color, Spacing, Dotte_b);
+}
 int ChatText (LPSTR str)
 {
 	if ('+'==str[0])
@@ -370,7 +408,20 @@ _CorretCursor_InGame CorretCursor_InGame= (_CorretCursor_InGame)0x048D220;
 _SetUICursor SetUICursor= (_SetUICursor)0x4AB400;
 
 _SelectAllSelectedUnits SelectAllSelectedUnits= (_SelectAllSelectedUnits)0x0048BE00;
-_GetPosition_Dword GetPosition_Dword=(_GetPosition_Dword)0x0484B50;
+
+
+_GetPosHeight GetPosHeight= (_GetPosHeight) 0x0485070;
+_TARadarDrawCircle TARadarDrawCircle= (_TARadarDrawCircle)0x04C0070;
+_GetGridPosFeature GetGridPosFeature= (_GetGridPosFeature)0x0421E60;
+
+_GetPosition_Dword GetPosition_Dword= (_GetPosition_Dword) 0x00484B50;
+_TADrawDotteCircle TADrawDotteCircle= (_TADrawDotteCircle) 0x004C01A0;
+
+_ScrollMinimap ScrollMinimap= (_ScrollMinimap )0x041C3C0 ;
+
+                                                     ; 
+
+_PlaySound_Effect PlaySound_Effect= (_PlaySound_Effect) 0x47F1A0;
 
 //////////////////////////////////////////////////////////////////////////////////////////
 /// Not working.

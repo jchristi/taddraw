@@ -66,9 +66,17 @@ FullScreenMinimap::FullScreenMinimap (BOOL Doit)
 		
 		LoadMap_hook->SetParamOfHook ( (LPVOID)this);
 		GameDrawer= new TAGameAreaReDrawer;
-
-		ProjectilesMap_p= new ProjectileMap ( );
 	}
+
+
+
+	DrawBackground= MyConfig->GetIniBool ( "DrawBackground", TRUE);
+	DrawMapped= MyConfig->GetIniBool ( "DrawMapped", TRUE);
+	DrawProjectile= MyConfig->GetIniBool ( "DrawProjectile", TRUE);
+	DrawUnits= MyConfig->GetIniBool ( "DrawUnits", TRUE);
+	DrawMegamapRect= MyConfig->GetIniBool ( "DrawMegamapRect", TRUE);
+	DrawSelectRect= MyConfig->GetIniBool ( "DrawSelectRect", TRUE);
+	DrawMegamapCursor= MyConfig->GetIniBool ( "DrawMegamapCursor", TRUE);
 }
 
 
@@ -191,18 +199,29 @@ void FullScreenMinimap::InitMinimap (TNTHeaderStruct * TNTPtr, RECT * GameScreen
 
 		if (NULL!=Controler)
 		{
-			Controler->Init ( this, &MegaMapInscren, &TAMAPTAPos, ICONMAXWIDTH, ICONMAXHEIGHT, MegamapVirtualKey);
+			Controler->Init ( this, &MegaMapInscren, &TAMAPTAPos, GameScreen, ICONMAXWIDTH, ICONMAXHEIGHT, MegamapVirtualKey);
 
 			Controler->InitSurface ( (IDirectDraw*)LocalShare->TADirectDraw);
 		}
 		else
 		{
-			Controler= new MegaMapControl ( this, &MegaMapInscren, &TAMAPTAPos, ICONMAXWIDTH, ICONMAXHEIGHT, MegamapVirtualKey);
+			Controler= new MegaMapControl ( this, &MegaMapInscren, &TAMAPTAPos, GameScreen, ICONMAXWIDTH, ICONMAXHEIGHT, MegamapVirtualKey);
 
 			Controler->InitSurface ( (IDirectDraw*)LocalShare->TADirectDraw);
 		}
+
+		if (ProjectilesMap_p)
+		{
+			delete ProjectilesMap_p;
+		}
+		if (UnitsMap)
+		{
+			ProjectilesMap_p= new ProjectileMap ( UnitsMap);
+		}
+		
 	}
 }
+
 void FullScreenMinimap::Set (int VirtualKey)
 {
 	MegamapVirtualKey= VirtualKey;
@@ -227,7 +246,7 @@ void FullScreenMinimap::Blit(LPDIRECTDRAWSURFACE DestSurf)
 			int CursorY= (*TAmainStruct_PtrPtr)->CurtMousePostion.y;
 
 			i++;
-			if (10<i)
+			if (5<i)
 			{//
 				if (!Flipping)
 				{
@@ -238,18 +257,37 @@ void FullScreenMinimap::Blit(LPDIRECTDRAWSURFACE DestSurf)
 
 					if (MyMinimap_p)
 					{
-						MyMinimap_p->PictureInfo ( &PixelBits, &Aspect);
 
-						Mapped_p->NowDrawMapped ( PixelBits, &Aspect);
 
+						if (DrawBackground)
+						{
+							MyMinimap_p->PictureInfo ( &PixelBits, &Aspect);
+						}
+						
+
+						if (DrawMapped)
+						{
+							Mapped_p->NowDrawMapped ( PixelBits, &Aspect);
+						}
 						Mapped_p->PictureInfo (  &PixelBits, &Aspect);
 
-						ProjectilesMap_p->NowDrawProjectile ( PixelBits, &Aspect);
 
-						UnitsMap->NowDrawUnits ( PixelBits, &Aspect);
+						if (DrawProjectile)
+						{
+							ProjectilesMap_p->NowDrawProjectile ( PixelBits, &Aspect);
+						}
+						
+						if (DrawUnits)
+						{
+							UnitsMap->NowDrawUnits ( PixelBits, &Aspect);
+						}
+						
 
-
-						GameDrawer->MixDSufInBlit ( &MegamapRect, UnitsMap->GetSurface ( ) , NULL);
+						if (DrawMegamapRect)
+						{
+							GameDrawer->MixDSufInBlit ( &MegamapRect, UnitsMap->GetSurface ( ) , NULL);
+						}
+						
 						GameDrawer->Flip ( );
 					}
 			
@@ -258,14 +296,24 @@ void FullScreenMinimap::Blit(LPDIRECTDRAWSURFACE DestSurf)
 			
 			}
 
-
-			GameDrawer->BlitTAGameArea ( DestSurf);
-			Controler->BlitSelect ( DestSurf);
+			if (DrawMegamapRect)
+			{
+				GameDrawer->BlitTAGameArea ( DestSurf);
+			}
+			if (DrawSelectRect)
+			{
+				Controler->BlitSelect ( DestSurf);
+			}
+			
 
 			if ((CursorY!=-1)
 				&&(CursorX!=-1))
 			{
-				Controler->DrawCursor ( DestSurf, CursorX, CursorY);
+				if (DrawMegamapCursor)
+				{
+						Controler->DrawCursor ( DestSurf, CursorX, CursorY);
+				}
+			
 			}
 		}
 	}
@@ -274,6 +322,7 @@ void FullScreenMinimap::LockBlit (char * lpSurfaceMem, int dwWidth,int dwHeight,
 {
 	Controler->LockBlit ( lpSurfaceMem, dwWidth, dwHeight, lPitch);
 }
+
 void FullScreenMinimap::InitSurface (LPDIRECTDRAW TADD)
 {
 	if (Do_b

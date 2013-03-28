@@ -45,6 +45,12 @@ ExternQuickKey::ExternQuickKey ()
 	 BuildingMask= NULL;
 	 AirWeaponMask= NULL;
 	 AirConMask= NULL;
+	 for (int i= 0; i<RACENUMBER; ++i)
+	 {
+		 Commanders[i][0]= '\0';
+
+		 CommandersMask[i]= NULL;
+	 }
 
 	HookInCircleSelect= new InlineSingleHook ( (unsigned int)AddrAboutCircleSelect, 5, 
 		INLINE_5BYTESLAGGERJMP, AddtionRoutine_CircleSelect);
@@ -689,11 +695,11 @@ int ExternQuickKey::FilterSelectedUnitProc (TAUnitType NeededType) //Ö»»áÔÚÒÑÑ¡Ö
 		Current= &Current[1];
 		
 	}
-	if (0!=SelectedCounter)
-	{
-		UpdateSelectUnitEffect ( );
-		//ApplySelectUnitMenu_Wapper ( );
-	}
+
+
+	UpdateSelectUnitEffect ( );
+	ApplySelectUnitMenu_Wapper ( );
+	
 
 	ReleaseSemaphore ( Semaphore_FilterSelect, 1, NULL);
 
@@ -710,33 +716,51 @@ int ExternQuickKey::InitExternTypeMask (void)
 
 	int Inited= 0;
 
-
-
-	if (NULL==CommanderMask)
+	if(NULL==CommanderMask)
 	{
 		CommanderMask= (LPDWORD)malloc (  CategroyMaskSize);
 	}
-	for (int i= 0; i<RACENUMBER; ++i)
+
+	
+	memset ( Commanders, 0, RACENUMBER* COMMANDNAMELEN);
+	for (int i= 0; i<static_cast<int>(TAMainStruct_Ptr->RaceCounter); ++i)
 	{
-		Commanders[i][0]= '\0';
-		CommandersMask[i]= NULL;
+		strcpy_s ( &Commanders[i][0], 30, TAMainStruct_Ptr->RaceSideDataAry[i].name);
+		if (NULL==CommandersMask[i])
+		{
+			CommandersMask[i]=  (LPDWORD)malloc (  CategroyMaskSize);
+		}
+		memset ( CommandersMask[i], 0, CategroyMaskSize);
 	}
 
-		
+	
 	memset ( CommanderMask, 0, CategroyMaskSize);
-	for (DWORD i= 0; i<TAMainStruct_Ptr->RaceCounter; ++i)
+	
+	for (int i= 0; i<TypeCount; ++i)
 	{
-		int ID= UnitName2ID ( TAMainStruct_Ptr->RaceSideDataAry[i].commanderUnitName);
-		strcpy_s ( &Commanders[i][0], COMMANDNAMELEN, TAMainStruct_Ptr->RaceSideDataAry[i].commanderUnitName);
+		Current= &Begin[i];
+		if (0!=(commander& Current->UnitTypeMask_1))
+		{
+			SetIDMaskInTypeAry (  Current->UnitTypeID, CommanderMask);
 
-		CommandersMask[i]=  (LPDWORD)malloc (  CategroyMaskSize);
-		memset ( CommandersMask[i], 0, CategroyMaskSize);
+			for (DWORD i= 0; i<TAMainStruct_Ptr->RaceCounter; ++i)
+			{
+				char GamedataSide[0x10];
+				char UnitSide[0x10];
 
-		SetIDMaskInTypeAry (  ID, CommandersMask[i]);
-		SetIDMaskInTypeAry (  ID, CommanderMask);
+				strcpy_s ( GamedataSide, 8, &Commanders[i][0]);
+				strcpy_s ( UnitSide, 8, Current->Side);
+
+				_strlwr_s ( GamedataSide, 8);
+				_strlwr_s ( UnitSide, 8);
+				if (0== _strcmpi ( GamedataSide, UnitSide))
+				{
+					SetIDMaskInTypeAry (  Current->UnitTypeID,  CommandersMask[i]);
+				}
+			}
+		}
 	}
 	Inited++;
-	
 	
 
 	if (NULL==MobileWeaponMask)
@@ -812,7 +836,6 @@ int ExternQuickKey::InitExternTypeMask (void)
 
 			if ((0!=(builder&Current->UnitTypeMask_0))
 				&&(NULL!=Current->YardMap)
-				&&(0==(canmove&Current->UnitTypeMask_0))
 				&&(! MatchInTypeAry ( Current->UnitTypeID, CommanderMask)))
 			{
 				SetIDMaskInTypeAry ( Current->UnitTypeID, FactoryMask);
@@ -833,7 +856,6 @@ int ExternQuickKey::InitExternTypeMask (void)
 		Current= &Begin[i];
 
 		if ((NULL!=Current->YardMap)
-			&&(0==(canmove&Current->UnitTypeMask_0))
 			&&(! MatchInTypeAry ( Current->UnitTypeID, CommanderMask)))
 		{
 			SetIDMaskInTypeAry ( Current->UnitTypeID, BuildingMask);
@@ -992,7 +1014,5 @@ void AddRoutine_InitAfterExternKey ( void)
 		{
 			GUIExpander->myMinimap->UnitsMap->LoadUnitPicture ( );
 		}
-
 	}
-	
 }

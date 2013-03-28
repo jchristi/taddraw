@@ -13,14 +13,15 @@ namespace selectbuttom
 	};
 };
 
+struct _GAFFrame;
 
 class MegaMapControl 
 {
 public:
-	MegaMapControl (FullScreenMinimap * parent_p, RECT * MegaMapScreen_p, RECT * TAMap_p,
+	MegaMapControl (FullScreenMinimap * parent_p, RECT * MegaMapScreen_p, RECT * TAMap_p, RECT * GameScreen_p,
 		int MaxIconWidth, int MaxIconHeight, int MegaMapVirtulKey_arg);
 	~ MegaMapControl ();
-	void Init (FullScreenMinimap * parent_p, RECT * MegaMapScreen_p, RECT * TAMap_p,
+	void Init (FullScreenMinimap * parent_p, RECT * MegaMapScreen_p, RECT * TAMap_p, RECT * GameScreen_p,
 		int MaxIconWidth, int MaxIconHeight, int MegaMapVirtulKey_arg);
 	
 	void DrawCursor (LPDIRECTDRAWSURFACE DestSurf,  unsigned int X, unsigned int Y);
@@ -30,7 +31,7 @@ public:
 	BOOL IsBliting(void);
 
 	BOOL IsInControl(void);
-
+	BOOL IsInMap(void);
 	void InitSurface ( LPDIRECTDRAW TADD);
 	void ReleaseSurface (void) ;
 
@@ -44,15 +45,18 @@ private:
 	BOOL RightUp (int x, int y, bool shift);
 	BOOL LeftDown (int x, int y, bool shift);
 	BOOL LeftUp (int x, int y, bool shift);
-	BOOL RightDoubleClick (int x, int y, bool shift);
-	BOOL LeftDoubleClick (int x, int y, bool shift);
+	//BOOL RightDoubleClick (int x, int y, bool shift);
+	BOOL DoubleClick (int x, int y, bool shift);
 	BOOL MouseMove (int x, int y);
 
-	void MoveScreen (unsigned int TAX, unsigned int TAY, unsigned int TAZ);
+	BOOL WheelBack (int xPos, int yPos);
+	BOOL WheelFont (int xPos, int yPos);
+
+	void MoveScreen ( int TAX,  int TAY,  int TAZ);
 
 	BOOL SelectDown (int x, int y, bool out);
-	BOOL SelectUp (int x, int y, bool out);
-	BOOL SelectMove (int x, int y, bool Out_b);
+	BOOL SelectUp (int x, int y, bool out, bool shift);
+	BOOL SelectMove (int x, int y, bool Out_b, bool LBMD);
 	Position_Dword * ScreenPos2TAPos (Position_Dword * TAPos, int x, int y);
 	POINT * TAPos2ScreenPos (POINT * ScreenPos, unsigned int TAX, unsigned int TAY, unsigned int TAZ);
 private:
@@ -60,11 +64,14 @@ private:
 
 	InlineSingleHook*  FindMouseUnitHook;
 	InlineSingleHook * GetPosition_DwordHook;
+	InlineSingleHook * GetGridPosFeatureHook;
 
 	int SelectedCount;
 	BOOL InControl;
+	BOOL InMap;
 	selectbuttom::SELECTBUTTOM SelectState;
 	RECT SelectScreenRect;
+	DWORD SelectTick;
 
 
 	int OrderType;
@@ -79,6 +86,9 @@ private:
 	int MegaMapVirtulKey;
 
 
+
+	RECT TAGameScreen;
+
 	RECT MegaMapScreen;
 	int MegaMapWidth;
 	int MegaMapHeight;
@@ -89,6 +99,6 @@ private:
 	float Screen2MapWidthScale;
 	float Screen2MapHeightScale;
 
-	LPDIRECTDRAWSURFACE Cursor_SurfcAry[0x15];
-	POINT Cursor_AspectAry[0x15];
+	_GAFFrame * LastCursor_GAFp;
+	LPDIRECTDRAWSURFACE Cursor_Surfc;
 };
