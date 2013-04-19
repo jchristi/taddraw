@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClCompile Include="MappedMAP.cpp" />
     <ClCompile Include="MegamapControl.cpp" />
+    <ClCompile Include="MegamapTAStuff.cpp" />
     <ClCompile Include="ProjectileMap.cpp" />
     <ClInclude Include="MegamapControl.h" />
     <ClInclude Include="ProjectilesMap.h">

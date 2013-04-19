@@ -25,7 +25,7 @@
 using namespace std;
 #include "TAConfig.h"
 
-
+#ifdef USEMEGAMAP
 int __stdcall LoadMap_Routine (PInlineX86StackBuffer X86StrackBuffer)
 {
 	TNTHeaderStruct * TNTPtr= (TNTHeaderStruct *)X86StrackBuffer->Eax;
@@ -46,12 +46,15 @@ FullScreenMinimap::FullScreenMinimap (BOOL Doit)
 	Mapped_p= NULL;
 	ProjectilesMap_p= NULL;
 
-	MegamapVirtualKey= VK_F4;
+	MegamapVirtualKey= VK_TAB;
 
 	Blit_b= FALSE;
 	Flipping= FALSE;
 
 	Controler= NULL;
+
+	
+
 	memset ( &MegamapRect, 0, sizeof(RECT) );
 	memset ( &MegaMapInscren, 0, sizeof(RECT) );
 	memset ( &TAMAPTAPos, 0, sizeof(RECT) );
@@ -75,8 +78,18 @@ FullScreenMinimap::FullScreenMinimap (BOOL Doit)
 	DrawProjectile= MyConfig->GetIniBool ( "DrawProjectile", TRUE);
 	DrawUnits= MyConfig->GetIniBool ( "DrawUnits", TRUE);
 	DrawMegamapRect= MyConfig->GetIniBool ( "DrawMegamapRect", TRUE);
-	DrawSelectRect= MyConfig->GetIniBool ( "DrawSelectRect", TRUE);
+	DrawMegamapBlit= MyConfig->GetIniBool ( "DrawMegamapBlit", TRUE);
+	DrawSelectAndOrder= MyConfig->GetIniBool ( "DrawSelectAndOrder", TRUE);
 	DrawMegamapCursor= MyConfig->GetIniBool ( "DrawMegamapCursor", TRUE);
+
+	DoubleClickMoveMegamap=  MyConfig->GetIniBool ( "DoubleClickMoveMegamap", FALSE);
+	WheelMoveMegaMap= MyConfig->GetIniBool ( "WheelMoveMegaMap", TRUE);
+	WheelZoom= MyConfig->GetIniBool ( "WheelZoom", TRUE);
+
+// 	DrawTAScreen_hok= new InlineSingleHook ( (unsigned int)DrawGameScreen_Addr, 5, 
+// 		INLINE_5BYTESLAGGERJMP, BlockTADraw);
+// 
+// 	DrawTAScreen_hok->SetParamOfHook ( reinterpret_cast<LPVOID>(this));
 }
 
 
@@ -110,12 +123,21 @@ FullScreenMinimap::~FullScreenMinimap (void)
 	{
 		delete Controler;
 	}
+
+// 	if(DrawTAScreen_hok)
+// 	{
+// 		delete DrawTAScreen_hok;
+// 		DrawTAScreen_hok= NULL;
+// 	}
 }
 
 void FullScreenMinimap::InitMinimap (TNTHeaderStruct * TNTPtr, RECT * GameScreen)
 {
+	if (!(IDirectDraw*)LocalShare->TADirectDraw)
+	{
+		return ;
+	}
 
-	
 	QuitMegaMap ( );
 	if (MyMinimap_p)
 	{
@@ -199,13 +221,13 @@ void FullScreenMinimap::InitMinimap (TNTHeaderStruct * TNTPtr, RECT * GameScreen
 
 		if (NULL!=Controler)
 		{
-			Controler->Init ( this, &MegaMapInscren, &TAMAPTAPos, GameScreen, ICONMAXWIDTH, ICONMAXHEIGHT, MegamapVirtualKey);
+			Controler->Init ( this, &MegaMapInscren, &TAMAPTAPos, GameScreen, ICONMAXWIDTH, ICONMAXHEIGHT, MegamapVirtualKey, WheelMoveMegaMap, DoubleClickMoveMegamap, WheelZoom);
 
 			Controler->InitSurface ( (IDirectDraw*)LocalShare->TADirectDraw);
 		}
 		else
 		{
-			Controler= new MegaMapControl ( this, &MegaMapInscren, &TAMAPTAPos, GameScreen, ICONMAXWIDTH, ICONMAXHEIGHT, MegamapVirtualKey);
+			Controler= new MegaMapControl ( this, &MegaMapInscren, &TAMAPTAPos, GameScreen, ICONMAXWIDTH, ICONMAXHEIGHT, MegamapVirtualKey, WheelMoveMegaMap, DoubleClickMoveMegamap, WheelZoom);
 
 			Controler->InitSurface ( (IDirectDraw*)LocalShare->TADirectDraw);
 		}
@@ -216,7 +238,7 @@ void FullScreenMinimap::InitMinimap (TNTHeaderStruct * TNTPtr, RECT * GameScreen
 		}
 		if (UnitsMap)
 		{
-			ProjectilesMap_p= new ProjectileMap ( UnitsMap);
+			ProjectilesMap_p= new ProjectileMap ( this, UnitsMap);
 		}
 		
 	}
@@ -233,7 +255,8 @@ void FullScreenMinimap::Set (int VirtualKey)
 }
 void FullScreenMinimap::Blit(LPDIRECTDRAWSURFACE DestSurf)
 {
-	static int i= 10;
+	static DWORD LastTick= 0;
+	static DWORD CurrentTick= 0;;
 
 	if (Do_b
 		&&Blit_b)
@@ -245,20 +268,22 @@ void FullScreenMinimap::Blit(LPDIRECTDRAWSURFACE DestSurf)
 			int CursorX= (*TAmainStruct_PtrPtr)->CurtMousePostion.x;
 			int CursorY= (*TAmainStruct_PtrPtr)->CurtMousePostion.y;
 
-			i++;
-			if (5<i)
+			CurrentTick= GetTickCount ( );
+			//i++;
+
+			if ((LastTick+ 1000/MEGAMAPFPS)<=CurrentTick)
 			{//
 				if (!Flipping)
 				{
 					Flipping= TRUE;
-					i= 0;
+
+					LastTick= CurrentTick;
+					//i= 0;
 					POINT Aspect;
 					LPBYTE PixelBits;
 
 					if (MyMinimap_p)
 					{
-
-
 						if (DrawBackground)
 						{
 							MyMinimap_p->PictureInfo ( &PixelBits, &Aspect);
@@ -285,7 +310,15 @@ void FullScreenMinimap::Blit(LPDIRECTDRAWSURFACE DestSurf)
 
 						if (DrawMegamapRect)
 						{
-							GameDrawer->MixDSufInBlit ( &MegamapRect, UnitsMap->GetSurface ( ) , NULL);
+							if (DrawUnits)
+							{
+								GameDrawer->MixDSufInBlit ( &MegamapRect, UnitsMap->GetSurface ( ) , NULL);
+							}
+							else
+							{
+								GameDrawer->MixBitsInBlit ( &MegamapRect, PixelBits, &Aspect, NULL);
+							}
+							
 						}
 						
 						GameDrawer->Flip ( );
@@ -293,32 +326,49 @@ void FullScreenMinimap::Blit(LPDIRECTDRAWSURFACE DestSurf)
 			
 					Flipping= FALSE;
 				}
-			
 			}
 
-			if (DrawMegamapRect)
+
+			if (DrawMegamapBlit)
 			{
 				GameDrawer->BlitTAGameArea ( DestSurf);
 			}
-			if (DrawSelectRect)
-			{
-				Controler->BlitSelect ( DestSurf);
-			}
-			
+			DDSURFACEDESC ddsd;
+			DDRAW_INIT_STRUCT(ddsd);
 
-			if ((CursorY!=-1)
-				&&(CursorX!=-1))
+			if (DrawSelectAndOrder||DrawMegamapCursor)
 			{
-				if (DrawMegamapCursor)
+				if (DD_OK==DestSurf->Lock(NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL))
 				{
-						Controler->DrawCursor ( DestSurf, CursorX, CursorY);
+					if (DrawSelectAndOrder)
+					{
+						LockBlit ( ddsd.lpSurface, ddsd.dwWidth, ddsd.dwHeight, ddsd.lPitch);
+					}
+
+					if (DrawMegamapCursor)
+					{
+
+						if ((CursorY!=-1)
+							&&(CursorX!=-1))
+						{
+							if ((! DrawSelectAndOrder)||
+								Controler==NULL||
+								(Controler->IsInMap ( )&&(! Controler->IsDrawGameRect ( TRUE))))
+							{
+								Controler->DrawCursor ( ddsd.lpSurface, ddsd.dwWidth, ddsd.dwHeight, ddsd.lPitch,
+									CursorX, CursorY);
+							}
+						}
+
+					}
+					DestSurf->Unlock ( NULL);
 				}
-			
 			}
 		}
+		
 	}
 }
-void FullScreenMinimap::LockBlit (char * lpSurfaceMem, int dwWidth,int dwHeight, int lPitch)
+void FullScreenMinimap::LockBlit (LPVOID lpSurfaceMem, int dwWidth,int dwHeight, int lPitch)
 {
 	Controler->LockBlit ( lpSurfaceMem, dwWidth, dwHeight, lPitch);
 }
@@ -326,7 +376,8 @@ void FullScreenMinimap::LockBlit (char * lpSurfaceMem, int dwWidth,int dwHeight,
 void FullScreenMinimap::InitSurface (LPDIRECTDRAW TADD)
 {
 	if (Do_b
-		&&(TALobby!=DataShare->TAProgress))
+		&&(TALobby!=DataShare->TAProgress)
+		&&MyMinimap_p)
 	{
 		if (UnitsMap)
 		{
@@ -436,8 +487,30 @@ BOOL FullScreenMinimap::IsBliting ( )
 void FullScreenMinimap::EnterMegaMap ()
 {
 	Blit_b= TRUE;
+
+
 }
 void FullScreenMinimap::QuitMegaMap ( )
 {
 	Blit_b= FALSE;
+
+
 }
+int __stdcall BlockTADraw (PInlineX86StackBuffer X86StrackBuffer)
+{
+	FullScreenMinimap * this_me= (FullScreenMinimap *)(X86StrackBuffer->myInlineHookClass_Pish->ParamOfHook);
+
+
+	if (this_me->IsBliting ( ))
+	{
+		*reinterpret_cast<LPDWORD>(X86StrackBuffer->Esp+ 4)= 0;
+
+		X86StrackBuffer->Esp-= 0x214;
+		return X86STRACKBUFFERCHANGE;
+	}
+
+	return 0;
+}
+
+
+#endif

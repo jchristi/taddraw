@@ -49,6 +49,11 @@ BYTE CDMusic_TABBits[]= {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0
 unsigned int CDMusic_Menu_PauseAddr= 0x00490B30;
 unsigned int CDMusic_Victory_PauseAddr= 0x4996DF;
 
+
+unsigned int CDMusic_StopAddr= 0x4CED4b;
+BYTE CDMusic_StopBits[]= {0x44, 0xb6, 0x50};
+
+
 TABugFixing::TABugFixing ()
 {
 	NullUnitDeathVictim= new SingleHook ( NullUnitDeathVictimAddr, sizeof(NullUnitDeathVictimBits), INLINE_UNPROTECTEVINMENT, NullUnitDeathVictimBits);
@@ -66,12 +71,18 @@ TABugFixing::TABugFixing ()
 	}
 
 	HMODULE Audiere_hm= GetModuleHandleA ( "audiere.dll");
-
+	CDMusic_TAB= NULL;
+	CDMusic_Menu_Pause= NULL;
+	CDMusic_Victory_Pause= NULL;
+	CDMusic_StopButton= NULL;
 	if (NULL!=Audiere_hm)
 	{// install music cd hook
+
 		CDMusic_TAB= new SingleHook ( CDMusic_TABAddr, sizeof(CDMusic_TABBits), INLINE_UNPROTECTEVINMENT, CDMusic_TABBits);
 		CDMusic_Menu_Pause= new InlineSingleHook ( CDMusic_Menu_PauseAddr, 5, INLINE_5BYTESLAGGERJMP, CDMusic_MenuProc);
 		CDMusic_Victory_Pause= new InlineSingleHook ( CDMusic_Victory_PauseAddr, 5, INLINE_5BYTESLAGGERJMP, CDMusic_VictoryProc);
+		//CDMusic_StopButton= new  SingleHook ( CDMusic_StopAddr  , sizeof(CDMusic_StopBits), INLINE_UNPROTECTEVINMENT, CDMusic_StopBits); 
+		
 	}
 }
 
@@ -115,7 +126,10 @@ TABugFixing::~TABugFixing ()
 	{
 		delete CDMusic_Victory_Pause;
 	}
-	
+	if (CDMusic_StopButton)
+	{
+		delete CDMusic_StopButton;
+	}
 	
 }
 
@@ -123,7 +137,7 @@ BOOL TABugFixing::AntiCheat (void)
 {
 	// sync "+now Film Chris Include Reload Assert"  with cheating
 
-	if (TRUE!=*IsCheating)
+	if (TRUE==*IsCheating)
 	{
 		(*TAmainStruct_PtrPtr)->SoftwareDebugMode|= 2;
 	}

@@ -11,6 +11,8 @@
 #include "iddrawsurface.h"
 
 
+#ifdef USEMEGAMAP
+
 MappedMap::MappedMap (int Width, int Height)
 {
 	Width_m= Width;
@@ -97,7 +99,7 @@ BOOL MappedMap::NowDrawMapped (LPBYTE PixelBits, POINT * AspectSrc)
 				int PlMapY= Player_p->LOS_Tileheight;
 				LPBYTE PlayerLosBits= Player_p->LOS_MEMORY_p;
 
-				int LosBitYOff;
+			//	int LosBitYOff;
 
 
 
@@ -186,3 +188,5 @@ LPBYTE MappedMap::PictureInfo (LPBYTE * PixelBits_pp, POINT * Aspect)
 
 	return MappedBits;
 }
+
+#endif

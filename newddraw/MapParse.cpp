@@ -4,6 +4,9 @@
 #include "mapParse.h"
 #include <tchar.h>
 #include <CString>
+#include "fullscreenminimap.h"
+
+#ifdef USEMEGAMAP
 
 using namespace std;
 LPLOGPALETTE TNTtoMiniMap::TALogPalette_Ptr= NULL;
@@ -207,8 +210,6 @@ MiniMapPicture::~MiniMapPicture ()
 
 LPBYTE MiniMapPicture::StretchTATNTDataToMiniMap (PTNTHeaderStruct TATNT_PTNTH)
 {
-
-	
 	int MapDataPitch_I= TATNT_PTNTH->Width;
 	int MapDataWidth_I= MapDataPitch_I- 1;
 	int MapDataHeight_I= TATNT_PTNTH->Height- 4;
@@ -230,14 +231,13 @@ LPBYTE MiniMapPicture::StretchTATNTDataToMiniMap (PTNTHeaderStruct TATNT_PTNTH)
 		if (Width<Height)
 		{
 			Height= Width;
-
 		}
 		else
 		{
 			Width= Height;
 		}
 	}
-	XInterval_I= static_cast<float>(MapDataPitch_I)* 32.0f;
+	XInterval_I= static_cast<float>(MapDataWidth_I)* 32.0f;
 	XInterval_I= XInterval_I/ Width;
 	YInterval_I= static_cast<float>(MapDataHeight_I)* 32.0f;
 	YInterval_I= YInterval_I/ Height;
@@ -268,7 +268,7 @@ LPBYTE MiniMapPicture::StretchTATNTDataToMiniMap (PTNTHeaderStruct TATNT_PTNTH)
 		int MiniMapTileIndexYoffset= (YInTrue/ 32)* (MapDataPitch_I);
 		int MiniMapTileYOffset= (YInTrue% 32)* 32;
 
-		// what's the hell wrong.
+
 		for (int XPos= 0, XInTrue= 0; XPos<Width; XPos++, XInTrue=  static_cast<int> (XPos* XInterval_I))
 		{//X 
 			int TileIndex_I= TATNT_PTNTH->PTRmapdata[MiniMapTileIndexYoffset+ XInTrue/ 32];
@@ -283,8 +283,6 @@ LPBYTE MiniMapPicture::StretchTATNTDataToMiniMap (PTNTHeaderStruct TATNT_PTNTH)
 			MiniMapPixelBits[MiniMapPixelYStart+ XPos]= MiniMapByte;
 		}
 	}
-	//	
-//	SaveToLagBmp ( Height, Width, MiniMapPixelBits);
 	return MiniMapPixelBits;
 }
 
@@ -544,3 +542,5 @@ RGBQUAD rqAry[256]=
 	, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0, 0xFB, 0xFF, 0x00, 0xA4, 0xA0, 0xA0, 0x00
 	, 0x80, 0x80, 0x80, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0x00
 };
+
+#endif

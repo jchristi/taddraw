@@ -15,6 +15,7 @@ struct posstruct{
 
 struct _GAFFrame;
 
+
 //////////////////////////////////////////////////////////////////////////////////////////
 /// Working.
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -38,7 +39,7 @@ extern _TADrawLine TADrawLine;
 typedef int (__stdcall *_GetContext)(char *ptr);
 extern _GetContext GetContext;
 //CirclePointer = CirclePointer in tadynmemstruct
-typedef void (__stdcall *_TADrawCircle)(char *context, void *CirclePointer, posstruct *pos, int radius, int color, char *text, int unk);
+typedef void (__stdcall *_TADrawCircle)(OFFSCREEN * context, void *CirclePointer, Position_Dword *pos, int radius, int color, char *text, LPSTR comment);
 extern _TADrawCircle TADrawCircle;
 
 typedef void (__stdcall * _ApplySelectUnitMenu) (void);
@@ -105,8 +106,38 @@ typedef int (__cdecl * _SelectAllSelectedUnits)(void);
 extern _SelectAllSelectedUnits SelectAllSelectedUnits;
 
 
-typedef int (__stdcall* _GetPosition_Dword)(int X, int Y, int out_p);
+
+
+typedef int ( __stdcall *_GetGridPosFeature)(int);
+extern _GetGridPosFeature GetGridPosFeature;
+
+
+typedef int (__stdcall * _TARadarDrawCircle) (_OFFSCREEN * OFFSCREEN_p, int CenterX, int CenterY, int Radius, int color);
+extern _TARadarDrawCircle TARadarDrawCircle;
+
+
+
+typedef int (__stdcall * _TADrawDotteCircle)(_OFFSCREEN * OFFSCREEN_p, int CenterX, int CenterY, int Radius, int color, int Spacing, int Dotte_b);
+extern _TADrawDotteCircle TADrawDotteCircle;
+
+typedef int (__stdcall * _GetPosition_Dword)(int X, int Y, Position_Dword * out_p);
 extern _GetPosition_Dword GetPosition_Dword;
+
+typedef int (__stdcall* _GetPosHeight)(Position_Dword * Pos);
+extern _GetPosHeight GetPosHeight;
+
+typedef int (__stdcall *_ScrollMinimap)(void);
+extern _ScrollMinimap ScrollMinimap;
+
+typedef int (__stdcall * _PlaySound_Effect)(char *VoiceName, int);
+extern _PlaySound_Effect PlaySound_Effect;
+
+  
+typedef int (__stdcall * _GafFrame2OFFScreen)(OFFSCREEN * Offscreen_p, _GAFFrame * GafFrame_p, int X, int Y);
+extern _GafFrame2OFFScreen GafFrame2OFFScreen;
+
+typedef int (__stdcall * _DrawGameScreen)(int IsDrawObject, int IsBlitScreen);
+extern _DrawGameScreen DrawGameScreen_Addr;
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -149,6 +180,9 @@ void ScrollToCenter(int x, int y);
 
 int CountSelectedUnits (void);
 int PauseCDMusic();
+
+int DrawRadarCircle (LPBYTE Bits, POINT * Aspect, int CenterX, int CenterY, int Radius, int color);
+int DrawDotteCircle (LPBYTE Bits, POINT * Aspect, int CenterX, int CenterY, int Radius, int color, int Spacing, int Dotte_b);
 
 extern TAProgramStruct * * TAProgramStruct_PtrPtr;
 
@@ -201,5 +235,9 @@ extern unsigned int SafeModelAddr;
 extern BOOL * IsCheating;                        
 extern WNDPROC TAWndProc_Addr;
 extern unsigned int TAWndProcSH_Addr;
+
+
+extern COBHandle *  * COBSciptHandler_Begin;
+extern COBHandle *  * COBSciptHandler_End;
 
 #endif

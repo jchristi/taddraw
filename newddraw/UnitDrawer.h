@@ -28,12 +28,17 @@ class UnitsMinimap
 {
 public:
 	FullScreenMinimap * parent;
+		
+
+	
+
 	
 public:
 	UnitsMinimap ( FullScreenMinimap * inheritFrom, int Width, int Height);
 	UnitsMinimap ( FullScreenMinimap * inheritFrom);
 
 	~UnitsMinimap();
+	void Init (void);
 	void ReSet (int Width, int Height);
 
 	LPDIRECTDRAWSURFACE InitSurface (LPDIRECTDRAW TADD);
@@ -47,6 +52,8 @@ public:
 	void NowDrawUnits ( LPBYTE PixelBitsBack, POINT * AspectSrc);
 
 	LPBYTE UnitPicture (UnitStruct * unitPtr, int PlayerID, LPBYTE * PixelBits_pp,  POINT * Aspect);
+	LPBYTE NukePicture (int PlayerID, LPBYTE * PixelBits_pp,  POINT * Aspect);
+	int GetTransparentColor (void);
 
 	void LoadUnitPicture ( void);
 	void FreeUnitPicture ( void);
@@ -56,7 +63,7 @@ private:
 	
 	void InitPicturePlayerColors (int PlayeyColor, int FillColor, LPBYTE * * PPCptr);
 	void InitUnSelectedPicturePlayerColors (int PlayeyColor, int FillColor, int UnSelectedColor,int TransparentColor,  
-		LPBYTE * * PPCptr);
+	LPBYTE * * PPCptr);
 private:
 	LPDIRECTDRAWSURFACE UnitsMapSfc;
 //	HANDLE Syncetux;
@@ -70,10 +77,11 @@ private:
 	int MaskNum;
 	int UnknowMaskIndex;
 	int NothingMaskIndex;
+	int ProjectileNukeIndex;
 
+	int UnSelectedColor;
 	int FillColor;
 	int TransparentColor;
-	int UnSelectedColor;
 
 	BOOL UseDefaultIcon;
 // 	InlineSingleHook * Clean_hook;
@@ -92,7 +100,7 @@ private:
 #define DEFAULTUNSELECTEDCOLOR (89)
 
 #define COMMICON ( "COMMANDER.PCX")
-#define MOBILEICON ("MOBILECOMBAT.PCX")
+#define MOBILEICOMB ("MOBILECOMBAT.PCX")
 #define CONICON ("CONS.PCX")
 #define FCTYICON ("FACTORY.PCX")
 #define BLDGICON ("BUILDING.PCX")
@@ -101,5 +109,7 @@ private:
 #define NOTHINGICON  ("NONE.PCX")
 #define UNKNOWICON ("UNKNOWN.PCX")
 
-#define ICONMAXWIDTH (32)
-#define ICONMAXHEIGHT (32)
+#define PROJECTNUKEICON ("NUKEICON.PCX")
+
+#define ICONMAXWIDTH (22)
+#define ICONMAXHEIGHT (22)

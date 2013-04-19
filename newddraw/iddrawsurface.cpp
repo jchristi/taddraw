@@ -70,12 +70,14 @@ IDDrawSurface::IDDrawSurface(LPDIRECTDRAWSURFACE lpTASurf, bool iWindowed, int i
 	SettingsDialog= new Dialog ;
 	ChangeQueue= new CChangeQueue ;
 	DDDTA= new CDDDTA ;
+#ifdef USEMEGAMAP
+
 	if (GUIExpander
 		&&(GUIExpander->myMinimap))
 	{
 		GUIExpander->myMinimap->InitSurface ( reinterpret_cast<LPDIRECTDRAW>(LocalShare->TADirectDraw));
 	}
-
+#endif
 	
 	lpFront = lpTASurf;
 	lpBack= NULL;
@@ -161,28 +163,39 @@ ULONG __stdcall IDDrawSurface::Release()
 	if (ScreenRegion)
 	{
 		delete ScreenRegion;
+		ScreenRegion= NULL;
 	}
 	if (BattleFieldRegion)
 	{
 		delete BattleFieldRegion;
+		BattleFieldRegion= NULL;
 	}
 	
 
 
 	delete WhiteBoard;
+	WhiteBoard= NULL;
 	delete Income;
+	Income= NULL;
 	delete TAHook;
+	TAHook= NULL;
 	delete CommanderWarp;
+	CommanderWarp= NULL;
 	delete SharedRect;
+	SharedRect= NULL;
 	delete SettingsDialog;
+	SettingsDialog= NULL;
 	delete ChangeQueue;
+	ChangeQueue= NULL;
 	delete DDDTA;
+	DDDTA= NULL;
+#ifdef USEMEGAMAP
 	if (GUIExpander
 		&&(GUIExpander->myMinimap))
 	{
 		GUIExpander->myMinimap->ReleaseSurface ( );
 	}
-	
+#endif
 	LocalShare->OrgLocalPlayerID= 0xa;
 	delete this;
 	return result;
@@ -463,13 +476,13 @@ HRESULT __stdcall IDDrawSurface::Unlock(LPVOID arg1)
 			}
 
 			
-
+#ifdef USEMEGAMAP
 			if ((GUIExpander)
 				&&(GUIExpander->myMinimap))
 			{
 				GUIExpander->myMinimap->Blit ( lpBack);
 			}
-
+#endif
 			SettingsDialog->BlitDialog(lpBack);
 
 
@@ -558,13 +571,13 @@ HRESULT __stdcall IDDrawSurface::Unlock(LPVOID arg1)
 			}
 
 
-
+#ifdef USEMEGAMAP
 			if ((GUIExpander)
 				&&(GUIExpander->myMinimap))
 			{
 				GUIExpander->myMinimap->Blit ( lpBack);
 			}
-
+#endif
 			SettingsDialog->BlitDialog(lpBack);
 
 
@@ -929,7 +942,7 @@ LRESULT CALLBACK WinProc(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam
 		if(DataShare->F1Disable)
 			if(Msg == WM_KEYDOWN && wParam == 112)
 				return 0;
-
+#ifdef USEMEGAMAP
 		if (GUIExpander
 			&&(GUIExpander->myMinimap))
 		{
@@ -938,6 +951,7 @@ LRESULT CALLBACK WinProc(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam
 				return 0;
 			}
 		}
+#endif
 	}
 	__except(EXCEPTION_EXECUTE_HANDLER)
 	{

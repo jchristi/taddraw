@@ -19,15 +19,16 @@ GUIExpand::GUIExpand ()
 {
 	myShareDialog= NULL;
 	SyncMenuResolution= NULL;
+#ifdef USEMEGAMAP
 	myMinimap= NULL;
-
+#endif
 	if (MyConfig->GetIniBool ( "ShareDialogExpand", TRUE))
 	{
 		myShareDialog = new ShareDialogExpand(TRUE);
 	}
-
+#ifdef USEMEGAMAP
 	myMinimap= new FullScreenMinimap ( MyConfig->GetIniBool ( "FullScreenMinimap", FALSE) );
-
+#endif
 	int i= MyConfig->GetIniInt ( "MenuWidth", 0);
 	if (0!=i)
 	{
@@ -49,9 +50,11 @@ GUIExpand::~GUIExpand ()
 	{
 		delete SyncMenuResolution;
 	}
+#ifdef USEMEGAMAP
 	if (NULL!=myMinimap)
 	{
 		delete myMinimap;
 	}
+#endif
 }
 
