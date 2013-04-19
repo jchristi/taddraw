@@ -20,6 +20,7 @@ using namespace std;
 #include "LimitCrack.h"
 #include "taHPI.h"
 #include "TAbugfix.h"
+#include "fullscreenminimap.h"
 #include "GUIExpand.h"
 
 #include "TAConfig.h"

@@ -5,6 +5,8 @@
 #include "tafunctions.h"
 #include "iddrawsurface.h"
 #include "gameredrawer.h"
+#include "fullscreenminimap.h"
+#ifdef USEMEGAMAP
 
 TAGameAreaReDrawer::TAGameAreaReDrawer()
 {
@@ -24,7 +26,6 @@ LPDIRECTDRAWSURFACE TAGameAreaReDrawer::InitOwnSurface (LPDIRECTDRAW TADD)
 	if (NULL!=GameAreaSurfaceBack_ptr)
 	{
 		GameAreaSurfaceBack_ptr->Release ( );
-
 		GameAreaSurfaceBack_ptr= NULL;
 	}
 
@@ -37,7 +38,7 @@ LPDIRECTDRAWSURFACE TAGameAreaReDrawer::InitOwnSurface (LPDIRECTDRAW TADD)
 		DDSURFACEDESC ddsd;
 		DDRAW_INIT_STRUCT(ddsd);
 		ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
-		ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN ;
+		ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
 		ddsd.dwWidth = GameAreaRect.right- GameAreaRect.left;
 		ddsd.dwHeight = GameAreaRect.bottom- GameAreaRect.top;
 
@@ -83,8 +84,25 @@ void TAGameAreaReDrawer::Cls (void)
 			GameAreaSurfaceBack_ptr->Blt ( NULL, NULL, NULL, DDBLT_WAIT| DDBLT_COLORFILL , &ddbltfx);
 		}
 	}
+	if (NULL!=GameAreaSurfaceFront_ptr)
+	{
+		if ( DD_OK!=GameAreaSurfaceFront_ptr->IsLost ( ))
+		{
+			GameAreaSurfaceFront_ptr->Restore ( );
+		}
 
+		DDBLTFX ddbltfx;
+		DDRAW_INIT_STRUCT(ddbltfx);
+		ddbltfx.dwFillColor= 245;
+
+		if(GameAreaSurfaceFront_ptr->Blt ( NULL, NULL, NULL, DDBLT_ASYNC| DDBLT_COLORFILL, &ddbltfx)!=DD_OK)
+		{
+			GameAreaSurfaceFront_ptr->Blt ( NULL, NULL, NULL, DDBLT_WAIT| DDBLT_COLORFILL , &ddbltfx);
+		}
+	}
 }
+
+
 void TAGameAreaReDrawer::BlitTAGameArea(LPDIRECTDRAWSURFACE DestSurf)
 {
 	if (NULL!=GameAreaSurfaceFront_ptr)
@@ -93,16 +111,16 @@ void TAGameAreaReDrawer::BlitTAGameArea(LPDIRECTDRAWSURFACE DestSurf)
 		{
 			GameAreaSurfaceFront_ptr->Restore ( );
 		}
-		DDBLTFX ddbltfx;
-		DDRAW_INIT_STRUCT(ddbltfx);
+// 		DDBLTFX ddbltfx;
+// 		DDRAW_INIT_STRUCT(ddbltfx);
 
 
 		RECT GameScreen;
 		TAWGameAreaRect ( &GameScreen);
 
-		if(DestSurf->Blt ( &GameScreen, GameAreaSurfaceFront_ptr, NULL, DDBLT_ASYNC  , &ddbltfx)!=DD_OK)
+		if(DestSurf->Blt ( &GameScreen, GameAreaSurfaceFront_ptr, NULL, DDBLT_ASYNC  , NULL)!=DD_OK)
 		{
-			DestSurf->Blt ( &GameScreen, GameAreaSurfaceFront_ptr, NULL, DDBLT_WAIT  , &ddbltfx);
+			DestSurf->Blt ( &GameScreen, GameAreaSurfaceFront_ptr, NULL, DDBLT_WAIT  , NULL);
 		}
 	}
 }
@@ -272,8 +290,6 @@ BOOL TAGameAreaReDrawer::MixBitsInBlit (LPRECT DescRect, LPBYTE SrcBits, LPPOINT
 
 BOOL TAGameAreaReDrawer::MixDSufInBlit (LPRECT DescRect, LPDIRECTDRAWSURFACE Src_DDrawSurface, LPRECT SrcScope)
 {
-
-	Cls ( );
 	BOOL Rtn_B= TRUE;
 
 	if (NULL!=GameAreaSurfaceBack_ptr)
@@ -283,14 +299,9 @@ BOOL TAGameAreaReDrawer::MixDSufInBlit (LPRECT DescRect, LPDIRECTDRAWSURFACE Src
 			GameAreaSurfaceBack_ptr->Restore ( );
 		}
 
-		
-
-		DDBLTFX ddbltfx;
-		DDRAW_INIT_STRUCT(ddbltfx);
-
-		if(GameAreaSurfaceBack_ptr->Blt ( DescRect, Src_DDrawSurface, SrcScope, DDBLT_ASYNC, &ddbltfx)!=DD_OK)
+		if(GameAreaSurfaceBack_ptr->Blt ( DescRect, Src_DDrawSurface, SrcScope, DDBLT_ASYNC,   NULL)!=DD_OK)
 		{
-			if (GameAreaSurfaceBack_ptr->Blt ( DescRect, Src_DDrawSurface, SrcScope, DDBLT_WAIT , &ddbltfx)!=DD_OK)
+			if (GameAreaSurfaceBack_ptr->Blt ( DescRect, Src_DDrawSurface, SrcScope, DDBLT_WAIT ,  NULL)!=DD_OK)
 			{
 				Rtn_B= FALSE;
 			}
@@ -488,16 +499,18 @@ LPRECT TAGameAreaReDrawer::TAWGameAreaRect (LPRECT Out_Rect)
 
 LPDIRECTDRAWSURFACE TAGameAreaReDrawer::Flip (void)
 {
-// 	if(GameAreaSurfaceFront_ptr->Blt ( NULL, GameAreaSurfaceBack_ptr, NULL, DDBLT_ASYNC, NULL)!=DD_OK)
-// 	{
-// 		GameAreaSurfaceFront_ptr->Blt ( NULL, GameAreaSurfaceBack_ptr, NULL, DDBLT_WAIT, NULL);
-// 	}
+ 
 
 	LPDIRECTDRAWSURFACE GameAreaSurface_ptr= GameAreaSurfaceFront_ptr;
 	GameAreaSurfaceFront_ptr= GameAreaSurfaceBack_ptr;
 	GameAreaSurfaceBack_ptr= GameAreaSurface_ptr;
 
-
+// 	if(GameAreaSurfaceFront_ptr->Blt ( NULL, GameAreaSurfaceBack_ptr, NULL, DDBLT_ASYNC, NULL)!=DD_OK)
+// 	{
+// 		GameAreaSurfaceFront_ptr->Blt ( NULL, GameAreaSurfaceBack_ptr, NULL, DDBLT_WAIT, NULL);
+// 	}
 
 	return GameAreaSurfaceFront_ptr;
 }
+
+#endif

@@ -157,7 +157,6 @@ LPBYTE InstanceGAFFrame (PGAFFrame GafFrame, LPBYTE * FrameBits, POINT * Aspect)
 	return (lpSuface);
 }
 
-/*
 void CopyGafToBits (LPBYTE PixelBits, POINT * Aspect, unsigned int X, unsigned int Y, PGAFFrame GafFrame)
 {
 	OFFSCREEN OffScreen;
@@ -173,8 +172,9 @@ void CopyGafToBits (LPBYTE PixelBits, POINT * Aspect, unsigned int X, unsigned i
 	OffScreen.ScreenRect.top= 0;
 	OffScreen.ScreenRect.bottom= Aspect->y;
 
-	CopyGafToContext ( &OffScreen, GafFrame, 0, 0);
-}*/
+	CopyGafToContext ( &OffScreen, GafFrame, X, Y);
+}
+/*
 
 void CopyGafToBits (LPBYTE PixelBits, POINT * Aspect, unsigned int X, unsigned int Y, PGAFFrame GafFrame)
 {
@@ -246,4 +246,4 @@ void CopyGafToBits (LPBYTE PixelBits, POINT * Aspect, unsigned int X, unsigned i
 				}
 			}
 		}
-}
+}*/

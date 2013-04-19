@@ -213,6 +213,9 @@
     <ClCompile Include="gaf.cpp">
       <Filter>Source Files\Functions\gaf</Filter>
     </ClCompile>
+    <ClCompile Include="MegamapTAStuff.cpp">
+      <Filter>Source Files\Functions\externFromChina\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="iddraw.h">
@@ -359,9 +362,6 @@
     <ClInclude Include="UnitDrawer.h">
       <Filter>Header Files\Functions\externFromChina\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="ddraw.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="mappedmap.h">
       <Filter>Header Files\Functions\externFromChina\GUI</Filter>
     </ClInclude>
@@ -375,7 +375,10 @@
       <Filter>Header Files\Functions\externFromChina\GUI</Filter>
     </ClInclude>
     <ClInclude Include="MegamapControl.h">
-      <Filter>Header Files\Functions\OrginalTadr</Filter>
+      <Filter>Header Files\Functions\externFromChina\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ddraw.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

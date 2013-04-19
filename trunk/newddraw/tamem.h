@@ -4,9 +4,10 @@
 #include <dsound.h>
 
 
-        
+struct _GAFFrame; 
 
 #pragma pack(1)
+
 
 
 enum PlayerType;
@@ -58,6 +59,7 @@ struct _GAFSequence;
 struct RadarUnit_ ;
 struct _MOUSEEVENT ;
 struct _Position_Dword ;
+struct _COBHandle;
 struct Point3{
 	int x;
 	int y;
@@ -140,21 +142,21 @@ struct WeaponStruct {
   char WeaponName[0x20];
   char WeaponDescription[0x40];
   int Unkn1;
-  char data3[20];
+  char data3[0x14];
   GafAnimStruct *LandExplodeAsGFX;
   GafAnimStruct *WaterExplodeAsGFX;
-  char data4[86];
-  short Damage; //d6
+  char data4[0x54];
+  short Damage; //d4
   short AOE;
   float EdgeEffectivnes;
   short Range;
-  char data5[21];
-  float ShakeMagnitude;
-  char data6[17];
+  short data5;
+  unsigned int coverage;
+  char data6[0x26];
   unsigned char ID;
   char data8[1];
   char RenderType;
-  char data7[4];
+  char data9[4];
   unsigned int WeaponTypeMask;
 };  //0x115
 
@@ -231,7 +233,7 @@ typedef struct _GUIInfo
 	int field_78;
 	char field_7C[60];
 	char  field_B8[2042];
-	char RadarObjecColor[16];
+	unsigned char RadarObjecColor[16];
 	char field_8C2[1032];
 	int GUIUpdated_b;
 }GUIInfo;
@@ -331,7 +333,7 @@ struct TAdynmemStruct{
 	unsigned short field_2CC1;
 	unsigned char PrepareOrder_Type;
 
-	short BuildNum;  //0x2CC4,  unitindex for selected OwnUnitBegin to build
+	short BuildUnitID;  //0x2CC4,  unitindex for selected OwnUnitBegin to build
 	char BuildSpotState; //0x40=notoktobuild
 	char data12[0x2C];
 
@@ -341,9 +343,11 @@ struct TAdynmemStruct{
 	ProjectileStruct *Projectiles; //0x141F7
 	char data13[0x10];
 	WreckageInfoStruct *WreckageInfo; //0x1420B
-	char data14[0x14];
-	int RealMapSizeX;
-	int RealMapSizeY;
+	unsigned int Feature_Unit;
+	char data14[0x10];
+	int  MapWidth ;
+	int  MapHeight;
+
 	int MapSizeX;
 	int MapSizeY;
 	int FeatureMapSizeX; //0x14233  
@@ -358,7 +362,7 @@ struct TAdynmemStruct{
 	unsigned char SeaLevel ;
 	unsigned char field_85;
 	unsigned short LosType;// 0x14281
-	char data19[4];
+	unsigned int	 TILE_SET; 
 	FeatureStruct *Features; //0x14287
 	char data20[0x40];
 	tagRECT MinimapRect;//0x142CB
@@ -368,8 +372,10 @@ struct TAdynmemStruct{
 	char data21[4];
 	short RadarPicSizeX;  //0x142EB
 	short RadarPicSizeY;  //0x142ED
-	char data22[4];
-	int CameraToUnit;//0x142F3 //used in drawcircle funktion
+	char data22[2];
+	char AntiWeaponDotte_b;
+	char field_142F2;
+	UnitStruct * CameraToUnit;//0x142F3 //used in drawcircle funktion
 	char data23[0x28];
 	int EyeBallMapXPos;	//0x1431f
 	int EyeBallMapYPos;   //0x14323
@@ -390,9 +396,13 @@ struct TAdynmemStruct{
 	UnitDefStruct *UnitDef;  //0x1439b 
 	char data26[0x440];
 	_GAFSequence * radlogo; //0147DF
-	char data26_[0x9C];
+	_GAFSequence * radlogohigh;
+	_GAFSequence * nuclogo ;//00147E7
+
+	char data26_[0x94];
 	_GAFSequence * cursor_ary [0x15];//0x1487F
-	char data27[0x48];
+	_GAFSequence * pathicon;
+	char data27[0x44];
 	int NumExplosions; //0x1491B
 	//char data9[0x6270];
 	ExplosionStruct Explosions[300]; //0x1491F
@@ -425,8 +435,12 @@ struct TAdynmemStruct{
 
 	char  Image_Output_Dir[256];  // 0x38a47+c= TA截图目录的字符串，即TA目录+当前用户名 
 	char  Movie_Shot_Output_Dir[256];
-	char data_33[0x596];
-
+	char data_33[0x56c];
+	DWORD Showranges;
+	DWORD bps;
+	DWORD field_391C7;
+	DWORD field_391CB;
+	char field_391CF[26];
 	GameingState *GameingState_Ptr; //0x391E9
 	int data34;
 	int State_GUI_CallBack;//0x0391F1
@@ -513,8 +527,8 @@ struct UnitDefStruct {
 	char UnitName[0x20];
 	char UnitDescription[0x40];
 	char ObjectName[0x20];
-	char Side[3];
-	char data5[0xA7];
+	char Side[8];
+	char data5[0xA2];
 	short FootX;  //0x14A
 	short FootY;  //0x14C
 	char *YardMap;
@@ -621,13 +635,20 @@ struct UnitStruct {
   int IsUnit;
   char data1[12];
   WeaponStruct *Weapon1;
-  char data2[11];
-  char Builder;
-  char data3[12];
+  char data2[10];
+  char Weapon1Dotte;
+  char Weapon1Valid;
+  char data3_[12];
   WeaponStruct *Weapon2;
-  char data4[24];
+  char data4[10];
+  char Weapon2Dotte;
+  char Weapon2Valid;
+  char data4_[12];
   WeaponStruct *Weapon3;
-  char data5[16];
+  char data5[10];
+  char Weapon3Dotte;
+  char Weapon3Valid;
+  char Data5_[4];
   UnitOrdersStruct *UnitOrders;  //5c
   char UnitState;
   char data6[3];
@@ -655,7 +676,8 @@ struct UnitStruct {
   Object3doStruct *Object3do;
   int Order_Unknow ;
   short int UnitID;
-  char data9[16];
+  short int UnitInGameIndex;
+  char data9[14];
 
   short Kills;
   char data17[50];
@@ -672,7 +694,8 @@ struct UnitStruct {
   char data10[4];
   float Nanoframe;
   short Health;
-  char data14[6];
+  char TerrainLevel[4];
+  unsigned short cIsCloaked;
   unsigned int UnitSelected;//and UnitSelectState
   char data11[4];
 }; //0x118
@@ -722,30 +745,25 @@ struct UnitOrdersStruct {
   unsigned short field_8;
   unsigned int unknow_0;
   UnitStruct * Unit_ptr;
-  unsigned int unknow_3;
-  UnitStruct* UnitTargat_p;
+  unsigned int field_12 ;
+  UnitStruct* AttackTargat;
   unsigned int field_1A;
   UnitOrdersStruct *ThisPTR;
   //char data2[2];
-  int PosX;
-  int PosZ;
-  int PosY;
-  char data3[6];
-  char FootPrint;
-  char data4[12];
-  struct {
-    char unk1 : 4;
-    bool ThisStart : 1;
-    char unk2 : 3;
-  } ThisStart;
-  char data5[6];
+  Position_Dword Pos;
+  char data3[4];
+  short RemeberX;
+  short RemeberY;
+  unsigned int BuildUnitID;
+  char data4[8];
+  unsigned int Order_State;
+  unsigned int StartTime ;
   UnitOrdersStruct *NextOrder;
+  unsigned int mask;
+  unsigned int Order_CallBack;
 };
 
-struct GafAnimStruct {
 
-
-};
 
 struct RadarPicStruct{
 	int XSize;
@@ -1154,6 +1172,7 @@ typedef struct RadarUnit_
 	unsigned int y;
 }RadarUnit; 
 
+
 typedef struct _TAProgramStruct 
 {
 	int HInstance;
@@ -1168,7 +1187,7 @@ typedef struct _TAProgramStruct
 	int Screen_DIBSECTION;
 	int WndMemHDC;
 	int Palette_H;
-	int DIB_OFFSCREEN;
+	OFFSCREEN * DIB_OFFSCREEN;
 	int BackMemHDC;
 	char field_58[40];
 	int field_80;
@@ -1183,7 +1202,7 @@ typedef struct _TAProgramStruct
 	int field_B0;
 	int lpDD_BackSurface_1;
 	int field_B8;
-	int CurrentOFFSCREEN;
+	OFFSCREEN * CurrentOFFSCREEN;
 	LPBYTE ALPHA_TABLE;
 	LPBYTE SHADE_TABLE;
 	LPBYTE LIGHT_TABLE;
@@ -1209,12 +1228,12 @@ typedef struct _TAProgramStruct
 	POINT CursorPos_Buf[3];
 	char field_1AE;
 	char field_1AF[3];
-	int Cursor;
+	_GAFFrame * Cursor;
 	int CursorX;
 	int CursorY;
-	int SAVEMOUSE_1;
-	int SAVEMOUSE_2;
-	int SAVEMOUSE_3;
+	OFFSCREEN * SAVEMOUSE_1;
+	OFFSCREEN *  SAVEMOUSE_2;
+	OFFSCREEN *  SAVEMOUSE_3;
 	int field_1CA;
 	int field_1CE;
 	int field_1D2;
@@ -1258,7 +1277,22 @@ typedef struct _MOUSEEVENT
 }MOUSEEVENT ;
 
 
-
+typedef struct _COBHandle
+{
+	unsigned int field_0;
+	unsigned int field_4;
+	unsigned int field_8;
+	unsigned char COBScripMask;
+	unsigned char field_d;
+	unsigned char field_e;
+	unsigned char field_f;
+	unsigned char cursorIndex;
+	unsigned char field_11;
+	unsigned char field_12;
+	unsigned char field_13;
+	unsigned int field_14;
+	unsigned char field_18;
+}COBHandle;
 
 enum PlayerPropertyMask
 {
@@ -1281,12 +1315,13 @@ enum LOSTYPE
 	 NOMAPPING        = 1,
 	 Permanent        = 2,
 	 LOSTYPE          = 4,
-	 Updating         = 8
-
+	 Updated         = 8
 };
 
 enum WeaponMask
 {
+	 cruise= 0x2000000,
+	 commandfire= 0x4000000,
 	 stockpile_mask   = 0x1000000,
 	 targetable_mask  = 0x20000000,
 	 interceptor_mask  = 0x40000000
@@ -1308,8 +1343,15 @@ enum UNITINFOMASK_0
 	downloadable     = 0x20,
 	builder          = 0x40,
 	canfly           = 0x800,
-	canhover         = 0x1000
+	canhover         = 0x1000,
+	antiweapons      = 0x20000000
 };
+enum UNITINFOMASK_1
+{
+	 commander        = 0x40000
+};
+	
+
 namespace ordertype
 {
 	enum ORDERTYPE

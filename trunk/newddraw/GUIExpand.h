@@ -6,9 +6,9 @@ class FullScreenMinimap;
 class GUIExpand
 {
 public:
-
 	MenuResolution * SyncMenuResolution;
 	ShareDialogExpand * myShareDialog;
+
 	FullScreenMinimap * myMinimap;
 
 public:
@@ -21,3 +21,4 @@ private:
 };
 
 extern GUIExpand * GUIExpander;
+

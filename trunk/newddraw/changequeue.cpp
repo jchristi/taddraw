@@ -74,7 +74,7 @@ bool CChangeQueue::Message(HWND WinProchWnd, UINT Msg, WPARAM wParam, LPARAM lPa
 	case WM_KEYDOWN:
 		if(wParam == 67) //c
 		{
-			TAdynmem->OwnUnitBegin[0].UnitOrders->ThisStart.ThisStart = 1;
+			TAdynmem->OwnUnitBegin[0].UnitOrders->Order_State |= 0x10;
 			Write(WinProchWnd);
 			//*((int*)NULL) = 1;
 			return true;
@@ -83,7 +83,7 @@ bool CChangeQueue::Message(HWND WinProchWnd, UINT Msg, WPARAM wParam, LPARAM lPa
 	case WM_KEYUP:
 		if(wParam == 67) //c
 		{
-			TAdynmem->OwnUnitBegin[0].UnitOrders->ThisStart.ThisStart = 0;
+			TAdynmem->OwnUnitBegin[0].UnitOrders->Order_State &= !0x10;
 			return true;
 		}
 		break;

@@ -18,6 +18,8 @@ private:
 	InlineSingleHook * CDMusic_Menu_Pause;
 	InlineSingleHook * CDMusic_Victory_Pause;
 
+	SingleHook* CDMusic_StopButton;
+
 public:
 	TABugFixing ();
 	~TABugFixing ();

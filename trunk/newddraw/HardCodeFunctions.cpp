@@ -241,15 +241,29 @@ void UpdateSelectUnitEffect (void)
 	int *PTR = (int*)0x00511de8;
 	BYTE temp= *((BYTE *)(*PTR+ 0x37EBE));
 	*((BYTE *)(*PTR+ 0x37EBE))= (BYTE)(temp| 0x10);
+
+	
+	*((unsigned short int *)(*PTR+ 0x37E9C))= 0;
 }
 
 void ApplySelectUnitMenu_Wapper (void)
 {
-	int *PTR = (int*)0x00511de8;
-	*((unsigned short int *)(*PTR+ 0x37E9C))= 0;
+	int old= (*TAmainStruct_PtrPtr)->PrepareOrder_Type;
+
 	typedef void (__stdcall * _ApplySelectUnitMenu) (void);
 	_ApplySelectUnitMenu ApplySelectUnitMenu= (_ApplySelectUnitMenu)0x00495860;
 	ApplySelectUnitMenu ();
+
+	(*TAmainStruct_PtrPtr)->PrepareOrder_Type= old;
+// 	typedef int( __stdcall *_sub_4A6A40)( GUIInfo *, TAdynmemStruct *);
+// 	_sub_4A6A40 sub_4A6A40= (_sub_4A6A40)0x4A6A40;
+// 
+// 	sub_4A6A40 ( &((*TAmainStruct_PtrPtr)->desktopGUI), *TAmainStruct_PtrPtr);
+// 
+//  	typedef int (__stdcall * _SetUIUpdateFlag)(GUIInfo * TAUIInfo); 	
+// 	_SetUIUpdateFlag SetUIUpdateFlag= (_SetUIUpdateFlag) 0x49FA90;
+//  
+//  	SetUIUpdateFlag ( &((*TAmainStruct_PtrPtr)->desktopGUI));
 }
 void DeselectUnits(void)
 {
@@ -299,7 +313,13 @@ typedef  MCIERROR  (WINAPI * _mciSendStringA)(  LPCSTR lpstrCommand,  LPSTR lpst
 
 }
 
-int DrawCircle (LPBYTE Bits, POINT * Aspect, int CenterX, int CenterY, int Radius, int color)
+// int DrawRadarCircleComment (LPBYTE Bits, POINT * Aspect, int CenterX, int CenterY, int Radius, int color, LPSTR comment)
+// {
+// 	//typedef void (__stdcall *_TADrawCircle)(char *context, void *CirclePointer, posstruct *pos, int radius, int color, char *text, int unk);
+// 	DrawRadarCircle ( Bits, Aspect, CenterX, CenterY, Radius, color);
+// 	//DrawText
+// }
+int DrawRadarCircle (LPBYTE Bits, POINT * Aspect, int CenterX, int CenterY, int Radius, int color)
 {
 	OFFSCREEN OffScreen;
 
@@ -423,6 +443,10 @@ _ScrollMinimap ScrollMinimap= (_ScrollMinimap )0x041C3C0 ;
 
 _PlaySound_Effect PlaySound_Effect= (_PlaySound_Effect) 0x47F1A0;
 
+
+_GafFrame2OFFScreen GafFrame2OFFScreen= (_GafFrame2OFFScreen) 0x4B8500;
+
+_DrawGameScreen DrawGameScreen_Addr= (_DrawGameScreen)0x0468CF0;
 //////////////////////////////////////////////////////////////////////////////////////////
 /// Not working.
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -494,3 +518,6 @@ BOOL * IsCheating= reinterpret_cast<BOOL *>(0x5091CC);
 WNDPROC TAWndProc_Addr= (WNDPROC )0x4B5CC0;
 
 unsigned int TAWndProcSH_Addr=0x4B5B82;
+
+COBHandle * * COBSciptHandler_Begin= (COBHandle  * *)0x0512344;
+COBHandle *  * COBSciptHandler_End= (COBHandle  * *) 0x0512348;

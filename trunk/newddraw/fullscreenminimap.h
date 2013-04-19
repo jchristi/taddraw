@@ -1,5 +1,9 @@
 #pragma once
 
+#define USEMEGAMAP
+
+#define MEGAMAPFPS (40)
+
 struct tagTNTHeaderStruct;
 class TNTtoMiniMap;
 class TAGameAreaReDrawer;
@@ -9,6 +13,9 @@ class UnitsMinimap;
 class MappedMap;
 class ProjectileMap;
 class MegaMapControl;
+
+struct tagInlineX86StackBuffer;
+typedef struct tagInlineX86StackBuffer * PInlineX86StackBuffer;
 
 class FullScreenMinimap
 {
@@ -20,6 +27,12 @@ public:
 	ProjectileMap* ProjectilesMap_p;
 	MegaMapControl * Controler;
 
+	int MegamapWidth;
+	int MegamapHeight;
+	RECT MegaMapInscren;
+	RECT MegamapRect;
+
+	RECT TAMAPTAPos;
 public:
 	FullScreenMinimap (BOOL Doit);
 	~FullScreenMinimap (void);
@@ -27,7 +40,7 @@ public:
 	void InitMinimap (tagTNTHeaderStruct * TNTPtr, RECT *  GameScreen= NULL);
 
 	void Blit(LPDIRECTDRAWSURFACE DestSurf);
-	void LockBlit (char * lpSurfaceMem, int dwWidth, int dwHeight, int lPitch);
+	void LockBlit (LPVOID lpSurfaceMem, int dwWidth, int dwHeight, int lPitch);
 	void InitSurface (LPDIRECTDRAW TADD);
 	void ReleaseSurface (void);
 
@@ -45,12 +58,7 @@ private:
 	
 	BOOL Do_b;
 
-	int MegamapWidth;
-	int MegamapHeight;
-	RECT MegaMapInscren;
-	RECT MegamapRect;
 
-	RECT TAMAPTAPos;
 
 	int MegamapVirtualKey;
 
@@ -61,6 +69,17 @@ private:
 	BOOL DrawProjectile;
 	BOOL DrawUnits;
 	BOOL DrawMegamapRect;
-	BOOL DrawSelectRect;
+	BOOL DrawMegamapBlit;
+	BOOL DrawSelectAndOrder;
 	BOOL DrawMegamapCursor;
+
+	BOOL WheelZoom;
+	BOOL WheelMoveMegaMap;
+	BOOL DoubleClickMoveMegamap;
+
+	InlineSingleHook * DrawTAScreen_hok;
 };
+
+
+
+int __stdcall BlockTADraw (PInlineX86StackBuffer X86StrackBuffer);

@@ -15,6 +15,9 @@
 #include "iddrawsurface.h"
 #include "ExternQuickKey.h "
 
+#include <math.h>
+
+#ifdef USEMEGAMAP
 
 using namespace ordertype;
 
@@ -55,7 +58,7 @@ int  __stdcall  GetGridPosFeatureRounte (PInlineX86StackBuffer X86StrackBuffer)
 }
 
 MegaMapControl::MegaMapControl (FullScreenMinimap * parent_p, RECT * MegaMapScreen_p, RECT * TAMap_p, RECT * GameScreen_p,
-	int MaxIconWidth, int MaxIconHeight, int MegaMapVirtulKey_arg)
+	int MaxIconWidth, int MaxIconHeight, int MegaMapVirtulKey_arg, BOOL WheelMoveMegaMap_v, BOOL DoubleClickMoveMegamap_v, BOOL WheelZoom_v)
 {
 	FindMouseUnitHook= new InlineSingleHook ( (unsigned int)FindMouseUnit, 5, INLINE_5BYTESLAGGERJMP, FindMouseUnitRounte);
 	FindMouseUnitHook->SetParamOfHook ( (LPVOID)this);
@@ -74,11 +77,11 @@ MegaMapControl::MegaMapControl (FullScreenMinimap * parent_p, RECT * MegaMapScre
 		Cursor_Surfc= NULL;
 	}
 
-	Init ( parent_p, MegaMapScreen_p, TAMap_p, GameScreen_p, MaxIconWidth, MaxIconHeight, MegaMapVirtulKey_arg);
+	Init ( parent_p, MegaMapScreen_p, TAMap_p, GameScreen_p, MaxIconWidth, MaxIconHeight, MegaMapVirtulKey_arg, WheelMoveMegaMap_v, DoubleClickMoveMegamap_v, WheelZoom_v);
 }
 
 
-MegaMapControl::~ MegaMapControl()
+MegaMapControl::~MegaMapControl()
 {
 	if (FindMouseUnitHook)
 	{
@@ -97,7 +100,7 @@ MegaMapControl::~ MegaMapControl()
 }
 
 void MegaMapControl::Init (FullScreenMinimap * parent_p, RECT * MegaMapScreen_p, RECT * TAMap_p, RECT * GameScreen_p,
-	int MaxIconWidth, int MaxIconHeight, int MegaMapVirtulKey_arg)
+	int MaxIconWidth, int MaxIconHeight, int MegaMapVirtulKey_arg, BOOL WheelMoveMegaMap_v, BOOL DoubleClickMoveMegamap_v, BOOL WheelZoom_v)
 {
 	parent= parent_p;
 	
@@ -106,6 +109,10 @@ void MegaMapControl::Init (FullScreenMinimap * parent_p, RECT * MegaMapScreen_p,
 	TAmainStruct_Ptr= *TAmainStruct_PtrPtr;
 
 	SelectedCount= 0;
+
+	WheelMoveMegaMap= WheelMoveMegaMap_v;
+	DoubleClickMoveMegamap= DoubleClickMoveMegamap_v;
+	WheelZoom= WheelZoom_v;
 	//OrderType= 
 	memcpy ( &MegaMapScreen, MegaMapScreen_p, sizeof(RECT));
 	MegaMapWidth= MegaMapScreen.right- MegaMapScreen.left;
@@ -132,11 +139,18 @@ void MegaMapControl::Init (FullScreenMinimap * parent_p, RECT * MegaMapScreen_p,
 
 	InControl= FALSE;
 	InMap= FALSE;
+
+	LastDblXPos= -1;
+	LastDblYpos= -1;
 }
 
 
 void MegaMapControl::InitSurface ( LPDIRECTDRAW TADD)
 {
+	if (!TADD)
+	{
+		return;// invalid
+	}
 	ReleaseSurface ( );
 
 	LastCursor_GAFp= (*TAProgramStruct_PtrPtr)->Cursor;
@@ -199,81 +213,37 @@ DrawSelectRect ()
 {
 
 }*/
-void MegaMapControl::DrawCursor (LPDIRECTDRAWSURFACE DestSurf, unsigned int X, unsigned int Y)
+
+void MegaMapControl::DrawCursor(LPVOID lpSurfaceMem, int dwWidth, int dwHeight, int lPitch
+	, unsigned int X, unsigned int Y)
 {
 	GAFFrame * Cursor_GafP= (*TAProgramStruct_PtrPtr)->Cursor;
-	X= (*TAProgramStruct_PtrPtr)->CursorX;//= X;
-	Y= (*TAProgramStruct_PtrPtr)->CursorY;//= Y;
-	BOOL Update_B= FALSE;;
 
-	
-	if (Cursor_Surfc)
-	{
-		if (LastCursor_GAFp!=Cursor_GafP)
-		{
-			Update_B= TRUE;
-		}
 
-		LPDIRECTDRAWSURFACE SrcSurf= Cursor_Surfc;
-		HRESULT LostResult;
+	X= (*TAProgramStruct_PtrPtr)->CursorX+ Cursor_GafP->xPosition;//= X;
+	Y= (*TAProgramStruct_PtrPtr)->CursorY+ Cursor_GafP->yPosition;//= Y;
 
-		if ((DD_OK!=(LostResult= SrcSurf->IsLost ( )))
-			||Update_B)
-		{
-			if (DD_OK!=LostResult)
-			{
-				SrcSurf->Restore ( );
-			}
-			
+	POINT Aspect;
+	Aspect.x= dwWidth;
+	Aspect.y= dwHeight;
 
-			DDSURFACEDESC ddsd;
-			DDRAW_INIT_STRUCT(ddsd);
-			POINT Aspect;
-			if (DD_OK==SrcSurf->Lock(NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL))
-			{
-				unsigned char *SurfPTR = (unsigned char*)ddsd.lpSurface;
+	CopyGafToBits ( (LPBYTE)lpSurfaceMem, &Aspect, X, Y, Cursor_GafP);
+// 
+// 	OFFSCREEN OffScreen;
+// 	memset ( &OffScreen, 0, sizeof(OFFSCREEN));
+// 	OffScreen.Height= dwHeight;
+// 	OffScreen.Width= dwWidth;
+// 	OffScreen.lPitch= lPitch;
+// 	OffScreen.lpSurface= lpSurfaceMem;
+// 
+// 	OffScreen.ScreenRect.left= 0;
+// 	OffScreen.ScreenRect.right=  dwWidth;;
+// 
+// 	OffScreen.ScreenRect.top= 0;
+// 	OffScreen.ScreenRect.bottom= dwHeight;
 
-				Aspect.x= ddsd.lPitch;
-				Aspect.y= ddsd.dwHeight;
-
-				memset ( SurfPTR, Cursor_GafP->Background, ddsd.lPitch* ddsd.dwHeight);
-				CopyGafToBits ( SurfPTR, &Aspect, Cursor_GafP->xPosition, Cursor_GafP->yPosition, Cursor_GafP);
-
-				SrcSurf->Unlock(NULL);
-
-				LastCursor_GAFp= Cursor_GafP;
-			}
-
-		}
-	
-		DDBLTFX ddbltfx;
-		DDRAW_INIT_STRUCT(ddbltfx);
-		RECT Dest;
-
-		RECT Src;
-
-		Dest.left = X;
-		Dest.top = Y;
-		Dest.right = Dest.left+ LastCursor_GAFp->Width;
-		Dest.bottom = Dest.top + LastCursor_GAFp->Height;
-
-		Src.left= 0;
-		Src.top= 0;
-		Src.right= LastCursor_GAFp->Width;
-		Src.bottom= LastCursor_GAFp->Height;
-
-		ddbltfx.ddckSrcColorkey.dwColorSpaceLowValue= LastCursor_GAFp->Background;
-		ddbltfx.ddckSrcColorkey.dwColorSpaceHighValue= 0;
-
-		if(DestSurf->Blt(&Dest, SrcSurf, &Src, DDBLT_ASYNC| DDBLT_KEYSRCOVERRIDE, &ddbltfx)!=DD_OK)
-		{
-			DestSurf->Blt(&Dest, SrcSurf, &Src, DDBLT_WAIT| DDBLT_KEYSRCOVERRIDE, &ddbltfx);
-		}
-	}
-	else
-	{
-		((Dialog *)(LocalShare->Dialog))->BlitCursor ( DestSurf, X, Y);
-	}
+// 	GafFrame2OFFScreen ( &OffScreen, Cursor_GafP, 
+// 		X, Y);
 }
 
 POINT * MegaMapControl::TAPos2ScreenPos (POINT * ScreenPos, unsigned int TAX, unsigned int TAY, unsigned int TAZ)
@@ -292,7 +262,7 @@ POINT * MegaMapControl::TAPos2ScreenPos (POINT * ScreenPos, unsigned int TAX, un
 	return ScreenPos;
 }
 
-Position_Dword * MegaMapControl::ScreenPos2TAPos (Position_Dword * TAPos, int x, int y)
+Position_Dword * MegaMapControl::ScreenPos2TAPos (Position_Dword * TAPos, int x, int y, BOOL UseTAHeight)
 {
 	if (NULL==TAPos)
 	{
@@ -300,11 +270,12 @@ Position_Dword * MegaMapControl::ScreenPos2TAPos (Position_Dword * TAPos, int x,
 	}
 	TAPos->X= static_cast<int>(static_cast<float>(x)/ Screen2MapWidthScale);
 	TAPos->Y= static_cast<int>(static_cast<float>(y)/ Screen2MapHeightScale);
-// 	if (TAmainStruct_Ptr->Features)
-// 	{
-// 		TAPos->Z= GetPosHeight ( TAPos);
-// 	}
-// 	else
+	if (UseTAHeight&&
+		TAmainStruct_Ptr->Features)
+	{
+		TAPos->Z= GetPosHeight ( TAPos);
+	}
+	else
 	{
 		TAPos->Z= TAmainStruct_Ptr->SeaLevel;
 	}
@@ -331,8 +302,10 @@ void MegaMapControl::EnterMegaMap ()
 	LastDblXPos= 0;
 	LastDblYpos= 0;
 	TAmainStruct_Ptr->BuildSpotState&= !CIRCLESELECTING;
-}
 
+
+}
+                                    
 void MegaMapControl::QuitMegaMap ( )
 {
 	PlaySound_Effect ( "Previous", 0);
@@ -388,7 +361,6 @@ bool MegaMapControl::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 		yPos= HIWORD(lParam);  // vertical position of cursor 
 		if (zDelta<0)
 		{
-
 			WheelBack ( xPos, yPos);
 		}
 		else if (0<zDelta)
@@ -518,34 +490,43 @@ BOOL MegaMapControl::RightDown (int x, int y, bool shift)
 }
 BOOL MegaMapControl::RightUp (int x, int y, bool shift)
 {
-	if (0!=TAmainStruct_Ptr->InterfaceType)
+	BOOL Upt= FALSE;
+	if (STOP!=TAmainStruct_Ptr->PrepareOrder_Type)
+	{//
+		TAmainStruct_Ptr->PrepareOrder_Type= STOP;
+		Upt= TRUE;
+	}
+	else if (0!=TAmainStruct_Ptr->InterfaceType)
 	{// R
+		//STOP==PrepareOrder_Type
 		if (0<SelectedCount)
 		{//
-			if (cursorselect!=TAmainStruct_Ptr->CurrentCursora_Index)
-			{
-				if (BUILD!=TAmainStruct_Ptr->PrepareOrder_Type)
-				{
-					SendOrder ( TAmainStruct_Ptr->MouseMapPos.X, TAmainStruct_Ptr->MouseMapPos.Y, TAmainStruct_Ptr->MouseMapPos.Z, TAmainStruct_Ptr->PrepareOrder_Type, shift);
-				}
-
-				UpdateSelectUnitEffect ( );
-				ApplySelectUnitMenu_Wapper  ( );
+			if (cursorselect==TAmainStruct_Ptr->CurrentCursora_Index)
+			{// in cursorselect case will do guard 
+				TAmainStruct_Ptr->PrepareOrder_Type= DEFEND;
+				Upt= TRUE;
 			}
+			SendOrder ( TAmainStruct_Ptr->MouseMapPos.X, TAmainStruct_Ptr->MouseMapPos.Y, TAmainStruct_Ptr->MouseMapPos.Z, TAmainStruct_Ptr->PrepareOrder_Type, shift);
+			Upt= TRUE;
 		}
 	}
 	else
-	{
-		if (0<SelectedCount)
+	{//L
+		if (0<SelectedCount)// deselect unit when no prepare order 
 		{
-			SelectedCount= 0;
 			DeselectUnits ();
+			SelectedCount= 0;
 
-			UpdateSelectUnitEffect ( ) ;
-			ApplySelectUnitMenu_Wapper ( );
+			Upt= TRUE;
 		}
 	}
 
+	if (Upt)
+	{
+
+		UpdateSelectUnitEffect ( ) ;
+		ApplySelectUnitMenu_Wapper ( );
+	}
 
 // 	else
 // 	{
@@ -568,21 +549,32 @@ BOOL MegaMapControl::LeftDown (int x, int y, bool shift)
 
 BOOL MegaMapControl::LeftUp (int x, int y, bool shift)
 {
-
 	UnitStruct * Begin= TAmainStruct_Ptr->OwnUnitBegin;
 	int MouseUnit= TAmainStruct_Ptr->MouseOverUnit;
+	if ((x==LastDblXPos)
+		&&(y==LastDblYpos))
+	{// no double clicked
+		return TRUE;
+	}
+	LastDblXPos= -1;
+	LastDblYpos= -1;
 
-	if (MouseUnit)
+	if (cursorselect==TAmainStruct_Ptr->CurrentCursora_Index)
 	{
-		if ((x!=LastDblXPos)
-			||(y!=LastDblYpos))
-		{// no double clicked
-
+		if (MouseUnit)
+		{
 			if (TAmainStruct_Ptr->Players[TAmainStruct_Ptr->LocalHumanPlayer_PlayerID].PlayerAryIndex==(TAmainStruct_Ptr->OwnUnitBegin[MouseUnit].Owner_PlayerPtr0->PlayerAryIndex))
 			{
 				DeselectUnits ( );
-				Begin[MouseUnit].UnitSelected|= 0x10;
-				SelectedCount= 1;
+				SelectedCount= 0;
+				if (0!=(0x20& Begin[MouseUnit].UnitSelected))
+				{
+					if (0.0F==(Begin[MouseUnit].Nanoframe))
+					{
+						Begin[MouseUnit].UnitSelected|= 0x10;
+						++SelectedCount;
+					}
+				}
 
 				UpdateSelectUnitEffect ();
 				ApplySelectUnitMenu_Wapper ( );
@@ -604,15 +596,21 @@ BOOL MegaMapControl::LeftUp (int x, int y, bool shift)
 					ApplySelectUnitMenu_Wapper  ( );
 				}
 		}
-		else if ((x!=LastDblXPos)
-			||(y!=LastDblYpos))
+		else
 		{// R 
+// 			if (MouseUnit)
+// 			{
+// 				;
+// 			}
+// 			else
+			{
+				DeselectUnits ();
+				SelectedCount= 0;
 
-			DeselectUnits ();
-			SelectedCount= 0;
+				UpdateSelectUnitEffect ( ) ;
+				ApplySelectUnitMenu_Wapper ( );
+			}
 
-			UpdateSelectUnitEffect ( ) ;
-			ApplySelectUnitMenu_Wapper ( );
 		}
 	}
 	return TRUE;
@@ -630,15 +628,15 @@ BOOL MegaMapControl::LeftUp (int x, int y, bool shift)
 
 BOOL MegaMapControl::DoubleClick (int x, int y, bool shift)
 {
-	if (myExternQuickKey->DoubleClick)
+	int SelectedUnit= TAmainStruct_Ptr->MouseOverUnit;
+
+	if (0!= SelectedUnit)
 	{
-		LastDblXPos= x;
-		LastDblYpos= y;
-
-		int SelectedUnit= TAmainStruct_Ptr->MouseOverUnit;
-
-		if (0!= SelectedUnit)
+		if (myExternQuickKey->DoubleClick)
 		{
+			LastDblXPos= x;
+			LastDblYpos= y;
+
 			UnitStruct * Begin= TAmainStruct_Ptr->OwnUnitBegin;
 
 			//DeselectUnits ( );
@@ -650,9 +648,15 @@ BOOL MegaMapControl::DoubleClick (int x, int y, bool shift)
 				SelectAllSelectedUnits ( );
 				SelectedCount= CountSelectedUnits ( );
 			}
+			UpdateSelectUnitEffect ();
+			ApplySelectUnitMenu_Wapper ( );
+		
 		}
-		UpdateSelectUnitEffect ();
-		ApplySelectUnitMenu_Wapper ( );
+	}
+	else if (DoubleClickMoveMegamap)
+	{// move screen
+		MegamapMoveSceen ( x+ MegaMapScreen.left, y+ MegaMapScreen.top);
+		QuitMegaMap  ( );
 	}
 
 	return TRUE;
@@ -662,46 +666,33 @@ BOOL MegaMapControl::DoubleClick (int x, int y, bool shift)
 
 BOOL MegaMapControl::WheelFont (int xPos, int yPos)
 {
-	if (IsBliting())
+	if (WheelZoom)
 	{
-		TAmainStruct_Ptr->CameraToUnit= 0; 
-
-		if (MegaMapScreen.right<xPos)
+		if (IsBliting())
 		{
-			xPos=MegaMapScreen.right;
-		}
-		if (xPos<MegaMapScreen.left)
-		{
-			xPos= MegaMapScreen.left;
-		}
-		if (MegaMapScreen.bottom<yPos)
-		{
-			yPos=MegaMapScreen.bottom;
-		}
-		if (yPos<MegaMapScreen.top)
-		{
-			yPos= MegaMapScreen.top;
-		}
+			TAmainStruct_Ptr->CameraToUnit= 0; 
 
-
-		xPos= xPos- MegaMapScreen.left;
-		yPos= yPos- MegaMapScreen.top;
-		
-		ScreenPos2TAPos ( &TAmainStruct_Ptr->MouseMapPos, xPos, yPos);
-
-		MoveScreen ( TAmainStruct_Ptr->MouseMapPos.X, TAmainStruct_Ptr->MouseMapPos.Y, TAmainStruct_Ptr->MouseMapPos.Z);
-
-		QuitMegaMap ( );
+			if (WheelMoveMegaMap)
+			{
+				MegamapMoveSceen ( xPos, yPos);
+			}
+			QuitMegaMap ( );
+		}
 	}
+
 	return TRUE;
 }
 
 BOOL MegaMapControl::WheelBack (int xPos, int yPos)
 {
-	if (! IsBliting())
+	if (WheelZoom)
 	{
-		EnterMegaMap ();
+		if (! IsBliting())
+		{
+			EnterMegaMap ();
+		}
 	}
+
 	return TRUE;
 }
 BOOL MegaMapControl::IsBliting(void)
@@ -725,7 +716,7 @@ BOOL MegaMapControl::MouseMove (int x, int y)
 {
 	if (IsInMap ( ))
 	{
-		ScreenPos2TAPos ( &TAmainStruct_Ptr->MouseMapPos, x+ 5, y+ 5);
+		ScreenPos2TAPos ( &TAmainStruct_Ptr->MouseMapPos, x, y, TRUE);
 
 		RECT MouseRect;
 		MouseRect.left= TAmainStruct_Ptr->MouseMapPos.X- HalfMaxIconWidth_TAPos;
@@ -744,10 +735,12 @@ BOOL MegaMapControl::MouseMove (int x, int y)
 		for (int i= 0; i<Count; ++i)
 		{
 			unitPtr=  &Begin[RadarUnits_v[i].ID];
-			if ((MouseRect.left<static_cast<int>(unitPtr->XPos))
-				&&(static_cast<int>(unitPtr->XPos)<MouseRect.right)
-				&&(MouseRect.top<static_cast<int>(unitPtr->YPos))
-				&&(static_cast<int>(unitPtr->YPos)<MouseRect.bottom))
+			int X= static_cast<int>(unitPtr->XPos+ unitPtr->UnitType->FootX/ 2);
+			int Y=static_cast<int>(unitPtr->YPos+ unitPtr->UnitType->FootY/ 2- unitPtr->ZPos/ 2);
+			if ((MouseRect.left<X)
+				&&(X<MouseRect.right)
+				&&(MouseRect.top<Y)
+				&&(Y<MouseRect.bottom))
 			{
 				TAmainStruct_Ptr->MouseOverUnit= RadarUnits_v[i].ID;
 				UnitUnderMouse= TRUE;
@@ -759,9 +752,10 @@ BOOL MegaMapControl::MouseMove (int x, int y)
 		{
 			TAmainStruct_Ptr->MouseOverUnit= 0;
 		}
+/*
 		if (0!=TAmainStruct_Ptr->MouseOverUnit)
 		{
-			if (BUILD!=TAmainStruct_Ptr->PrepareOrder_Type)
+			if (STOP==TAmainStruct_Ptr->PrepareOrder_Type)
 			{
 				int NewCursorIndex= CorretCursor_InGame ( TAmainStruct_Ptr->PrepareOrder_Type);
 
@@ -771,7 +765,7 @@ BOOL MegaMapControl::MouseMove (int x, int y)
 					SetUICursor ( &(TAmainStruct_Ptr->desktopGUI), TAmainStruct_Ptr->cursor_ary[NewCursorIndex]);
 				}
 			}
-		}
+		}*/
 	}
 
 	return TRUE;
@@ -842,8 +836,13 @@ BOOL MegaMapControl::SelectUp (int x, int y, bool out, bool shift)
 	{
 		if (STOP!=TAmainStruct_Ptr->PrepareOrder_Type)
 		{
+			//
 			MOUSEEVENT MEvent;
+			memset ( &MEvent, 0, sizeof(MOUSEEVENT));
 			MEvent.fwKeys= shift? 4: 0;
+
+		//	ScreenPos2TAPos ( &TAmainStruct_Ptr->MouseMapPos, x, y, TRUE);
+
 			TAMapClick ( &MEvent);
 
 			Rtn_b= TRUE;
@@ -858,8 +857,9 @@ BOOL MegaMapControl::SelectMove (int x, int y, bool Out_b, bool LBMD)
 {
 	if (LBMD)
 	{
-		if (selectbuttom::down==SelectState
+		if ((selectbuttom::down==SelectState
 			||selectbuttom::select==SelectState)
+			&&(! IsDrawOrder ( )))
 		{
 			SelectState= selectbuttom::select;
 
@@ -897,25 +897,474 @@ BOOL MegaMapControl::SelectMove (int x, int y, bool Out_b, bool LBMD)
 	return FALSE;
 }
 
-void MegaMapControl::BlitSelect (LPDIRECTDRAWSURFACE DestSurf)
-{
-	DDSURFACEDESC ddsd;
-	DDRAW_INIT_STRUCT(ddsd);
-
-	if ((selectbuttom::select==SelectState)
-		||(BUILD==TAmainStruct_Ptr->PrepareOrder_Type))
-	{
-		if (DD_OK==DestSurf->Lock(NULL, &ddsd, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL))
-		{
-			LockBlit ( ddsd.lpSurface, ddsd.dwWidth, ddsd.dwHeight, ddsd.lPitch);
-			DestSurf->Unlock ( NULL);
-		}
-	}
-}
 void MegaMapControl::LockBlit (LPVOID lpSurfaceMem, int dwWidth, int dwHeight, int lPitch)
 {
-	if ((selectbuttom::select==SelectState)
-		||(BUILD==TAmainStruct_Ptr->PrepareOrder_Type))
+	if (IsDrawGameRect ())
+	{
+			BlitSelect ( lpSurfaceMem,  dwWidth,  dwHeight,  lPitch);
+	}
+
+	if (IsDrawOrder ( ))
+	{
+			BlitOrder ( lpSurfaceMem,  dwWidth,  dwHeight,  lPitch);
+	}
+}
+
+BOOL MegaMapControl::IsDrawOrder (void)
+{
+	return (0!= GetAsyncKeyState ( VK_SHIFT));
+}
+
+BOOL MegaMapControl::IsDrawGameRect (BOOL Build_b)
+{
+	if (Build_b)
+	{
+		return (BUILD==TAmainStruct_Ptr->PrepareOrder_Type);
+	}
+	return (selectbuttom::select==SelectState)
+		||(BUILD==TAmainStruct_Ptr->PrepareOrder_Type);
+}
+
+void MegaMapControl::DrawBuildRect (OFFSCREEN * offscren_p, unsigned char  Color, 
+	UnitDefStruct * BuildTargat, int TAx, int TAy, int TAz)
+{// draw in TA screen
+	POINT Pos;
+	TAPos2ScreenPos (  &Pos, TAx, TAy, TAz);
+	RECT Rect;
+	Rect.left= Pos.x;
+	Rect.top= Pos.y;
+
+
+	TAPos2ScreenPos (  &Pos, BuildTargat->FootX* 16, BuildTargat->FootY* 16, 0);
+	Rect.left-= Pos.x/ 2;
+	Rect.top-= Pos.y/ 2;
+
+	if (Rect.left<0)
+	{
+		Rect.left= 0;
+	}
+	if (Rect.top<0)
+	{
+		Rect.top= 0;
+	}
+
+	Rect.left+= MegaMapScreen.left;
+	Rect.top+= MegaMapScreen.top;
+
+	Rect.right= Rect.left+ Pos.x;
+	Rect.bottom= Rect.top+ Pos.y;
+
+	if (MegaMapScreen.right<Rect.right)
+	{
+		Rect.right= MegaMapScreen.right;
+		Rect.left= Rect.right- Pos.x;
+	}
+
+	if (MegaMapScreen.bottom<Rect.bottom)
+	{
+		Rect.bottom= MegaMapScreen.bottom;
+		Rect.top= Rect.bottom- Pos.y;
+	}
+
+	TADrawRect ( offscren_p, &Rect, Color);
+}
+
+void MegaMapControl::DrawTargatOrder (OFFSCREEN * OffScreen, UnitOrdersStruct * Order, PlayerStruct * me)
+{
+	POINT Pos;
+
+	if (Order->AttackTargat)
+	{
+		do 
+		{
+			if (! CheckUnitInPlayerLOS ( me, Order->AttackTargat))
+			{
+				if (0x200000&Order->Order_State)
+				{
+					break;
+				}
+				Order->Order_State|= 0x200000;											
+			}
+			Order->RemeberX= Order->AttackTargat->XPos;
+			Order->RemeberY= Order->AttackTargat->YPos- Order->AttackTargat->ZPos/ 2;
+
+		} while (false);
+		TAPos2ScreenPos ( &Pos, Order->RemeberX, Order->RemeberY, 0);
+	}
+	else
+	{
+		TAPos2ScreenPos ( &Pos, Order->Pos.X, Order->Pos.Y, Order->Pos.Z);
+	}
+
+	// 							RECT MouseRect;
+	// 							MouseRect.top= Pos.y+ MegaMapScreen.top;
+	// 							MouseRect.left= Pos.x+ MegaMapScreen.left;
+	Pos.x+= MegaMapScreen.left;
+	Pos.y+= MegaMapScreen.top;
+	int Index= (*COBSciptHandler_Begin)[Order->COBHandler_index].cursorIndex;
+	if ((cursorattack<=Index)
+		&&(Index<=cursorhourglass))
+	{
+		PGAFSequence GafSeq_p= TAmainStruct_Ptr->cursor_ary[Index];
+
+		PGAFFrame Gaf_p= GafSeq_p->PtrFrameAry[(TAmainStruct_Ptr->GameTime/ (GafSeq_p->PtrFrameAry->Animated* 2))% GafSeq_p->Frames].PtrFrame;
+
+		GafFrame2OFFScreen ( OffScreen, Gaf_p, 
+			Pos.x, Pos.y);
+	}
+
+}
+
+void MegaMapControl::DrawOrderPath (OFFSCREEN * OffScreen, UnitOrdersStruct * Order, Position_Dword * UnitPos)
+{
+	//Order->Pos;
+	double x;
+	double y; 
+	int X1;
+	int X2;
+	int Y1;
+	int Y2;
+
+	if (Order->AttackTargat)
+	{
+		X1= Order->RemeberX;
+		X2= UnitPos->X;
+		Y1= Order->RemeberY;
+		Y2=  UnitPos->Y;
+	}
+	else
+	{
+		X1= Order->Pos.X;
+		X2= UnitPos->X;
+		Y1=  Order->Pos.Y;
+		Y2=  UnitPos->Y;
+	}
+
+
+
+	if (X1<TAMap.left)
+	{
+		X1= TAMap.left;
+	}
+
+	if (X2<TAMap.left)
+	{
+		X2= TAMap.left;
+	}
+	if (TAMap.right<X1)
+	{
+		X1= TAMap.right;
+	}
+
+	if (TAMap.right<X2)
+	{
+		X2= TAMap.right;
+	}
+
+
+
+	if (Y1<TAMap.top)
+	{
+		Y1= TAMap.top;
+	}
+	if (Y2<TAMap.top)
+	{
+		Y2= TAMap.top;
+	}
+
+	if (TAMap.bottom<Y1)
+	{
+		Y1= TAMap.bottom;
+	}
+
+	if (TAMap.bottom<Y2)
+	{
+		Y2= TAMap.bottom;
+	}
+
+
+	x= X1- X2;
+	y= Y1- Y2;
+	double Sqrt= sqrt (x* x+ y* y);
+	Position_Dword Pos;
+	ScreenPos2TAPos ( &Pos, ORDERPATHSPACING, ORDERPATHSPACING);
+	double SpacingSqrt= sqrt( (double)(Pos.X* Pos.X)+ (double)(Pos.Y* Pos.Y));
+
+	if (SpacingSqrt<Sqrt)
+	{//
+		int TimeDelay= TAmainStruct_Ptr->GameTime- Order->StartTime;
+		PGAFSequence path= TAmainStruct_Ptr->pathicon;
+
+		if (TimeDelay<0)
+		{
+			TimeDelay= 0;
+		}
+		int FrameIndex= (TimeDelay/ path->PtrFrameAry->Animated)% path->Frames;
+
+		
+		double Curt= (SpacingSqrt* (TimeDelay% ORDERPATHSPACING))/ ORDERPATHSPACING;
+
+		double Ratio;
+		POINT ScreenPos;
+		while (Curt<Sqrt)
+		{
+			Ratio= Curt/ Sqrt;
+
+			TAPos2ScreenPos ( &ScreenPos, UnitPos->X+ static_cast<int>(x* Ratio), UnitPos->Y+ static_cast<int>(y* Ratio)- UnitPos->Z/ 2, 0);
+			GafFrame2OFFScreen ( OffScreen, path->PtrFrameAry[FrameIndex].PtrFrame, 
+				ScreenPos.x+ MegaMapScreen.left, ScreenPos.y+ MegaMapScreen.top);
+
+			Curt+= SpacingSqrt;
+
+			FrameIndex= (++FrameIndex)% path->Frames;
+		}
+	}
+
+}
+void MegaMapControl::BlitOrder (LPVOID lpSurfaceMem, int dwWidth, int dwHeight, int lPitch)
+{
+	IDDrawSurface::OutptTxt ( "BlitOrder");
+	int ColorIndex;
+	OFFSCREEN OffScreen;
+	memset ( &OffScreen, 0, sizeof(OFFSCREEN));
+	OffScreen.Height= dwHeight;
+	OffScreen.Width= dwWidth;
+	OffScreen.lPitch= lPitch;
+	OffScreen.lpSurface= lpSurfaceMem;
+
+	OffScreen.ScreenRect.left= 0;
+	OffScreen.ScreenRect.right=  dwWidth;;
+
+	OffScreen.ScreenRect.top= 0;
+	OffScreen.ScreenRect.bottom= dwHeight;
+
+	BOOL Draw= FALSE, OtherBuilder= FALSE;
+	PlayerStruct * me= &TAmainStruct_Ptr->Players[TAmainStruct_Ptr->LocalHumanPlayer_PlayerID];
+	UnitStruct * Begin= me->Units;
+	UnitStruct * End= me->UnitsAry_End;
+	unsigned int MouseID= TAmainStruct_Ptr->MouseOverUnit;
+	unsigned int ShowRange= TAmainStruct_Ptr->ShowRangeUnitIndex;
+	UnitStruct *Camera= TAmainStruct_Ptr->CameraToUnit;
+	POINT Aspect;
+
+
+
+	if (Camera)
+	{
+		if (Camera->UnitType->CANBUILD_ptr)
+		{
+			OtherBuilder= TRUE;
+		}				
+	}
+	if (ShowRange)
+	{
+		if (TAmainStruct_Ptr->OwnUnitBegin[ShowRange].UnitType->CANBUILD_ptr)
+		{
+			OtherBuilder= TRUE;
+		}
+	}
+	if (MouseID)
+	{
+		if (TAmainStruct_Ptr->OwnUnitBegin[MouseID].UnitType->CANBUILD_ptr)
+		{
+			OtherBuilder= TRUE;
+		}
+	}
+
+	Position_Dword UnitPos;
+	for (; Begin!=End; Begin= &Begin[1])
+	{
+		if ((0x10000000&Begin->UnitSelected)
+			&&(0==(0x4000&Begin->UnitSelected)))
+		{	
+			Draw= FALSE;
+			if ((Begin->UnitInGameIndex==MouseID)
+				||(Begin==Camera)
+				||(Begin->UnitInGameIndex==ShowRange)
+				)
+			{//
+				Draw= TRUE;
+			}	
+			if ((Begin->UnitInGameIndex==MouseID)
+				||(Begin->UnitInGameIndex==ShowRange))
+			{
+				DWORD Radius;
+				int TAx;
+				int TAy;
+
+				TAPos2ScreenPos ( &Aspect, Begin->XPos, Begin->YPos, Begin->ZPos);
+
+				TAx= Aspect.x+ MegaMapScreen.left;
+				TAy= Aspect.y+ MegaMapScreen.top;
+
+				Aspect.x= dwWidth;
+				Aspect.y= dwHeight;
+				//if ((*TAmainStruct_PtrPtr)->Showranges)
+
+				if (2&Begin->Weapon1Valid)
+				{
+					if (Begin->Weapon1->Range)
+					{
+						Radius= (static_cast<int>(Begin->Weapon1->Range)* MegaMapWidth)/ TAMapWidth;
+						DrawRadarCircle ( (LPBYTE)lpSurfaceMem, &Aspect,
+							TAx, TAy, 
+							Radius, 
+							(*TAmainStruct_PtrPtr)->desktopGUI.RadarObjecColor[6] );
+					}
+				}
+				if (2&Begin->Weapon2Valid)
+				{
+					if (Begin->Weapon2->Range)
+					{
+						Radius= (static_cast<int>(Begin->Weapon2->Range)* MegaMapWidth)/ TAMapWidth;
+						DrawRadarCircle ( (LPBYTE)lpSurfaceMem, &Aspect,
+							TAx, TAy, 
+							Radius, 
+							(*TAmainStruct_PtrPtr)->desktopGUI.RadarObjecColor[7] );
+					}
+				}
+				if (2&Begin->Weapon3Valid)
+				{
+					if (Begin->Weapon3->Range)
+					{
+						Radius= (static_cast<int>(Begin->Weapon3->Range)* MegaMapWidth)/ TAMapWidth;
+						DrawRadarCircle ( (LPBYTE)lpSurfaceMem, &Aspect,
+							TAx, TAy, 
+							Radius, 
+							(*TAmainStruct_PtrPtr)->desktopGUI.RadarObjecColor[7] );
+					}
+				}
+			}
+			//
+			if (Draw
+				||(UnitSelected_State& Begin->UnitSelected)
+				||OtherBuilder)
+			{			
+				
+				if (Begin->UnitOrders)
+				{
+					UnitOrdersStruct *Order= Begin->UnitOrders;
+	 
+					UnitPos.X= Begin->XPos;
+					UnitPos.Y= Begin->YPos;
+					UnitPos.Z= Begin->ZPos;
+					do 
+					{
+						DWORD OrderMask= (*COBSciptHandler_Begin)[Order->COBHandler_index].COBScripMask;
+
+						if (OrderMask& 1)
+						{// build
+							if (0x10& Begin->UnitSelected)
+							{
+								ColorIndex= TAmainStruct_Ptr->desktopGUI.RadarObjecColor[10];
+							}
+							else
+							{
+								ColorIndex= TAmainStruct_Ptr->desktopGUI.RadarObjecColor[9];
+							}
+							DrawBuildRect ( &OffScreen, ColorIndex, 
+								&(TAmainStruct_Ptr->UnitDef[Order->BuildUnitID]), Order->Pos.X, Order->Pos.Y, Order->Pos.Z);
+
+							if (Draw)
+							{
+								DrawOrderPath ( &OffScreen, Order, &UnitPos);
+							}
+
+							UnitPos.X= Order->Pos.X;
+							UnitPos.Y= Order->Pos.Y;
+							UnitPos.Z= Order->Pos.Z;
+						}
+
+						if (OrderMask& 2)
+						{
+							if (Draw
+								||(UnitSelected_State& Begin->UnitSelected))
+							{
+								DrawTargatOrder ( &OffScreen, Order, me);
+								if (Draw)
+								{
+									DrawOrderPath ( &OffScreen, Order, &UnitPos);
+								}
+
+							}
+						
+							
+						
+							if (Order->AttackTargat)
+							{
+								UnitPos.X= Order->RemeberX;
+								UnitPos.Y= Order->RemeberY;
+								UnitPos.Z= 0;
+							}
+							else
+							{
+								UnitPos.X= Order->Pos.X;
+								UnitPos.Y= Order->Pos.Y;
+								UnitPos.Z= Order->Pos.Z;
+							}
+						}
+
+						if (OrderMask& 8)
+						{// cursor
+
+							if (Draw
+								||(UnitSelected_State& Begin->UnitSelected))
+							{
+								DrawTargatOrder ( &OffScreen, Order, me);
+							}
+							
+							if (Order->AttackTargat)
+							{
+								UnitPos.X= Order->RemeberX;
+								UnitPos.Y= Order->RemeberY;
+								UnitPos.Z= 0;
+							}
+							else
+							{
+								UnitPos.X= Order->Pos.X;
+								UnitPos.Y= Order->Pos.Y;
+								UnitPos.Z= Order->Pos.Z;
+							}
+	
+						}
+
+						if (OrderMask& 0x10)
+						{
+							if (Draw)
+							{
+								if (4&Begin->cIsCloaked)
+								{
+
+
+									DWORD Radius= (static_cast<int>(Begin->UnitType->mincloakdistance)* MegaMapWidth)/ TAMapWidth;
+									int TAx;
+									int TAy;
+
+									TAPos2ScreenPos ( &Aspect, Begin->XPos, Begin->YPos, Begin->ZPos);
+									TAx= Aspect.x+ MegaMapScreen.left;
+									TAy= Aspect.y+ MegaMapScreen.top;
+
+									Aspect.x= dwWidth;
+									Aspect.y= dwHeight;
+
+									DrawRadarCircle ( (LPBYTE)lpSurfaceMem, &Aspect,
+										TAx, TAy, 
+										Radius, 
+										(*TAmainStruct_PtrPtr)->desktopGUI.RadarObjecColor[0xf] );
+								}
+							}
+						}
+
+					} while (Order= Order->NextOrder);
+				}
+			}
+		}
+	}
+	
+}
+void MegaMapControl::BlitSelect (LPVOID lpSurfaceMem, int dwWidth, int dwHeight, int lPitch)
+{
+	if (IsDrawGameRect ())
 	{
 		int ColorIndex;
 		OFFSCREEN OffScreen;
@@ -942,6 +1391,8 @@ void MegaMapControl::LockBlit (LPVOID lpSurfaceMem, int dwWidth, int dwHeight, i
 			SelectInScreen.bottom= SelectScreenRect.bottom+ MegaMapScreen.top;
 
 			ColorIndex= 0xf;
+
+			TADrawRect ( &OffScreen, &SelectInScreen, TAmainStruct_Ptr->desktopGUI.RadarObjecColor[ColorIndex]);
 		}
 		else if (BUILD==TAmainStruct_Ptr->PrepareOrder_Type)
 		{// draw build rect
@@ -950,47 +1401,88 @@ void MegaMapControl::LockBlit (LPVOID lpSurfaceMem, int dwWidth, int dwHeight, i
 			{
 				return ;
 			}
-			POINT Po;
-
-			TAPos2ScreenPos ( &Po,  TAmainStruct_Ptr->CircleSelect_Pos1TAx, TAmainStruct_Ptr->CircleSelect_Pos1TAy, TAmainStruct_Ptr->CircleSelect_Pos1TAz);
-			SelectInScreen.left= Po.x;
-			SelectInScreen.top= Po.y;
-
-			TAPos2ScreenPos ( &Po,  TAmainStruct_Ptr->CircleSelect_Pos2TAx, TAmainStruct_Ptr->CircleSelect_Pos2TAy, TAmainStruct_Ptr->CircleSelect_Pos2TAz);
-			
-			SelectInScreen.bottom= Po.y;
-
-			if (SelectInScreen.left<Po.x)
-			{
-				SelectInScreen.right= Po.x;
-			}
-			else
-			{
-				SelectInScreen.right= SelectInScreen.left;
-				SelectInScreen.left= Po.x;
-			}
-
-
-			if (SelectInScreen.top<Po.y)
-			{
-				SelectInScreen.bottom= Po.y;
-			}
-			else
-			{
-				SelectInScreen.bottom= SelectInScreen.top;
-				SelectInScreen.top= Po.y;
-			}
-
-			SelectInScreen.left= SelectInScreen.left+ MegaMapScreen.left;
-			SelectInScreen.right= SelectInScreen.right+ MegaMapScreen.left;
-			SelectInScreen.top= SelectInScreen.top+ MegaMapScreen.top;
-			SelectInScreen.bottom= SelectInScreen.bottom+ MegaMapScreen.top;
 
 			ColorIndex = ((TAmainStruct_Ptr->BuildSpotState) & 0x40 )!= 0 ? 10 : 4;
+
+			DrawBuildRect ( &OffScreen, TAmainStruct_Ptr->desktopGUI.RadarObjecColor[ColorIndex], &(TAmainStruct_Ptr->UnitDef[TAmainStruct_Ptr->BuildUnitID]), TAmainStruct_Ptr->MouseMapPos.X, TAmainStruct_Ptr->MouseMapPos.Y, TAmainStruct_Ptr->MouseMapPos.Z);
+
+			//ScreenPos2TAPos ( &TAmainStruct_Ptr->MouseMapPos, x, y, TRUE);
+// 			POINT Po;
+// 
+// 			TAPos2ScreenPos ( &Po,  TAmainStruct_Ptr->CircleSelect_Pos1TAx, TAmainStruct_Ptr->CircleSelect_Pos1TAy, TAmainStruct_Ptr->CircleSelect_Pos1TAz);
+// 			SelectInScreen.left= Po.x;
+// 			SelectInScreen.top= Po.y;
+// 
+// 			TAPos2ScreenPos ( &Po,  TAmainStruct_Ptr->CircleSelect_Pos2TAx, TAmainStruct_Ptr->CircleSelect_Pos2TAy, TAmainStruct_Ptr->CircleSelect_Pos2TAz);
+// 			
+// 			//SelectInScreen.bottom= Po.y;
+// 
+// 			if (SelectInScreen.left<Po.x)
+// 			{
+// 				SelectInScreen.right= Po.x;
+// 			}
+// 			else
+// 			{
+// 				SelectInScreen.right= SelectInScreen.left;
+// 				SelectInScreen.left= Po.x;
+// 			}
+// 
+// 
+// 			if (SelectInScreen.top<Po.y)
+// 			{
+// 				SelectInScreen.bottom= Po.y;
+// 			}
+// 			else
+// 			{
+// 				SelectInScreen.bottom= SelectInScreen.top;
+// 				SelectInScreen.top= Po.y;
+// 			}
+// 
+// 			SelectInScreen.left= SelectInScreen.left+ MegaMapScreen.left;
+// 			SelectInScreen.right= SelectInScreen.right+ MegaMapScreen.left;
+// 			SelectInScreen.top= SelectInScreen.top+ MegaMapScreen.top;
+// 			SelectInScreen.bottom= SelectInScreen.bottom+ MegaMapScreen.top;
+
+
 		}
 
-		TADrawRect ( &OffScreen, &SelectInScreen, TAmainStruct_Ptr->desktopGUI.RadarObjecColor[ColorIndex]);
+
+		
+// 		--SelectInScreen.bottom;
+// 		--SelectInScreen.right;
+// 		++SelectInScreen.top;
+// 		++SelectInScreen.left;
+// 		TADrawRect ( &OffScreen, &SelectInScreen, TAmainStruct_Ptr->desktopGUI.RadarObjecColor[ColorIndex]);
 	}
+
+}
+
+void MegaMapControl::MegamapMoveSceen (int xPos, int yPos)
+{
+	if (MegaMapScreen.right<xPos)
+	{
+		xPos=MegaMapScreen.right;
+	}
+	if (xPos<MegaMapScreen.left)
+	{
+		xPos= MegaMapScreen.left;
+	}
+	if (MegaMapScreen.bottom<yPos)
+	{
+		yPos=MegaMapScreen.bottom;
+	}
+	if (yPos<MegaMapScreen.top)
+	{
+		yPos= MegaMapScreen.top;
+	}
+
+
+	xPos= xPos- MegaMapScreen.left;
+	yPos= yPos- MegaMapScreen.top;
+
+	ScreenPos2TAPos ( &TAmainStruct_Ptr->MouseMapPos, xPos, yPos);
+
+	MoveScreen ( TAmainStruct_Ptr->MouseMapPos.X, TAmainStruct_Ptr->MouseMapPos.Y, TAmainStruct_Ptr->MouseMapPos.Z);
 
 }
 
@@ -1057,3 +1549,5 @@ int TADRBuildOrder ()
 };
 */
 
+
+#endif

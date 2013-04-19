@@ -16,8 +16,9 @@
 #include "hook\etc.h"
 #include "hook\hook.h"
 
-#include "GUIExpand.h"
 #include "fullscreenminimap.h"
+#include "GUIExpand.h"
+
 #include "MegamapControl.h"
 
 
@@ -638,7 +639,10 @@ void Dialog::RenderDialog()
 	//DrawDelay();
 	DrawWhiteboardKey();
 	//DrawVisibleButton();
+#ifdef USEMEGAMAP
 	DrawMegaMapKey ( );
+#endif
+	
 }
 
 bool Dialog::Inside(int x, int y, int Control)
@@ -698,11 +702,14 @@ bool Dialog::Inside(int x, int y, int Control)
 			return true;
 		else
 			return false;
+#ifdef USEMEGAMAP
 	case MegaMapKey:
 		if(x>=MegaMapKeyPosX && x<MegaMapKeyPosX+MegamapKeyWidth && y>=MegaMapKeyPoxY && y<MegaMapKeyPoxY+MegamapKeyHeight)
 			return true;
 		else
 			return false;
+
+#endif
 	}
 
 	return false;
@@ -816,13 +823,13 @@ void Dialog::SetAll()
 
 	AlliesWhiteboard *WB = (AlliesWhiteboard*)LocalShare->Whiteboard;
 	WB->Set(VirtualWhiteboardKey);
-	
+#ifdef USEMEGAMAP
 	if (GUIExpander
 		&&GUIExpander->myMinimap)
 	{
 		GUIExpander->myMinimap->Set ( VirtualMegamap);
 	}
-
+#endif
 }
 
 //reads dialog position from registry
@@ -919,7 +926,7 @@ void Dialog::ReadSettings()
 	Size = sizeof(int);
 	if(RegQueryValueEx(hKey, "MegamapKey", NULL, NULL, (unsigned char*)&VirtualMegamap, &Size) != ERROR_SUCCESS)
 	{
-		VirtualMegamap = VK_F4;
+		VirtualMegamap = VK_TAB;
 	}
 
 	RegCloseKey(hKey);

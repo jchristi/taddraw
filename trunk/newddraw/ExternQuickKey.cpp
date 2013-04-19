@@ -149,20 +149,22 @@ bool ExternQuickKey::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 				break;
 			}
 
-			if (0==(TAMainStruct_Ptr->InterfaceType))
-			{
-				if (Msg==WM_RBUTTONDBLCLK)
-				{
-					break;
-				}
-			}
-			else
-			{
-				if (Msg==WM_LBUTTONDBLCLK)
-				{
-					break;
-				}
-			}
+// 			if (0==(TAMainStruct_Ptr->InterfaceType))
+// 			{
+// 				if (Msg==WM_RBUTTONDBLCLK)
+// 				{
+// 					break;
+// 				}
+// 			}
+// 			else
+// 			{
+// // 				if (Msg==WM_LBUTTONDBLCLK)
+// // 				{
+// // 					break;
+// // 				}
+// 			}
+#ifdef USEMEGAMAP
+
 			if (GUIExpander)
 			{
 				if (GUIExpander->myMinimap)
@@ -173,7 +175,7 @@ bool ExternQuickKey::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lP
 					}
 				}
 			}
-
+#endif
 			if ((GetAsyncKeyState(VirtualKeyCode)&0x8000)==0)
 			{// don't catch the msg when whiteboard key down.
 				int xPos;
@@ -773,33 +775,27 @@ int ExternQuickKey::InitExternTypeMask (void)
 	for (int i= 0; i<TypeCount; ++i)
 	{
 		Current= &Begin[i];
-		if((NoWeaponPtr!=reinterpret_cast<unsigned long>(Current->weapon1))
-			|| (NoWeaponPtr!=reinterpret_cast<unsigned long>(Current->weapon2))
-			|| (NoWeaponPtr!=reinterpret_cast<unsigned long>(Current->weapon3)))
+		if((NoWeaponPtr!=reinterpret_cast<unsigned long>(Current->weapon1)&&(NULL!=Current->weapon1)&&(0==(stockpile_mask&(Current->weapon1->WeaponTypeMask))))
+			|| (NoWeaponPtr!=reinterpret_cast<unsigned long>(Current->weapon2)&&(NULL!=Current->weapon2)&&(0==(stockpile_mask&(Current->weapon2->WeaponTypeMask))))
+			|| (NoWeaponPtr!=reinterpret_cast<unsigned long>(Current->weapon3)&&(NULL!=Current->weapon3)&&(0==(stockpile_mask&(Current->weapon3->WeaponTypeMask))))
+			)
 		{
-			if ((NULL!=Current->weapon1
-				&&(0==(stockpile_mask&(Current->weapon1->WeaponTypeMask))))
-				||(NULL!=Current->weapon2
-				&&(0==(stockpile_mask&(Current->weapon2->WeaponTypeMask))))
-				||(NULL!=Current->weapon3
-				&&(0==(stockpile_mask&(Current->weapon3->WeaponTypeMask)))))
-			{
-				if ((NULL!=CommanderMask)&&
-					(! MatchInTypeAry ( Current->UnitTypeID, CommanderMask)))
-				{//don't select commander in here
-					if((0==(builder&Current->UnitTypeMask_0)))
-					{
-						if (NULL==Current->YardMap)
-						{//not building
-							if (canfly!=(canfly& Current->UnitTypeMask_0))
-							{
-								SetIDMaskInTypeAry ( Current->UnitTypeID, MobileWeaponMask);
-							}
+			if ((NULL!=CommanderMask)&&
+				(! MatchInTypeAry ( Current->UnitTypeID, CommanderMask)))
+			{//don't select commander in here
+				if((0==(builder&Current->UnitTypeMask_0)))
+				{
+					if (NULL==Current->YardMap)
+					{//not building
+						if (canfly!=(canfly& Current->UnitTypeMask_0))
+						{
+							SetIDMaskInTypeAry ( Current->UnitTypeID, MobileWeaponMask);
 						}
 					}
 				}
 			}
 		}
+		
 	}
 		Inited++;
 
@@ -818,7 +814,8 @@ int ExternQuickKey::InitExternTypeMask (void)
 			if ((0!=(builder&Current->UnitTypeMask_0))
 				&&(NULL==Current->YardMap)//building
 				&&(! MatchInTypeAry ( Current->UnitTypeID, CommanderMask))
-				&&(canfly!=(canfly& Current->UnitTypeMask_0)))
+				/*&&(canfly!=(canfly& Current->UnitTypeMask_0))*/
+				)
 			{
 				SetIDMaskInTypeAry ( Current->UnitTypeID, ConstructorMask);
 			}
@@ -871,35 +868,30 @@ int ExternQuickKey::InitExternTypeMask (void)
 	for (int i= 0; i<TypeCount; ++i)
 	{
 		Current= &Begin[i];
-		if((NoWeaponPtr!=reinterpret_cast<unsigned long>(Current->weapon1))
-			|| (NoWeaponPtr!=reinterpret_cast<unsigned long>(Current->weapon2))
-			|| (NoWeaponPtr!=reinterpret_cast<unsigned long>(Current->weapon3)))
+	
+		if((NoWeaponPtr!=reinterpret_cast<unsigned long>(Current->weapon1)&&(NULL!=Current->weapon1)&&(0==(stockpile_mask&(Current->weapon1->WeaponTypeMask))))
+			|| (NoWeaponPtr!=reinterpret_cast<unsigned long>(Current->weapon2)&&(NULL!=Current->weapon2)&&(0==(stockpile_mask&(Current->weapon2->WeaponTypeMask))))
+			|| (NoWeaponPtr!=reinterpret_cast<unsigned long>(Current->weapon3)&&(NULL!=Current->weapon3)&&(0==(stockpile_mask&(Current->weapon3->WeaponTypeMask))))
+			)
 		{
-			if ((NULL!=Current->weapon1
-				&&(0==(stockpile_mask&(Current->weapon1->WeaponTypeMask))))
-				||(NULL!=Current->weapon2
-				&&(0==(stockpile_mask&(Current->weapon2->WeaponTypeMask))))
-				||(NULL!=Current->weapon3
-				&&(0==(stockpile_mask&(Current->weapon3->WeaponTypeMask)))))
-			{
 
-				if ((NULL!=CommanderMask)&&
-					(! MatchInTypeAry ( Current->UnitTypeID, CommanderMask)))
-				{//don't select commander in here
-					if((0==(builder&Current->UnitTypeMask_0)))
-					{
-						if (NULL==Current->YardMap)
-						{//not building
-							if (canfly==(canfly& Current->UnitTypeMask_0))
-							{
-								SetIDMaskInTypeAry ( Current->UnitTypeID, AirWeaponMask);
+			if ((NULL!=CommanderMask)&&
+				(! MatchInTypeAry ( Current->UnitTypeID, CommanderMask)))
+			{//don't select commander in here
+				if((0==(builder&Current->UnitTypeMask_0)))
+				{
+					if (NULL==Current->YardMap)
+					{//not building
+						if (canfly==(canfly& Current->UnitTypeMask_0))
+						{
+							SetIDMaskInTypeAry ( Current->UnitTypeID, AirWeaponMask);
 
-							}
 						}
 					}
 				}
 			}
 		}
+		
 	}
 	Inited++;
 	if (NULL==AirConMask)
@@ -1006,8 +998,9 @@ int __stdcall AddtionRoutine_UnitINFOInit (PInlineX86StackBuffer X86StrackBuffer
 
 void AddRoutine_InitAfterExternKey ( void)
 {
-	if (GUIExpander)
+#ifdef USEMEGAMAP
 
+	if (GUIExpander)
 	{
 		if ((GUIExpander->myMinimap)
 			&&(GUIExpander->myMinimap->UnitsMap))
@@ -1015,4 +1008,5 @@ void AddRoutine_InitAfterExternKey ( void)
 			GUIExpander->myMinimap->UnitsMap->LoadUnitPicture ( );
 		}
 	}
+#endif
 }

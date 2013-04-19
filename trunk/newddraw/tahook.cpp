@@ -10,8 +10,9 @@
 #include "hook\hook.h"
 #include "tahook.h"
 
-#include "GUIExpand.h"
 #include "fullscreenminimap.h"
+#include "GUIExpand.h"
+
 #include "MegamapControl.h"
 #include "tamem.h"
 #include "tafunctions.h"
@@ -106,6 +107,7 @@ bool CTAHook::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 	__try
 	{
+#ifdef USEMEGAMAP
 		if (GUIExpander
 			&&GUIExpander->myMinimap
 			&&GUIExpander->myMinimap->Controler)
@@ -122,6 +124,7 @@ bool CTAHook::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 				return false;
 			}
 		}
+#endif
 		if (TAInGame==DataShare->TAProgress)
 		{
 				switch(Msg)
@@ -1017,12 +1020,12 @@ void CTAHook::ClickBuilding(int Xpos, int Ypos)
 
 short CTAHook::GetFootX()  //get footprint of selected OwnUnitBegin to build
 {
-	return TAdynmem->UnitDef[TAdynmem->BuildNum].FootX;
+	return TAdynmem->UnitDef[TAdynmem->BuildUnitID].FootX;
 }
 
 short CTAHook::GetFootY()  //get footprint of selected OwnUnitBegin to build
 {
-	return TAdynmem->UnitDef[TAdynmem->BuildNum].FootY;
+	return TAdynmem->UnitDef[TAdynmem->BuildUnitID].FootY;
 }
 
 void CTAHook::DrawBuildRect(int posx, int posy, int sizex, int sizey, int color)
