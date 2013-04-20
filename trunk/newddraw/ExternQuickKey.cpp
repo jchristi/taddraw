@@ -552,7 +552,7 @@ int ExternQuickKey::SelectOnlyInScreenWeaponUnit (unsigned int SelectWay_Mask)
 	return SelectedUnits;
 }
 
-int ExternQuickKey::SelectUnitInRect (TAUnitType NeededType, RECT * rect)
+int ExternQuickKey::SelectUnitInRect (TAUnitType NeededType, RECT * rect, bool shift)
 {
 	if (NULL==rect)
 	{
@@ -586,15 +586,36 @@ int ExternQuickKey::SelectUnitInRect (TAUnitType NeededType, RECT * rect)
 					{
 						DoSelect_b= true;
 					}
-					if (DoSelect_b)
+					if (shift)
 					{
-						Current->UnitSelected=  Current->UnitSelected| UnitSelected_State;
-						++SelectedCounter;
+						if (DoSelect_b)
+						{
+							if (Current->UnitSelected& (UnitSelected_State))
+							{
+								Current->UnitSelected= Current->UnitSelected& (~ UnitSelected_State);
+							}
+							else
+							{
+								Current->UnitSelected= Current->UnitSelected| ( UnitSelected_State);
+								++SelectedCounter;
+							}
+
+						}
 					}
 					else
 					{
-						Current->UnitSelected= Current->UnitSelected& (~ UnitSelected_State);
+						if (DoSelect_b)
+						{
+
+							Current->UnitSelected=  Current->UnitSelected| UnitSelected_State;
+							++SelectedCounter;
+						}
+						else
+						{
+							Current->UnitSelected= Current->UnitSelected& (~ UnitSelected_State);
+						}
 					}
+	
 				}
 			}
 		}

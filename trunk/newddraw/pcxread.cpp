@@ -31,7 +31,7 @@ LPDIRECTDRAWSURFACE CreateSurfPCXResource(WORD PCXNum, bool VidMem)
 	DDRAW_INIT_STRUCT(ddsd);
 	ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
 	if(VidMem)
-		ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_VIDEOMEMORY;
+		ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
 	else
 		ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
 	ddsd.dwWidth = Width;

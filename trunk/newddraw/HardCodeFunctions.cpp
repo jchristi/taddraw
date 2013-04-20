@@ -447,6 +447,14 @@ _PlaySound_Effect PlaySound_Effect= (_PlaySound_Effect) 0x47F1A0;
 _GafFrame2OFFScreen GafFrame2OFFScreen= (_GafFrame2OFFScreen) 0x4B8500;
 
 _DrawGameScreen DrawGameScreen_Addr= (_DrawGameScreen)0x0468CF0;
+
+_DrawUnitUI DrawUnitUI= (_DrawUnitUI) 0x04AB170;
+
+_DrawPopupF4Dialog DrawPopupF4Dialog= (_DrawPopupF4Dialog) 0x4948E0;
+
+_DrawPopupButtomDialog DrawPopupButtomDialog= (_DrawPopupButtomDialog) 0x04689C0;
+
+_DrawChatText DrawChatText= (_DrawChatText) 0x0464060;
 //////////////////////////////////////////////////////////////////////////////////////////
 /// Not working.
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -521,3 +529,5 @@ unsigned int TAWndProcSH_Addr=0x4B5B82;
 
 COBHandle * * COBSciptHandler_Begin= (COBHandle  * *)0x0512344;
 COBHandle *  * COBSciptHandler_End= (COBHandle  * *) 0x0512348;
+
+unsigned int KeepActiveAddr= 0x4AB10F;

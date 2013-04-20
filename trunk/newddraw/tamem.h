@@ -398,8 +398,9 @@ struct TAdynmemStruct{
 	_GAFSequence * radlogo; //0147DF
 	_GAFSequence * radlogohigh;
 	_GAFSequence * nuclogo ;//00147E7
-
-	char data26_[0x94];
+	char data26__[0x30];
+	_GAFSequence * igpaused;
+	char data26_[0x60];///[0x94];
 	_GAFSequence * cursor_ary [0x15];//0x1487F
 	_GAFSequence * pathicon;
 	char data27[0x44];
@@ -407,7 +408,10 @@ struct TAdynmemStruct{
 	//char data9[0x6270];
 	ExplosionStruct Explosions[300]; //0x1491F
 	LPVOID data28; //0x1AB8F
-	char data29[0x1D294]; //0x1AB93
+	char data29[0x1D28C]; //0x1AB93
+	DWORD ScreenWidth;
+	DWORD ScreenHeight ;
+
 	RECT GameSreen_Rect; //0x37E27 
 	DWORD GameScreenWidth;
 	DWORD GameScreenHeight;
@@ -872,7 +876,9 @@ typedef struct _GUIMEMSTRUCT
 	int field_24;
 	char field_28[19];
 	int field_3B;
-	char field_3F[119];
+	char field_3F[2];
+	char GUIName[16];
+	char field_51[101];
 	__int16 SubGUICount;
 	int field_B8;
 	int field_BC;

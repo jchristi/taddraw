@@ -156,9 +156,10 @@ public:
 	static void OutptTxt(char *string);
 	static void OutptInt(int Int_I);
 	void Set(bool EnableVSync);
+	void FrontSurface (LPDIRECTDRAWSURFACE lpTASurf);
 	int ScreenWidth;
 	int ScreenHeight;
-	IDDrawSurface(LPDIRECTDRAWSURFACE lpTASurf, bool iWindowed, int iScreenWidth, int iScreenHeight);
+	IDDrawSurface(LPDDSURFACEDESC lpTAddsc, bool iWindowed, int iScreenWidth, int iScreenHeight);
 	/*** IUnknown methods ***/
 	HRESULT __stdcall QueryInterface(REFIID riid, LPVOID FAR * ppvObj);
 	ULONG __stdcall AddRef();

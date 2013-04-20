@@ -85,7 +85,7 @@ public:
 	int InitExternTypeMask (void);
 	void DestroyExternTypeMask (void);
 
-	int SelectUnitInRect (TAUnitType NeededType, RECT * rect);
+	int SelectUnitInRect (TAUnitType NeededType, RECT * rect, bool shift=false);
 
 	int SelectOnlyInScreenSameTypeUnit (BOOL FirstSelect_Flag);
 	int SelectOnlyInScreenWeaponUnit (unsigned int SelectWay_Mask);

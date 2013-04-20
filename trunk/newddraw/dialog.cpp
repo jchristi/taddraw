@@ -44,7 +44,7 @@ Dialog::Dialog()
 	DDSURFACEDESC ddsd;
 	DDRAW_INIT_STRUCT(ddsd);
 	ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
-	ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_VIDEOMEMORY;
+	ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
 	ddsd.dwWidth = DialogWidth;
 	ddsd.dwHeight = DialogHeight;
 	TADD->CreateSurface(&ddsd, &lpDialogSurf, NULL);

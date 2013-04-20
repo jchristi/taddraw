@@ -13,6 +13,7 @@
 #include "fullscreenminimap.h"
 #include "GUIExpand.h"
 
+#include "megamaptastuff.h"
 #include "MegamapControl.h"
 #include "tamem.h"
 #include "tafunctions.h"
@@ -45,7 +46,7 @@ CTAHook::CTAHook()
 	RegSetValueEx(hKey, "Ver", NULL, REG_SZ, (unsigned char*)VerString, strlen(VerString));
 	RegCloseKey(hKey);
 	RegCloseKey(hKey1);
-	
+
 
 	LocalShare->TAHook = this;
 	TAHook = this;
@@ -107,231 +108,227 @@ bool CTAHook::Message(HWND WinProcWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 	__try
 	{
-#ifdef USEMEGAMAP
-		if (GUIExpander
-			&&GUIExpander->myMinimap
-			&&GUIExpander->myMinimap->Controler)
-		{
-			if (GUIExpander->myMinimap->Controler->IsBliting ( ))
-			{// do not 
-				if (WriteLine)
-				{
-					WriteLine = false;
-					EnableTABuildRect();
-				}
-				RingWrite = false;
-				
-				return false;
-			}
-		}
-#endif
+
 		if (TAInGame==DataShare->TAProgress)
 		{
-				switch(Msg)
-		{
-		case WM_KEYDOWN:
-			switch((int)wParam)
+			switch(Msg)
 			{
-			case 122: //f11
-				WriteShareMacro();
-				return true;
-
-			case 33:  //pageup
-				if((GetAsyncKeyState(VirtualKeyCode)&0x8000)>0)
+			case WM_KEYDOWN:
+				switch((int)wParam)
 				{
-					Spacing++;
-					if(Spacing>MAX_SPACING)
-						Spacing = MAX_SPACING;
-					UpdateSpacing();
+				case 122: //f11
+					WriteShareMacro();
+					return true;
+
+				case 33:  //pageup
+					if((GetAsyncKeyState(VirtualKeyCode)&0x8000)>0)
+					{
+						Spacing++;
+						if(Spacing>MAX_SPACING)
+							Spacing = MAX_SPACING;
+						UpdateSpacing();
+						return true;
+					}
+
+				case 34:  //pagedown
+					if((GetAsyncKeyState(VirtualKeyCode)&0x8000)>0)
+					{
+						Spacing--;
+						if(Spacing<0)
+							Spacing = 0;
+						UpdateSpacing();
+						return true;
+					}
+
+				}
+				break;
+
+			case WM_KEYUP:
+				if(wParam == VirtualKeyCode)
+				{
+					WriteLine = false;
+					RingWrite = false;
+					//EnableTABuildRect();
+				}
+				break;
+
+
+			case WM_CHAR:
+				if((GetAsyncKeyState(VirtualKeyCode)&0x8000)>0 && WriteLine==true)
+					return true;
+				break;
+
+			case WM_LBUTTONDOWN:
+				if(RingWrite)
+				{
+					WriteDTLine();
 					return true;
 				}
-
-			case 34:  //pagedown
-				if((GetAsyncKeyState(VirtualKeyCode)&0x8000)>0)
+				else if(WriteLine==true && (GetAsyncKeyState(VirtualKeyCode)&0x8000)>0)
 				{
-					Spacing--;
-					if(Spacing<0)
-						Spacing = 0;
-					UpdateSpacing();
+					FootPrintX = GetFootX();
+					if(FootPrintX == 0)
+						FootPrintX = 1;
+					FootPrintY = GetFootY();
+					if(FootPrintY == 0)
+						FootPrintY = 1;
+
+					EndX= TAdynmem->MouseMapPos.X;
+					EndY= TAdynmem->MouseMapPos.Y;
+					//EndX = (LOWORD(lParam)-128) + TAdynmem->EyeBallMapXPos;
+					//EndY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->CircleSelect_Pos1TAz/2;
+					/*if(ScrollEnabled)
+					WriteScrollDTLine();
+					else
+					WriteDTLine();*/
+					WriteDTLine();
+
+
+					StartX= TAdynmem->MouseMapPos.X;
+					StartY= TAdynmem->MouseMapPos.Y;
+					//StartX = (LOWORD(lParam)-128) + TAdynmem->EyeBallMapXPos;
+					//StartY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->CircleSelect_Pos1TAz/2;
+					/*if(ScrollEnabled)
+					{
+					StartMapX = *MapX;
+					StartMapY = *MapY;
+					}*/
+					XMatrix[0]=-1;
+					YMatrix[0]=-1;
 					return true;
 				}
+				else if((ordertype::BUILD==(*TAmainStruct_PtrPtr)->PrepareOrder_Type)
+					&&(GetAsyncKeyState(VirtualKeyCode)&0x8000)>0 && LOWORD(lParam)>127)
+				{
+					FootPrintX = GetFootX();
+					if(FootPrintX == 0)
+						FootPrintX = 1;
+					FootPrintY = GetFootY();
+					if(FootPrintY == 0)
+						FootPrintY = 1;
 
-			}
-			break;
+					WriteLine = true;
 
-		case WM_KEYUP:
-			if(wParam == VirtualKeyCode)
-			{
-				WriteLine = false;
+					//DisableTABuildRect();
+
+					StartX= TAdynmem->MouseMapPos.X;
+					StartY= TAdynmem->MouseMapPos.Y;
+					EndX= TAdynmem->MouseMapPos.X;
+					EndY= TAdynmem->MouseMapPos.Y;
+					//StartX = (LOWORD(lParam)-128) + TAdynmem->EyeBallMapXPos;
+					//StartY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->CircleSelect_Pos1TAz/2;
+					//EndX = (LOWORD(lParam)-128) + TAdynmem->EyeBallMapXPos;
+				//	EndY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->CircleSelect_Pos1TAz/2;
+					XMatrix[0]=-1;
+					YMatrix[0]=-1;
+
+					CalculateLine();
+					/*if(ScrollEnabled)
+					{
+					StartMapX = *MapX;
+					StartMapY = *MapY;
+					}*/
+					return true;
+				}
+				break;
+
+			case WM_LBUTTONUP:
+				if(RingWrite)
+				{
+					return true;
+				}
+				if((GetAsyncKeyState(VirtualKeyCode)&0x8000)==0)
+				{
+					WriteLine = false;
+					//EnableTABuildRect();
+				}
+				break;
+
+			case WM_RBUTTONDOWN:
+				if((GetAsyncKeyState(VirtualKeyCode)&0x8000)>0)
+				{
+					//RingWrite = true;
+					return true;
+				}
+				break;
+
+			case WM_RBUTTONUP:
 				RingWrite = false;
-				EnableTABuildRect();
-			}
-			break;
+				break;
 
-
-		case WM_CHAR:
-			if((GetAsyncKeyState(VirtualKeyCode)&0x8000)>0 && WriteLine==true)
-				return true;
-			break;
-
-		case WM_LBUTTONDOWN:
-			if(RingWrite)
-			{
-				WriteDTLine();
-				return true;
-			}
-			else if(WriteLine==true && (GetAsyncKeyState(VirtualKeyCode)&0x8000)>0)
-			{
-				FootPrintX = GetFootX();
-				if(FootPrintX == 0)
-					FootPrintX = 1;
-				FootPrintY = GetFootY();
-				if(FootPrintY == 0)
-					FootPrintY = 1;
-
-				EndX = (LOWORD(lParam)-128) + TAdynmem->EyeBallMapXPos;
-				EndY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->CircleSelect_Pos1TAz/2;
-				/*if(ScrollEnabled)
-				WriteScrollDTLine();
-				else
-				WriteDTLine();*/
-				WriteDTLine();
-
-				StartX = (LOWORD(lParam)-128) + TAdynmem->EyeBallMapXPos;
-				StartY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->CircleSelect_Pos1TAz/2;
-				/*if(ScrollEnabled)
+			case WM_MOUSEMOVE:
+				//MouseX = LOWORD(lParam);
+				//MouseY = HIWORD(lParam);
+				if(WriteLine)
 				{
-				StartMapX = *MapX;
-				StartMapY = *MapY;
-				}*/
-				XMatrix[0]=-1;
-				YMatrix[0]=-1;
-				return true;
-			}
-			else if((ordertype::BUILD==(*TAmainStruct_PtrPtr)->PrepareOrder_Type)
-				&&(GetAsyncKeyState(VirtualKeyCode)&0x8000)>0 && LOWORD(lParam)>127)
-			{
-				FootPrintX = GetFootX();
-				if(FootPrintX == 0)
-					FootPrintX = 1;
-				FootPrintY = GetFootY();
-				if(FootPrintY == 0)
-					FootPrintY = 1;
+					//EndX = LOWORD(lParam);
+					//EndY = HIWORD(lParam);
+					//if(VisualizeDTRows)
 
-				WriteLine = true;
-
-				DisableTABuildRect();
-
-				StartX = (LOWORD(lParam)-128) + TAdynmem->EyeBallMapXPos;
-				StartY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->CircleSelect_Pos1TAz/2;
-				EndX = (LOWORD(lParam)-128) + TAdynmem->EyeBallMapXPos;
-				EndY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->CircleSelect_Pos1TAz/2;
-				XMatrix[0]=-1;
-				YMatrix[0]=-1;
-
-				CalculateLine();
-				/*if(ScrollEnabled)
+					EndX= TAdynmem->MouseMapPos.X;
+					EndY= TAdynmem->MouseMapPos.Y;
+					//EndX = (LOWORD(lParam)-128) + TAdynmem->EyeBallMapXPos;
+					//EndY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->CircleSelect_Pos1TAz/2;
+					CalculateLine();
+				}
+				else if((ordertype::BUILD==(*TAmainStruct_PtrPtr)->PrepareOrder_Type)
+					&&(GetAsyncKeyState(VirtualKeyCode)&0x8000)>0)
 				{
-				StartMapX = *MapX;
-				StartMapY = *MapY;
-				}*/
-				return true;
-			}
-			break;
-
-		case WM_LBUTTONUP:
-			if(RingWrite)
-			{
-				return true;
-			}
-			if((GetAsyncKeyState(VirtualKeyCode)&0x8000)==0)
-			{
-				WriteLine = false;
-				EnableTABuildRect();
-			}
-			break;
-
-		case WM_RBUTTONDOWN:
-			if((GetAsyncKeyState(VirtualKeyCode)&0x8000)>0)
-			{
-				//RingWrite = true;
-				return true;
-			}
-			break;
-
-		case WM_RBUTTONUP:
-			RingWrite = false;
-			break;
-
-		case WM_MOUSEMOVE:
-			//MouseX = LOWORD(lParam);
-			//MouseY = HIWORD(lParam);
-			if(WriteLine)
-			{
-				//EndX = LOWORD(lParam);
-				//EndY = HIWORD(lParam);
-				//if(VisualizeDTRows)
-				EndX = (LOWORD(lParam)-128) + TAdynmem->EyeBallMapXPos;
-				EndY = (HIWORD(lParam)) + TAdynmem->EyeBallMapYPos - 32 + TAdynmem->CircleSelect_Pos1TAz/2;
-				CalculateLine();
-			}
-			else if((ordertype::BUILD==(*TAmainStruct_PtrPtr)->PrepareOrder_Type)
-				&&(GetAsyncKeyState(VirtualKeyCode)&0x8000)>0)
-			{
-				MouseOverUnit = FindMouseUnit ( );
-				if(MouseOverUnit)
-				{
-					CalculateRing();
-					RingWrite = true;
+					MouseOverUnit = FindMouseUnit ( );
+					if(MouseOverUnit)
+					{
+						CalculateRing();
+						RingWrite = true;
+					}
+					else
+					{
+						RingWrite = false;
+						//if(!WriteLine)
+							//EnableTABuildRect();
+							;
+					}
 				}
 				else
 				{
 					RingWrite = false;
-					if(!WriteLine)
-						EnableTABuildRect();
 				}
-			}
-			else
-			{
-				RingWrite = false;
-			}
-			break;
-		case WM_MOUSEWHEEL:
-			/*FootPrint += ((short)HIWORD(wParam))/120;
-			if(FootPrint>8)
-			FootPrint = 8;
-			if(FootPrint<2)
-			FootPrint = 2;
-			OutputFootPrint();
-			return true;*/
+				break;
+			case WM_MOUSEWHEEL:
+				/*FootPrint += ((short)HIWORD(wParam))/120;
+				if(FootPrint>8)
+				FootPrint = 8;
+				if(FootPrint<2)
+				FootPrint = 2;
+				OutputFootPrint();
+				return true;*/
 
-			if(HIWORD(wParam)>120)
-			{
-				if((GetAsyncKeyState(VirtualKeyCode)&0x8000)>0)
+				if(HIWORD(wParam)>120)
 				{
-					Spacing--;
-					if(Spacing<0)
-						Spacing = 0;
-					UpdateSpacing();
-					return true;
+					if((GetAsyncKeyState(VirtualKeyCode)&0x8000)>0)
+					{
+						Spacing--;
+						if(Spacing<0)
+							Spacing = 0;
+						UpdateSpacing();
+						return true;
+					}
 				}
+				else if(HIWORD(wParam)<=120)
+				{
+					if((GetAsyncKeyState(VirtualKeyCode)&0x8000)>0)
+					{
+						Spacing++;
+						if(Spacing>MAX_SPACING)
+							Spacing = MAX_SPACING;
+						UpdateSpacing();
+						return true;
+					}
+				}   
+				break;
 			}
-			else if(HIWORD(wParam)<=120)
-			{
-				if((GetAsyncKeyState(VirtualKeyCode)&0x8000)>0)
-				{
-					Spacing++;
-					if(Spacing>MAX_SPACING)
-						Spacing = MAX_SPACING;
-					UpdateSpacing();
-					return true;
-				}
-			}   
-			break;
-		}
 		}
 
-	
+
 	}
 	__except(EXCEPTION_EXECUTE_HANDLER)
 	{
@@ -437,16 +434,37 @@ void CTAHook::Blit(LPDIRECTDRAWSURFACE DestSurf)
 	VisualizeRing(DestSurf);*/
 }
 
+BOOL CTAHook::IsLineBuilding (void)
+{
+	return WriteLine || RingWrite;
+}
+
 void CTAHook::TABlit()
 {
-	if(WriteLine || RingWrite)
+	if(IsLineBuilding ( ))
 	{
-		EnableTABuildRect();
+		//EnableTABuildRect();
 		PaintMinimapRect();
-		VisualizeRow();
-		DisableTABuildRect();
+#ifdef USEMEGAMAP
+		if (GUIExpander
+			&&GUIExpander->myMinimap
+			&&GUIExpander->myMinimap->Controler
+			&&( GUIExpander->myMinimap->Controler->IsBliting ( )))
+		{
+			;
+		}
+		else
+#endif
+		{
+			VisualizeRow();
+		}
+
+
+		
+		//DisableTABuildRect();
 	}
 }
+/*
 
 void CTAHook::QueueMessage(UINT M, WPARAM W, LPARAM L)
 {
@@ -500,6 +518,7 @@ void CTAHook::SendQueued()
 	}
 
 }
+*/
 
 void CTAHook::WriteDTLine()
 {
@@ -693,26 +712,61 @@ void CTAHook::OptimizeDTRows()
 	}
 }
 
+void CTAHook::VisualizeRow_ForME_megamap (OFFSCREEN * argc)
+{
+	int i=0;
+
+	while(XMatrix[i] != -1 && YMatrix[i]!=-1)
+	{
+		int BakX= TAdynmem->MouseMapPos.X;
+		int BakY= TAdynmem->MouseMapPos.Y;
+
+		TAdynmem->MouseMapPos.X = XMatrix[i];
+		TAdynmem->MouseMapPos.Y = YMatrix[i];
+
+		TAdynmem->BuildSpotState=70;
+
+		TestBuildSpot ( );
+
+		int color = TAdynmem->BuildSpotState==70 ? 234 : 214; 
+
+		GUIExpander->myMinimap->TAStuff->TADrawRect ( (OFFSCREEN *)argc, TAdynmem->CircleSelect_Pos1TAx, TAdynmem->CircleSelect_Pos1TAy, TAdynmem->CircleSelect_Pos1TAz, 
+			TAdynmem->CircleSelect_Pos2TAx, TAdynmem->CircleSelect_Pos2TAy, TAdynmem->CircleSelect_Pos2TAz, color);
+		i++;
+
+		TAdynmem->MouseMapPos.X= BakX;
+		TAdynmem->MouseMapPos.Y= BakY;
+	}
+
+}
+
 void CTAHook::VisualizeRow()
 {
 	int i=0;
 
 	while(XMatrix[i] != -1 && YMatrix[i]!=-1)
 	{
+		int BakX= TAdynmem->MouseMapPos.X;
+		int BakY= TAdynmem->MouseMapPos.Y;
+
 		TAdynmem->MouseMapPos.X = XMatrix[i];
 		TAdynmem->MouseMapPos.Y = YMatrix[i];
 
 		TAdynmem->BuildSpotState=70;
 
-		TestBuildSpot();
+		TestBuildSpot ( );
+
 		int color = TAdynmem->BuildSpotState==70 ? 234 : 214; 
+
 		DrawBuildRect( (TAdynmem->CircleSelect_Pos1TAx - TAdynmem->EyeBallMapXPos) + 128,
 			(TAdynmem->CircleSelect_Pos1TAy - TAdynmem->EyeBallMapYPos) + 32 - (TAdynmem->CircleSelect_Pos1TAz/2),
 			GetFootX()*16,
 			GetFootY()*16,
 			color);
-
+		
 		i++;
+		TAdynmem->MouseMapPos.X= BakX;
+		TAdynmem->MouseMapPos.Y= BakY;
 	}
 
 	/*  DDBLTFX ddbltfx;
@@ -901,6 +955,7 @@ void CTAHook::CalculateRing()
 	CalculateRing(posx, posy, footx, footy);
 }
 
+/*
 void CTAHook::FindConnectedSquare(int &x1, int &y1, int &x2, int &y2, char *unittested)
 {
 	CalculateRing(x1, y1, (x2-x1)/16, (y2-y1)/16);
@@ -935,6 +990,7 @@ void CTAHook::FindConnectedSquare(int &x1, int &y1, int &x2, int &y2, char *unit
 		i++;
 	}
 }
+*/
 
 void CTAHook::CalculateRing(int posx, int posy, int footx, int footy)
 {
@@ -974,6 +1030,7 @@ void CTAHook::CalculateRing(int posx, int posy, int footx, int footy)
 	XMatrix[pos] = -1;
 	YMatrix[pos] = -1;
 }
+/*
 
 void CTAHook::VisualizeRing(LPDIRECTDRAWSURFACE DestSurf)
 {
@@ -1004,9 +1061,13 @@ void CTAHook::VisualizeRing(LPDIRECTDRAWSURFACE DestSurf)
 		}
 	}
 }
+*/
 
 void CTAHook::ClickBuilding(int Xpos, int Ypos)
 {
+	int BakX= TAdynmem->MouseMapPos.X;
+	int BakY= TAdynmem->MouseMapPos.Y;
+
 	msgstruct mu;
 	mu.shiftstatus = 5;
 
@@ -1016,6 +1077,9 @@ void CTAHook::ClickBuilding(int Xpos, int Ypos)
 	TestBuildSpot();
 
 	TAMapClick(&mu);
+
+	TAdynmem->MouseMapPos.X= BakX;
+	TAdynmem->MouseMapPos.Y= BakY;
 }
 
 short CTAHook::GetFootX()  //get footprint of selected OwnUnitBegin to build

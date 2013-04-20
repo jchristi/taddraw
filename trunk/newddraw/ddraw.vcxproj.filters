@@ -380,6 +380,9 @@
     <ClInclude Include="ddraw.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="megamaptastuff.h">
+      <Filter>Header Files\Functions\externFromChina\GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="bitmaps\3stagedbutton.pcx">

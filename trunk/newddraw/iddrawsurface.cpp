@@ -60,7 +60,7 @@ IDDrawSurface::~IDDrawSurface()
 	delete DDDTA;
 }*/
 
-IDDrawSurface::IDDrawSurface(LPDIRECTDRAWSURFACE lpTASurf, bool iWindowed, int iScreenWidth, int iScreenHeight)
+IDDrawSurface::IDDrawSurface(LPDDSURFACEDESC lpTAddsc,  bool iWindowed, int iScreenWidth, int iScreenHeight)
 {
 	WhiteBoard= new AlliesWhiteboard ;
 	Income= new CIncome;
@@ -79,7 +79,7 @@ IDDrawSurface::IDDrawSurface(LPDIRECTDRAWSURFACE lpTASurf, bool iWindowed, int i
 	}
 #endif
 	
-	lpFront = lpTASurf;
+	lpFront = NULL;
 	lpBack= NULL;
 	lpDDClipper= NULL;
 	OutptTxt("IDDrawSurface Created");
@@ -92,14 +92,13 @@ IDDrawSurface::IDDrawSurface(LPDIRECTDRAWSURFACE lpTASurf, bool iWindowed, int i
 	//LocalShare->XPos = ScreenWidth - 254;
 	//LocalShare->YPos = 50;
 	LocalShare->DDrawSurfClass = this;
-	LocalShare->TADirectDrawFrontSurface = lpTASurf;
+	LocalShare->TADirectDrawFrontSurface = lpFront;
 
 
 	
 	DataShare->IsRunning = 10;
 
 	VerticalSync = true;
-
 	SettingsDialog->SetAll  ( );
 
 	//check if version is 3.1 standar
@@ -131,6 +130,13 @@ IDDrawSurface::IDDrawSurface(LPDIRECTDRAWSURFACE lpTASurf, bool iWindowed, int i
 	RegCloseKey(hKey);
 
 	LocalShare->OrgLocalPlayerID= (*TAmainStruct_PtrPtr)->LocalHumanPlayer_PlayerID;
+
+
+	if (VerticalSync)
+	{
+		lpTAddsc->ddsCaps.dwCaps&= ~DDSCAPS_VIDEOMEMORY;
+		lpTAddsc->ddsCaps.dwCaps|= DDSCAPS_SYSTEMMEMORY;
+	}
 }
 
 HRESULT __stdcall IDDrawSurface::QueryInterface(REFIID riid, LPVOID FAR * ppvObj)
@@ -482,6 +488,7 @@ HRESULT __stdcall IDDrawSurface::Unlock(LPVOID arg1)
 			{
 				GUIExpander->myMinimap->Blit ( lpBack);
 			}
+
 #endif
 			SettingsDialog->BlitDialog(lpBack);
 
@@ -660,7 +667,10 @@ void IDDrawSurface::OutptInt(int Int_I)
 	OutptTxt ( Buffer_Int);
 #endif //DEBUG
 }
-
+void IDDrawSurface::FrontSurface (LPDIRECTDRAWSURFACE lpTASurf)
+{
+	lpFront= lpTASurf;
+}
 
 void IDDrawSurface::Set(bool EnableVSync)
 {
