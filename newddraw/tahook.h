@@ -34,8 +34,8 @@ class CTAHook
     QueMSG MessageQueue[1000];
     int QueuePos;
     int QueueLength;
-    void QueueMessage(UINT M, WPARAM W, LPARAM L);
-    void SendQueued();
+    //void QueueMessage(UINT M, WPARAM W, LPARAM L);
+    //void SendQueued();
     void WriteDTLine();
     void CalculateLine();
     void OptimizeDTRows();
@@ -63,7 +63,7 @@ class CTAHook
     void CalculateRing();
 	void CalculateRing(int posx, int posy, int footx, int footy);
 	void FindConnectedSquare(int &x1, int &y1, int &x2, int &y2, char *unittested);
-    void VisualizeRing(LPDIRECTDRAWSURFACE DestSurf);
+    //void VisualizeRing(LPDIRECTDRAWSURFACE DestSurf);
 
 	void ClickBuilding(int Xpos, int Ypos);
 	short GetFootX();
@@ -105,6 +105,9 @@ class CTAHook
     void Blit(LPDIRECTDRAWSURFACE DestSurf);
 	void TABlit();
 
+
+	BOOL IsLineBuilding (void);
+	void VisualizeRow_ForME_megamap (OFFSCREEN * argc);
 //addtion
 	public:
 		HWND TAhWnd;

@@ -1175,39 +1175,43 @@ void UnitsMinimap::NowDrawUnits ( LPBYTE PixelBitsBack, POINT * AspectSrc)
 	LPBYTE PixelBits= NULL;
 
 	LockOn ( &PixelBits, &Aspect);
-
-	if ((TAInGame==DataShare->TAProgress))
+	try 
 	{
-
-		if (NULL!=PixelBits)
+		if ((TAInGame==DataShare->TAProgress))
 		{
-			for (int i= 0; i<AspectSrc->y; ++i)
+			if (NULL!=PixelBits)
 			{
-				int Line= Aspect.x* i;
-				int SrcLine= AspectSrc->x* i;
-				for (int j= 0; j<AspectSrc->x; ++j)
+				for (int i= 0; i<AspectSrc->y; ++i)
 				{
-					PixelBits[Line+ j]= PixelBitsBack[SrcLine+ j];
+					int Line= Aspect.x* i;
+					int SrcLine= AspectSrc->x* i;
+					for (int j= 0; j<AspectSrc->x; ++j)
+					{
+						PixelBits[Line+ j]= PixelBitsBack[SrcLine+ j];
+					}
 				}
-			}
 
-			UnitStruct * Begin= (*TAmainStruct_PtrPtr)->OwnUnitBegin;
-			UnitStruct * unitPtr;
+				UnitStruct * Begin= (*TAmainStruct_PtrPtr)->OwnUnitBegin;
+				UnitStruct * unitPtr;
 
-			int NumHotRadarUnits= (*TAmainStruct_PtrPtr)->NumHotRadarUnits;
-			RadarUnit_ * RadarUnits_v= (*TAmainStruct_PtrPtr)->RadarUnits;
-
-
-			for (int i= 0; i<NumHotRadarUnits; ++i)
-			{
-				unitPtr= &Begin[RadarUnits_v[i].ID];
-				if (0!=unitPtr->UnitID)
+				int NumHotRadarUnits= (*TAmainStruct_PtrPtr)->NumHotRadarUnits;
+				RadarUnit_ * RadarUnits_v= (*TAmainStruct_PtrPtr)->RadarUnits;
+				for (int i= 0; i<NumHotRadarUnits; ++i)
 				{
-					DrawUnit (  PixelBits, &Aspect, unitPtr);
+					unitPtr= &Begin[RadarUnits_v[i].ID];
+					if (0!=unitPtr->UnitID)
+					{
+						DrawUnit (  PixelBits, &Aspect, unitPtr);
+					}
 				}
 			}
 		}
 	}
+	catch (...)
+	{
+		;
+	}
+	
 	Unlock ( PixelBits);
 }
 

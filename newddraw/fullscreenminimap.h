@@ -13,6 +13,7 @@ class UnitsMinimap;
 class MappedMap;
 class ProjectileMap;
 class MegaMapControl;
+class MegamapTAStuff;
 
 struct tagInlineX86StackBuffer;
 typedef struct tagInlineX86StackBuffer * PInlineX86StackBuffer;
@@ -26,6 +27,7 @@ public:
 	MappedMap* Mapped_p;
 	ProjectileMap* ProjectilesMap_p;
 	MegaMapControl * Controler;
+	MegamapTAStuff* TAStuff;
 
 	int MegamapWidth;
 	int MegamapHeight;
@@ -40,7 +42,8 @@ public:
 	void InitMinimap (tagTNTHeaderStruct * TNTPtr, RECT *  GameScreen= NULL);
 
 	void Blit(LPDIRECTDRAWSURFACE DestSurf);
-	void LockBlit (LPVOID lpSurfaceMem, int dwWidth, int dwHeight, int lPitch);
+	void LockBlit_TA (LPVOID lpSurfaceMem, int dwWidth, int dwHeight, int lPitch);
+	void LockBlit_MEGA (LPVOID lpSurfaceMem, int dwWidth, int dwHeight, int lPitch);
 	void InitSurface (LPDIRECTDRAW TADD);
 	void ReleaseSurface (void);
 

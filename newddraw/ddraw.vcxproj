@@ -152,6 +152,7 @@
     <ClCompile Include="MegamapTAStuff.cpp" />
     <ClCompile Include="ProjectileMap.cpp" />
     <ClInclude Include="MegamapControl.h" />
+    <ClInclude Include="megamaptastuff.h" />
     <ClInclude Include="ProjectilesMap.h">
       <FileType>CppCode</FileType>
     </ClInclude>

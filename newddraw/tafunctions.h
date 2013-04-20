@@ -139,6 +139,22 @@ extern _GafFrame2OFFScreen GafFrame2OFFScreen;
 typedef int (__stdcall * _DrawGameScreen)(int IsDrawObject, int IsBlitScreen);
 extern _DrawGameScreen DrawGameScreen_Addr;
 
+typedef int (__stdcall* _DrawUnitUI)(GUIInfo * TAGUISummy_ptr, OFFSCREEN * offscreen, RECT * lprect);
+extern _DrawUnitUI DrawUnitUI;
+
+
+                    
+typedef int (__stdcall * _DrawPopupF4Dialog)(OFFSCREEN * OFFSCREN_ptr);
+extern _DrawPopupF4Dialog DrawPopupF4Dialog;
+
+
+                                                     
+typedef int (__stdcall* _DrawPopupButtomDialog)(OFFSCREEN * OFFSCREN_ptr);
+extern _DrawPopupButtomDialog DrawPopupButtomDialog;
+
+
+typedef int (__stdcall * _DrawChatText)(OFFSCREEN * Offscreen_p);
+extern _DrawChatText DrawChatText;
 
 //////////////////////////////////////////////////////////////////////////////////////////
 /// Not working.
@@ -240,4 +256,5 @@ extern unsigned int TAWndProcSH_Addr;
 extern COBHandle *  * COBSciptHandler_Begin;
 extern COBHandle *  * COBSciptHandler_End;
 
+extern unsigned int KeepActiveAddr;
 #endif
